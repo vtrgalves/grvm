@@ -1,16 +1,29 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Particles from "@/components/Particles";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import TokenomicsSection from "@/components/TokenomicsSection";
+import EcosystemSection from "@/components/EcosystemSection";
+import DifferentialsSection from "@/components/DifferentialsSection";
+import RoadmapSection from "@/components/RoadmapSection";
+import CTASection from "@/components/CTASection";
+import FooterSection from "@/components/FooterSection";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <Particles />
+      <HeroSection />
+      <AboutSection />
+      <HowItWorksSection />
+      <TokenomicsSection />
+      <EcosystemSection />
+      <DifferentialsSection />
+      <RoadmapSection />
+      <CTASection />
+      <FooterSection />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
