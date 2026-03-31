@@ -19,8 +19,14 @@ const AboutSection = () => {
         </h2>
 
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-lg text-muted-foreground">
-            Tecnologia blockchain que conecta no mundo da música
+          <p className="text-lg text-muted-foreground mb-4">
+            Groovium é mais do que uma criptomoeda — é um <span className="text-primary font-semibold">movimento</span>.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            Criado para revolucionar a indústria musical, o projeto conecta artistas, fãs e criadores em um ecossistema onde todos são recompensados pela sua participação.
+          </p>
+          <p className="text-muted-foreground">
+            Através da tecnologia blockchain, cada batida, cada interação e cada contribuição ganha valor real.
           </p>
         </div>
 
