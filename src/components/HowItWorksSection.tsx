@@ -43,14 +43,11 @@ const HowItWorksSection = () => {
           {/* Connector lines (desktop) */}
           <div className="hidden md:block absolute top-1/2 left-[20%] right-[20%] h-[2px] bg-gradient-to-r from-primary via-secondary to-accent opacity-30" />
 
-          {steps.map(({ icon: Icon, step, title, desc, color, iconColor }, i) => (
+          {steps.map(({ icon: Icon, title, desc, color, iconColor }, i) => (
             <div
               key={i}
               className={`relative flex flex-col items-center text-center p-8 rounded-2xl border bg-card/60 backdrop-blur-sm ${color} hover:scale-105 transition-all duration-300`}
             >
-              <span className="font-display text-xs text-muted-foreground uppercase tracking-widest mb-4">
-                Etapa {step}
-              </span>
               <div className={`p-4 rounded-full bg-muted mb-4 ${iconColor}`}>
                 <Icon size={32} />
               </div>
