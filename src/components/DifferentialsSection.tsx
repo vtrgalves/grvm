@@ -3,7 +3,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const items = [
   { icon: Sparkles, text: "Integração real com música e cultura digital" },
-  { icon: Cpu, text: "Tecnologia Web3 de última geração" },
+  { icon: Cpu, text: "Tecnologia blockchain que conecta no mundo da música" },
   { icon: Users, text: "Comunidade ativa e engajada" },
   { icon: AudioWaveform, text: "Experiência imersiva baseada em frequência" },
 ];
