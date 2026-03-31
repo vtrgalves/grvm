@@ -2,15 +2,15 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const phases = [
   {
-    phase: "Fase 1",
-    title: "Lançamento",
-    desc: "Lançamento do token e comunidade inicial",
+    phase: "Etapa 01",
+    title: "Artistas Ofertam",
+    desc: "Benefícios para fãs como acesso a bastidores",
     color: "border-primary",
     dotColor: "bg-primary",
     glow: "box-glow-blue",
   },
   {
-    phase: "Fase 2",
+    phase: "Etapa 02",
     title: "Plataforma",
     desc: "Desenvolvimento da plataforma musical",
     color: "border-secondary",
@@ -18,15 +18,15 @@ const phases = [
     glow: "box-glow-purple",
   },
   {
-    phase: "Fase 3",
-    title: "NFTs",
-    desc: "Integração com NFTs e marketplace",
+    phase: "Etapa 03",
+    title: "Exclusividade Groovium",
+    desc: "Economia criativa gerando acesso ao mundo da música pelos artistas",
     color: "border-accent",
     dotColor: "bg-accent",
     glow: "box-glow-magenta",
   },
   {
-    phase: "Fase 4",
+    phase: "Etapa 04",
     title: "Expansão",
     desc: "Expansão global e parcerias estratégicas",
     color: "border-primary",
