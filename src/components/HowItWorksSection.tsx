@@ -4,15 +4,13 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 const steps = [
   {
     icon: Mic,
-    step: "01",
     title: "Artistas ofertam",
-    desc: "Benefícios para fãs como acesso à bastidores",
+    desc: "Benefícios para fãs como acesso à bastidores e camarim (Definido pelo próprio artista)",
     color: "border-primary box-glow-blue",
     iconColor: "text-primary",
   },
   {
     icon: Heart,
-    step: "02",
     title: "Fãs interagem",
     desc: "Fãs interagem, apoiam e participam da comunidade",
     color: "border-secondary box-glow-purple",
@@ -20,9 +18,8 @@ const steps = [
   },
   {
     icon: Coins,
-    step: "03",
     title: "Exclusividade Groovium",
-    desc: "Economia criativa gerando acesso ao mundo da música pelos artistas",
+    desc: "Economia criativa gerando acesso ao mundo conectando artistas e fãs",
     color: "border-accent box-glow-magenta",
     iconColor: "text-accent",
   },
@@ -46,14 +43,11 @@ const HowItWorksSection = () => {
           {/* Connector lines (desktop) */}
           <div className="hidden md:block absolute top-1/2 left-[20%] right-[20%] h-[2px] bg-gradient-to-r from-primary via-secondary to-accent opacity-30" />
 
-          {steps.map(({ icon: Icon, step, title, desc, color, iconColor }, i) => (
+          {steps.map(({ icon: Icon, title, desc, color, iconColor }, i) => (
             <div
               key={i}
               className={`relative flex flex-col items-center text-center p-8 rounded-2xl border bg-card/60 backdrop-blur-sm ${color} hover:scale-105 transition-all duration-300`}
             >
-              <span className="font-display text-xs text-muted-foreground uppercase tracking-widest mb-4">
-                Etapa {step}
-              </span>
               <div className={`p-4 rounded-full bg-muted mb-4 ${iconColor}`}>
                 <Icon size={32} />
               </div>
