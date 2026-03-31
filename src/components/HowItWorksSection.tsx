@@ -4,15 +4,13 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 const steps = [
   {
     icon: Mic,
-    step: "01",
     title: "Artistas ofertam",
-    desc: "Benefícios para fãs como acesso à bastidores",
+    desc: "Benefícios para fãs como acesso à bastidores e camarim (Definido pelo próprio artista)",
     color: "border-primary box-glow-blue",
     iconColor: "text-primary",
   },
   {
     icon: Heart,
-    step: "02",
     title: "Fãs interagem",
     desc: "Fãs interagem, apoiam e participam da comunidade",
     color: "border-secondary box-glow-purple",
@@ -20,9 +18,8 @@ const steps = [
   },
   {
     icon: Coins,
-    step: "03",
     title: "Exclusividade Groovium",
-    desc: "Economia criativa gerando acesso ao mundo da música pelos artistas",
+    desc: "Economia criativa gerando acesso ao mundo conectando artistas e fãs",
     color: "border-accent box-glow-magenta",
     iconColor: "text-accent",
   },
