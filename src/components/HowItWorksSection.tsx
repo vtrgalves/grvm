@@ -5,8 +5,8 @@ const steps = [
   {
     icon: Mic,
     step: "01",
-    title: "Artistas criam",
-    desc: "Artistas criam e compartilham conteúdo exclusivo",
+    title: "Artistas ofertam",
+    desc: "Benefícios para fãs como acesso à bastidores",
     color: "border-primary box-glow-blue",
     iconColor: "text-primary",
   },
@@ -21,8 +21,8 @@ const steps = [
   {
     icon: Coins,
     step: "03",
-    title: "Todos ganham",
-    desc: "Todos são recompensados com tokens GRVM",
+    title: "Exclusividade Groovium",
+    desc: "Economia criativa gerando acesso ao mundo da música pelos artistas",
     color: "border-accent box-glow-magenta",
     iconColor: "text-accent",
   },
