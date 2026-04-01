@@ -8,14 +8,32 @@ import babycommando6000 from "@/assets/artists/babycommando6000.gif";
 import bazuros from "@/assets/artists/bazuros.webp";
 import gasolines from "@/assets/artists/gasolines.webp";
 import giulianoRodrigues from "@/assets/artists/giuliano-rodrigues.webp";
+import neuroniosMimas from "@/assets/artists/neuronios-mimas.webp";
+import nihilDreamz from "@/assets/artists/nihil-dreamz.webp";
+import osEspectros from "@/assets/artists/os-espectros.webp";
+import primoBastardo from "@/assets/artists/primo-bastardo.webp";
+import reverendoFrankenstein from "@/assets/artists/reverendo-frankenstein.webp";
+import sentimentoCarpete from "@/assets/artists/sentimento-carpete.webp";
+import strikinglyAffect from "@/assets/artists/strikingly-affect.webp";
+import theElectricCandles from "@/assets/artists/the-electric-candles.webp";
+import theParkingLots from "@/assets/artists/the-parking-lots.webp";
 
 const artists = [
   { name: "Gasolines", location: "São Paulo, BR", image: gasolines },
-  { name: "Agentes Atlantis", location: "São Paulo, BR", image: agentesAtlantis },
+  { name: "Reverendo Frankenstein", location: "São Paulo, BR", image: reverendoFrankenstein },
   { name: "babycommando3000", location: "São Paulo, BR", image: babycommando3000 },
   { name: "babycommando6000", location: "São Paulo, BR", image: babycommando6000 },
-  { name: "baby808", location: "São Paulo, BR", image: baby808 },
   { name: "Bazuros", location: "São Paulo, BR", image: bazuros },
+  { name: "Sentimento Carpete", location: "São Paulo, BR", image: sentimentoCarpete },
+  { name: "NIHIL DREAMZ", location: "São Paulo, BR", image: nihilDreamz },
+  { name: "Agentes Atlantis", location: "São Paulo, BR", image: agentesAtlantis },
+  { name: "The Parking Lots", location: "São Paulo, BR", image: theParkingLots },
+  { name: "Strikingly Affect", location: "São Paulo, BR", image: strikinglyAffect },
+  { name: "primo bastardo", location: "Minas Gerais, BR", image: primoBastardo },
+  { name: "The Electric Candles", location: "Paraná, BR", image: theElectricCandles },
+  { name: "baby808", location: "São Paulo, BR", image: baby808 },
+  { name: "neurônios mimas", location: "Minas Gerais, BR", image: neuroniosMimas },
+  { name: "Os Espectros", location: "São Paulo, BR", image: osEspectros },
   { name: "Giuliano Rodrigues", location: "Rio de Janeiro, BR", image: giulianoRodrigues },
 ];
 
