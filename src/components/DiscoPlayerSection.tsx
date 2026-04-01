@@ -6,7 +6,7 @@ const DiscoPlayerSection = () => {
   const sectionRef = useScrollReveal();
 
   return (
-    <section ref={sectionRef} className="py-20 relative flex justify-center items-center reveal-section">
+    <section ref={sectionRef} className="pt-6 pb-16 relative flex justify-center items-center reveal-section">
       <a
         href="https://discoapp.xyz/"
         target="_blank"
@@ -16,12 +16,12 @@ const DiscoPlayerSection = () => {
         <img
           src={moshedGif}
           alt="Groovium Player"
-          className="w-[340px] md:w-[480px] h-auto block"
+          className="w-[200px] md:w-[260px] h-auto block"
         />
         <img
           src={logoPlayer}
           alt="Disco Player"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 md:w-32 drop-shadow-[0_0_20px_rgba(255,255,255,0.6)] group-hover:scale-110 transition-transform duration-300"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 md:w-48 drop-shadow-[0_0_20px_rgba(255,255,255,0.6)] group-hover:scale-110 transition-transform duration-300"
         />
       </a>
     </section>
