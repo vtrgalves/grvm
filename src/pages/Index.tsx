@@ -2,6 +2,7 @@ import Particles from "@/components/Particles";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import DiscoPlayerSection from "@/components/DiscoPlayerSection";
 import TokenomicsSection from "@/components/TokenomicsSection";
 import EcosystemSection from "@/components/EcosystemSection";
 import DifferentialsSection from "@/components/DifferentialsSection";
