@@ -22,6 +22,7 @@ const Index = () => {
       <DifferentialsSection />
       <RoadmapSection />
       <CTASection />
+      <ArtistsCarousel />
       <FooterSection />
     </div>
   );
