@@ -6,7 +6,10 @@ const DiscoPlayerSection = () => {
   const sectionRef = useScrollReveal();
 
   return (
-    <section ref={sectionRef} className="pt-6 pb-16 relative flex justify-center items-center reveal-section">
+    <section ref={sectionRef} className="pt-6 pb-16 relative flex flex-col justify-center items-center reveal-section">
+      <h2 className="text-3xl md:text-5xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-[#8A2EFF] to-[#FF2E9A] bg-clip-text text-transparent">
+        Música Alternativa para pessoas alternativas!
+      </h2>
       <a
         href="https://discoapp.xyz/"
         target="_blank"
