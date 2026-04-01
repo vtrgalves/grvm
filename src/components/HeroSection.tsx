@@ -42,12 +42,9 @@ const HeroSection = () => {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex justify-center">
           <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform">
-            Comprar GRVM
-          </button>
-          <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider border border-secondary text-secondary hover:bg-secondary/10 box-glow-purple transition-all hover:scale-105">
-            Ver Whitepaper
+            Cadastre-se na rede!
           </button>
         </div>
       </div>
