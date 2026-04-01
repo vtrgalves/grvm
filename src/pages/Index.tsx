@@ -18,6 +18,7 @@ const Index = () => {
       <HeroSection />
       <AboutSection />
       <HowItWorksSection />
+      <DiscoPlayerSection />
       <TokenomicsSection />
       <EcosystemSection />
       <DifferentialsSection />
