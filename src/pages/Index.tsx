@@ -7,6 +7,7 @@ import EcosystemSection from "@/components/EcosystemSection";
 import DifferentialsSection from "@/components/DifferentialsSection";
 import RoadmapSection from "@/components/RoadmapSection";
 import CTASection from "@/components/CTASection";
+import ArtistsCarousel from "@/components/ArtistsCarousel";
 import FooterSection from "@/components/FooterSection";
 
 const Index = () => {
