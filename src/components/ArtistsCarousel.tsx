@@ -37,7 +37,6 @@ const artists = [
   { name: "Giuliano Rodrigues", location: "Rio de Janeiro, BR", image: giulianoRodrigues },
 ];
 
-// Duplicate for seamless infinite scroll
 const allArtists = [...artists, ...artists];
 
 const ArtistsCarousel = () => {
@@ -51,12 +50,11 @@ const ArtistsCarousel = () => {
     const container = scrollRef.current;
     if (!container) return;
 
-    const speed = 0.5; // px per frame
+    const speed = 0.5;
 
     const animate = () => {
       if (!isPaused.current && container) {
         scrollPos.current += speed;
-        // Reset when first set is fully scrolled
         const halfWidth = container.scrollWidth / 2;
         if (scrollPos.current >= halfWidth) {
           scrollPos.current = 0;
@@ -73,13 +71,13 @@ const ArtistsCarousel = () => {
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
-      className="section-reveal py-16 md:py-24 relative overflow-hidden"
+      className="section-reveal py-16 md:py-24 relative overflow-hidden noise-bg"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background to-background" />
 
       <div className="relative z-10 container mx-auto px-4 mb-10">
         <h2 className="font-display text-2xl md:text-4xl font-bold">
-          Discover <span className="gradient-neon-text">Artists</span>
+          Discover <span className="gradient-neon-text text-glow-blue">Artists</span>
         </h2>
       </div>
 
@@ -94,7 +92,7 @@ const ArtistsCarousel = () => {
             key={`${artist.name}-${i}`}
             className="flex-shrink-0 flex flex-col items-center gap-3 group"
           >
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all duration-300 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)]">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary/50 transition-all duration-300 group-hover:shadow-[0_0_25px_hsl(191_100%_50%/0.4)]">
               <img
                 src={artist.image}
                 alt={artist.name}
