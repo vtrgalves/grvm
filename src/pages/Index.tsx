@@ -13,7 +13,7 @@ import FooterSection from "@/components/FooterSection";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden relative noise-bg scanlines">
       <Particles />
       <HeroSection />
       <AboutSection />

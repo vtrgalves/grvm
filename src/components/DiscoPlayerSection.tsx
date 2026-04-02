@@ -6,15 +6,15 @@ const DiscoPlayerSection = () => {
   const sectionRef = useScrollReveal();
 
   return (
-    <section ref={sectionRef} className="pt-6 pb-16 relative flex flex-col justify-center items-center reveal-section">
-      <h2 className="text-3xl md:text-5xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-[#8A2EFF] to-[#FF2E9A] bg-clip-text text-transparent">
+    <section ref={sectionRef} className="pt-6 pb-16 relative flex flex-col justify-center items-center reveal-section noise-bg">
+      <h2 className="text-3xl md:text-5xl font-bold text-center mb-8 gradient-neon-text text-glow-blue animate-glitch">
         Música Alternativa para pessoas alternativas!
       </h2>
       <a
         href="https://discoapp.xyz/"
         target="_blank"
         rel="noopener noreferrer"
-        className="relative inline-block group cursor-pointer rounded-2xl overflow-hidden border border-primary/30 hover:border-primary/60 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,209,255,0.3)]"
+        className="relative inline-block group cursor-pointer rounded-2xl overflow-hidden border border-primary/20 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_0_40px_hsl(191_100%_50%/0.3)]"
       >
         <img
           src={moshedGif}

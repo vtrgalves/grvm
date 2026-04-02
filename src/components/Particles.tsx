@@ -9,11 +9,11 @@ const Particles = () => {
 
     const createParticle = () => {
       const particle = document.createElement("div");
-      const size = Math.random() * 4 + 1;
+      const size = Math.random() * 3 + 1;
       const colors = [
-        "hsl(190 100% 50%)",
-        "hsl(268 100% 59%)",
-        "hsl(330 100% 59%)",
+        "hsl(191 100% 50%)",
+        "hsl(270 80% 55%)",
+        "hsl(330 100% 55%)",
       ];
       const color = colors[Math.floor(Math.random() * colors.length)];
 
@@ -26,14 +26,14 @@ const Particles = () => {
         left: ${Math.random() * 100}%;
         bottom: -10px;
         pointer-events: none;
-        box-shadow: 0 0 ${size * 3}px ${color};
+        box-shadow: 0 0 ${size * 4}px ${color}, 0 0 ${size * 8}px ${color};
         animation: particle-float ${Math.random() * 8 + 6}s linear forwards;
       `;
       container.appendChild(particle);
       setTimeout(() => particle.remove(), 14000);
     };
 
-    const interval = setInterval(createParticle, 400);
+    const interval = setInterval(createParticle, 500);
     return () => clearInterval(interval);
   }, []);
 
