@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const phases = [
   {
