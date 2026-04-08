@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const phases = [
   {
@@ -15,7 +16,7 @@ const phases = [
     phase: "Fase 2",
     title: "Plataforma",
     desc: "Desenvolvimento da plataforma musical",
-    detail: null,
+    detail: "Mais informações em breve.",
     glowClass: "hover:box-glow-purple border-secondary/20",
     activeClass: "box-glow-purple border-secondary/40",
     dotColor: "bg-secondary",
@@ -24,7 +25,7 @@ const phases = [
     phase: "Fase 3",
     title: "NFTs",
     desc: "Integração com NFTs e marketplace",
-    detail: null,
+    detail: "Mais informações em breve.",
     glowClass: "hover:box-glow-magenta border-accent/20",
     activeClass: "box-glow-magenta border-accent/40",
     dotColor: "bg-accent",
@@ -33,7 +34,7 @@ const phases = [
     phase: "Fase 4",
     title: "Expansão",
     desc: "Expansão global e parcerias estratégicas",
-    detail: null,
+    detail: "Mais informações em breve.",
     glowClass: "hover:box-glow-blue border-primary/20",
     activeClass: "box-glow-blue border-primary/40",
     dotColor: "bg-primary",
@@ -42,6 +43,7 @@ const phases = [
 
 const RoadmapSection = () => {
   const ref = useScrollReveal();
+  const isMobile = useIsMobile();
   const [activePhase, setActivePhase] = useState<number | null>(null);
 
   return (
@@ -66,10 +68,12 @@ const RoadmapSection = () => {
 
                   <div className="ml-12 md:ml-16 flex-1">
                     <div
-                      onClick={() => detail && setActivePhase(activePhase === i ? null : i)}
+                      onMouseEnter={() => !isMobile && setActivePhase(i)}
+                      onMouseLeave={() => !isMobile && setActivePhase(null)}
+                      onClick={() => isMobile && setActivePhase(activePhase === i ? null : i)}
                       className={`p-6 rounded-xl glass-card transition-all duration-300 ${
                         activePhase === i ? activeClass : glowClass
-                      } ${detail ? "cursor-pointer hover:scale-105" : "hover:scale-105"}`}
+                      } cursor-pointer hover:scale-105`}
                     >
                       <span className="font-display text-xs uppercase tracking-widest text-muted-foreground">
                         {phase}
