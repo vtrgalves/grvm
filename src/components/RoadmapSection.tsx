@@ -134,7 +134,7 @@ const RoadmapSection = () => {
                 </p>
               ))}
             </div>
-          )
+          )}
         </div>
       </div>
     </section>
