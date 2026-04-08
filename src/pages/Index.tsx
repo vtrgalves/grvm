@@ -21,7 +21,7 @@ const Index = () => {
       <AboutSection />
       <HowItWorksSection />
       <DiscoPlayerSection />
-      <TokenomicsSection />
+      
       <EcosystemSection />
       <DifferentialsSection />
       <RoadmapSection />
