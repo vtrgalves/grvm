@@ -42,6 +42,7 @@ const phases = [
 ];
 
 const RoadmapSection = () => {
+  const ref = useScrollReveal();
   const isMobile = useIsMobile();
   const [activePhase, setActivePhase] = useState<number | null>(null);
 
