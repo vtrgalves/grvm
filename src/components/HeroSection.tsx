@@ -26,7 +26,7 @@ const HeroSection = () => {
 
         {/* Headline with glitch hint */}
         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-glitch">
-          <span className="gradient-neon-text text-glow-blue">A moeda da música alternativa.</span>
+          <span className="gradient-neon-text text-glow-blue">A moeda da música.</span>
           <br />
           <span className="text-foreground">Entre na frequência!</span>
         </h1>
