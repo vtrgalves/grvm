@@ -21,7 +21,7 @@ const CTASection = () => {
           Não fique de fora da revolução que está transformando música em valor digital.
         </p>
         <button className="px-10 py-5 rounded-xl font-display font-bold text-base uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-110 transition-transform animate-neon-flicker">
-          Comprar GRVM agora
+          CADASTRE-SE NA REDE!
         </button>
       </div>
     </section>
