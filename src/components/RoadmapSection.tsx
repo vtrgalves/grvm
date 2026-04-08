@@ -87,30 +87,54 @@ const RoadmapSection = () => {
             </div>
           </div>
 
-          {/* Detail Panel */}
-          <div
-            className={`md:w-[340px] transition-all duration-500 ${
-              activePhase !== null && phases[activePhase].detail
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 md:translate-x-4 pointer-events-none"
-            }`}
-          >
-            {activePhase !== null && phases[activePhase].detail && (
-              <div className="glass-card border-primary/20 box-glow-blue rounded-xl p-6 sticky top-24">
-                <span className="font-display text-xs uppercase tracking-widest text-primary">
-                  {phases[activePhase].phase}
-                </span>
-                <h3 className="font-display text-lg font-bold mt-2 mb-3">
-                  {phases[activePhase].title}
-                </h3>
-                {phases[activePhase].detail!.split("\n").map((line, idx) => (
-                  <p key={idx} className="text-muted-foreground text-sm leading-relaxed mb-2">
-                    {line}
-                  </p>
-                ))}
+          {/* Detail Panels - positioned next to each phase */}
+          <div className="hidden md:flex flex-col md:w-[340px]">
+            {phases.map(({ phase, title, detail, activeClass, dotColor }, i) => (
+              <div
+                key={i}
+                className={`transition-all duration-500 ${
+                  activePhase === i
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-4 pointer-events-none absolute"
+                }`}
+                style={{
+                  position: activePhase === i ? 'sticky' : 'absolute',
+                  top: '6rem',
+                }}
+              >
+                <div className={`glass-card ${activeClass} rounded-xl p-6`}>
+                  <span className={`font-display text-xs uppercase tracking-widest`} style={{ color: `var(--phase-${i})` }}>
+                    {phase}
+                  </span>
+                  <h3 className="font-display text-lg font-bold mt-2 mb-3">
+                    {title}
+                  </h3>
+                  {detail.split("\n").map((line, idx) => (
+                    <p key={idx} className="text-muted-foreground text-sm leading-relaxed mb-2">
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
-            )}
+            ))}
           </div>
+
+          {/* Mobile Detail Panel */}
+          {isMobile && activePhase !== null && (
+            <div className={`mt-4 glass-card ${phases[activePhase].activeClass} rounded-xl p-6`}>
+              <span className="font-display text-xs uppercase tracking-widest text-primary">
+                {phases[activePhase].phase}
+              </span>
+              <h3 className="font-display text-lg font-bold mt-2 mb-3">
+                {phases[activePhase].title}
+              </h3>
+              {phases[activePhase].detail.split("\n").map((line, idx) => (
+                <p key={idx} className="text-muted-foreground text-sm leading-relaxed mb-2">
+                  {line}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
