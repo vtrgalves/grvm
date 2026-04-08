@@ -68,10 +68,12 @@ const RoadmapSection = () => {
 
                   <div className="ml-12 md:ml-16 flex-1">
                     <div
-                      onClick={() => detail && setActivePhase(activePhase === i ? null : i)}
+                      onMouseEnter={() => !isMobile && setActivePhase(i)}
+                      onMouseLeave={() => !isMobile && setActivePhase(null)}
+                      onClick={() => isMobile && setActivePhase(activePhase === i ? null : i)}
                       className={`p-6 rounded-xl glass-card transition-all duration-300 ${
                         activePhase === i ? activeClass : glowClass
-                      } ${detail ? "cursor-pointer hover:scale-105" : "hover:scale-105"}`}
+                      } cursor-pointer hover:scale-105`}
                     >
                       <span className="font-display text-xs uppercase tracking-widest text-muted-foreground">
                         {phase}
