@@ -59,7 +59,7 @@ const RoadmapSection = () => {
             {/* Timeline line */}
             <div className="absolute left-4 md:left-8 top-0 bottom-0 w-[1px] bg-gradient-to-b from-primary/30 via-secondary/30 to-accent/30" />
 
-            <div className="space-y-12">
+            <div className="flex flex-col gap-10">
               {phases.map(({ phase, title, desc, glowClass, activeClass, dotColor, detail }, i) => (
                 <div key={i} className="relative">
                   {/* Dot */}
@@ -68,7 +68,7 @@ const RoadmapSection = () => {
                   </div>
 
                   {/* Row: card + detail side by side */}
-                  <div className="ml-12 md:ml-16 flex flex-col md:flex-row md:items-start gap-4">
+                  <div className="ml-12 md:ml-16 flex flex-col md:flex-row md:items-center gap-4">
                     {/* Phase card */}
                     <div
                       onMouseEnter={() => !isMobile && setActivePhase(i)}
@@ -94,10 +94,7 @@ const RoadmapSection = () => {
                       }`}
                     >
                       <div className={`glass-card ${activeClass} rounded-xl p-6`}>
-                        <span className="font-display text-xs uppercase tracking-widest text-muted-foreground">
-                          {phase}
-                        </span>
-                        <h3 className="font-display text-lg font-bold mt-2 mb-3">{title}</h3>
+                        <h3 className="font-display text-lg font-bold mb-3">{title}</h3>
                         {detail.split("\n").map((line, idx) => (
                           <p key={idx} className="text-muted-foreground text-sm leading-relaxed mb-2">
                             {line}
