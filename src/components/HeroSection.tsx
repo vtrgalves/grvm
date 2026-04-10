@@ -3,7 +3,7 @@ import SoundwaveBackground from "./SoundwaveBackground";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-bg">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-bg pt-20">
       {/* Deep black gradient bg */}
       <div className="absolute inset-0 bg-[#0A0A0A]" />
       
