@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import agentesAtlantis from "@/assets/artists/agentes-atlantis.webp";
 import baby808 from "@/assets/artists/baby808.webp";
@@ -39,6 +40,10 @@ const artists = [
 
 const allArtists = [...artists, ...artists];
 
+const ITEM_WIDTH_MD = 176; // 40*4 + gap
+const ITEM_WIDTH_SM = 152; // 32*4 + gap
+const SCROLL_JUMP = 3;
+
 const ArtistsCarousel = () => {
   const ref = useScrollReveal();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,11 +51,25 @@ const ArtistsCarousel = () => {
   const scrollPos = useRef(0);
   const isPaused = useRef(false);
 
+  const getItemWidth = useCallback(() => {
+    return window.innerWidth >= 768 ? ITEM_WIDTH_MD : ITEM_WIDTH_SM;
+  }, []);
+
+  const scrollBy = useCallback((direction: number) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const jump = getItemWidth() * SCROLL_JUMP;
+    scrollPos.current += jump * direction;
+    const halfWidth = container.scrollWidth / 2;
+    if (scrollPos.current >= halfWidth) scrollPos.current -= halfWidth;
+    if (scrollPos.current < 0) scrollPos.current += halfWidth;
+  }, [getItemWidth]);
+
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
-    const speed = 0.5;
+    const speed = 0.8;
 
     const animate = () => {
       if (!isPaused.current && container) {
@@ -75,10 +94,27 @@ const ArtistsCarousel = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background to-background" />
 
-      <div className="relative z-10 container mx-auto px-4 mb-10">
+      <div className="relative z-10 container mx-auto px-4 mb-10 flex items-center justify-between">
         <h2 className="font-display text-2xl md:text-4xl font-bold">
           Discover <span className="gradient-neon-text text-glow-blue">Artists</span>
         </h2>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => scrollBy(-1)}
+            className="group relative w-10 h-10 md:w-12 md:h-12 rounded-full border border-primary/30 bg-card/60 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:border-primary/70 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] active:scale-95"
+            aria-label="Previous artists"
+          >
+            <ChevronLeft className="w-5 h-5 text-primary/70 group-hover:text-primary transition-colors" />
+          </button>
+          <button
+            onClick={() => scrollBy(1)}
+            className="group relative w-10 h-10 md:w-12 md:h-12 rounded-full border border-[hsl(330_100%_60%)]/30 bg-card/60 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:border-[hsl(330_100%_60%)]/70 hover:shadow-[0_0_20px_hsl(330_100%_60%/0.3)] active:scale-95"
+            aria-label="Next artists"
+          >
+            <ChevronRight className="w-5 h-5 text-[hsl(330_100%_60%)]/70 group-hover:text-[hsl(330_100%_60%)] transition-colors" />
+          </button>
+        </div>
       </div>
 
       <div
