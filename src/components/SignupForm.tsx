@@ -4,7 +4,8 @@ import { ArrowLeft, Upload, X, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const GENRES = [
   "Pop", "Rock", "Hip-Hop", "R&B", "Eletrônica", "Funk",
@@ -23,6 +24,7 @@ const SignupForm = ({ type, onBack }: SignupFormProps) => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [form, setForm] = useState({ name: "", email: "", password: "", city: "" });
+  const [loading, setLoading] = useState(false);
 
   const isFan = type === "fan";
   const accentColor = isFan ? "primary" : "accent";
@@ -42,17 +44,55 @@ const SignupForm = ({ type, onBack }: SignupFormProps) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) {
-      toast({ title: "Preencha os campos obrigatórios", variant: "destructive" });
+      toast.error("Preencha os campos obrigatórios");
       return;
     }
-    toast({
-      title: "Conta criada com sucesso! 🎉",
-      description: `Bem-vindo(a) à Groovium como ${isFan ? "Fã" : "Músico"}!`,
-    });
-    navigate("/");
+    if (form.password.length < 6) {
+      toast.error("A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            name: form.name,
+            profile_type: type,
+            city: form.city,
+            selected_genres: selectedGenres,
+          },
+        },
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      // Update profile with extra data if user was created
+      if (data.user) {
+        await supabase
+          .from("profiles")
+          .update({
+            city: form.city || null,
+            selected_genres: selectedGenres,
+          })
+          .eq("user_id", data.user.id);
+      }
+
+      toast.success(`Conta criada com sucesso! 🎉`);
+      navigate(`/welcome?type=${type}`);
+    } catch (err) {
+      toast.error("Erro ao criar conta. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -191,13 +231,14 @@ const SignupForm = ({ type, onBack }: SignupFormProps) => {
           {/* Submit */}
           <Button
             type="submit"
+            disabled={loading}
             className={`w-full font-display text-base font-semibold py-6 ${
               isFan
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "bg-accent text-accent-foreground hover:bg-accent/90"
             } animate-pulse-glow`}
           >
-            Finalizar Cadastro
+            {loading ? "Criando conta..." : "Finalizar Cadastro"}
           </Button>
         </form>
       </div>
