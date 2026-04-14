@@ -2,9 +2,9 @@ import { Music, Zap, Globe } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const bullets = [
-  { icon: Music, text: "Conecte música e tecnologia", color: "text-primary", glowClass: "hover:box-glow-blue hover:border-primary/40" },
-  { icon: Zap, text: "Monetize engajamento real", color: "text-secondary", glowClass: "hover:box-glow-purple hover:border-secondary/40" },
-  { icon: Globe, text: "Participe de uma economia descentralizada", color: "text-accent", glowClass: "hover:box-glow-magenta hover:border-accent/40" },
+  { icon: Music, text: "Conecta música e tecnologia", color: "text-primary", glowClass: "hover:box-glow-blue hover:border-primary/40" },
+  { icon: Zap, text: "Monetiza engajamento real", color: "text-secondary", glowClass: "hover:box-glow-purple hover:border-secondary/40" },
+  { icon: Globe, text: "Promove a economia criativa", color: "text-accent", glowClass: "hover:box-glow-magenta hover:border-accent/40" },
 ];
 
 const AboutSection = () => {
@@ -19,14 +19,8 @@ const AboutSection = () => {
         </h2>
 
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-lg text-muted-foreground mb-4">
+          <p className="text-lg text-muted-foreground">
             <span className="font-bold text-foreground">Groovium</span> é mais do que um ativo digital, é um <span className="text-primary font-semibold text-glow-blue">movimento</span>.
-          </p>
-          <p className="text-muted-foreground mb-4">
-            Trazendo os princípios na <span className="font-bold text-foreground">economia criativa</span> para a <span className="font-bold text-foreground">cena musical</span>, <span className="font-bold text-foreground">Groovium</span> conecta <span className="font-bold text-foreground">artistas</span>, <span className="font-bold text-foreground">fãs</span> e <span className="font-bold text-foreground">criadores</span> por meio de uma <span className="font-bold text-foreground">plataforma</span> participativa e repleta de recompensas. Basta se cadastrar para começar a ganhar e acumular <span className="font-bold text-foreground">GRVM</span>, a moeda corrente Groovium.
-          </p>
-          <p className="text-muted-foreground">
-            Cada batida, cada interação e cada contribuição gera valor real na comunidade Groovium.
           </p>
         </div>
 
