@@ -25,16 +25,27 @@ const HeroSection = () => {
         </div>
 
         {/* Headline with glitch hint */}
-        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-          <span className="gradient-neon-text text-glow-blue">Groovium</span> é um ecossistema que conecta{" "}
-          <span className="gradient-neon-text text-glow-blue">artistas</span> e{" "}
-          <span className="gradient-neon-text text-glow-blue">fãs!</span>
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-glitch">
+          <span className="gradient-neon-text text-glow-blue">A moeda da música.</span>
+          <br />
+          <span className="text-foreground">Entre na frequência!</span>
         </h1>
 
+        {/* Subheadline */}
+        <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-4">
+          Groovium conecta artistas, fãs e tecnologia em um ecossistema
+          descentralizado onde cada interação gera valor.
+        </p>
+
+        <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-10">
+          Transforme engajamento em recompensa. Viva a música como nunca antes —
+          agora na blockchain.
+        </p>
+
         {/* CTA */}
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex justify-center">
           <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform animate-neon-flicker">
-            FAÇA PARTE DA REDE!
+            Cadastre-se na rede!
           </button>
         </div>
       </div>

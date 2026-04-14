@@ -4,22 +4,22 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 const steps = [
   {
     icon: Mic,
-    title: "Artistas",
-    desc: "Oferecem benefícios para fãs como acessos à conteúdos e experiências únicas.",
+    title: "Artistas ofertam",
+    desc: "Benefícios para fãs como acesso à bastidores e camarim (Definido pelo próprio artista)",
     glowClass: "hover:box-glow-blue border-primary/20",
     iconColor: "text-primary",
   },
   {
     icon: Heart,
-    title: "Fãs",
-    desc: "Interagem, engajam e se sentem realmente pertencentes à comunidade.",
+    title: "Fãs interagem",
+    desc: "Fãs interagem, apoiam e participam da comunidade",
     glowClass: "hover:box-glow-purple border-secondary/20",
     iconColor: "text-secondary",
   },
   {
     icon: Coins,
     title: "Exclusividade Groovium",
-    desc: "Modelo baseado na gamificação onde a participação faz a economia girar.",
+    desc: "Economia criativa gerando acesso ao mundo conectando artistas e fãs",
     glowClass: "hover:box-glow-magenta border-accent/20",
     iconColor: "text-accent",
   },
@@ -36,7 +36,7 @@ const HowItWorksSection = () => {
           Como funciona o ecossistema <span className="gradient-neon-text text-glow-blue">Groovium</span>
         </h2>
         <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-16">
-          Um sistema baseado em frequência e valor em que cada ação gera impacto dentro do ecossistema.
+          Um sistema baseado em frequência e valor, onde cada ação gera impacto dentro do ecossistema.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
