@@ -31,22 +31,11 @@ const HeroSection = () => {
           <span className="gradient-neon-text text-glow-blue">fãs!</span>
         </h1>
 
-        <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-4">
-          De forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
-        </p>
-
-        <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-10">
-          Na prática, todo <span className="font-bold text-foreground">engajamento</span> se <span className="font-bold text-foreground">transforma</span> em <span className="font-bold text-foreground">recompensas</span> e <span className="font-bold text-foreground">benefícios</span>.
-          <br />
-          Embarque nessa <span className="font-bold text-foreground">nova era tecnológica</span> e <span className="font-bold text-foreground">viva</span> a <span className="font-bold text-foreground">música</span> como nunca antes.
-        </p>
-
         {/* CTA */}
         <div className="flex flex-col items-center gap-3">
           <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform animate-neon-flicker">
-            Venha fazer parte desta rede!
+            FAÇA PARTE DA REDE!
           </button>
-          <p className="text-sm text-muted-foreground/60">Siga em frente para conhecer mais</p>
         </div>
       </div>
 
