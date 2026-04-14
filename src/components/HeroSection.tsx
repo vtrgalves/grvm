@@ -28,8 +28,12 @@ const HeroSection = () => {
         <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">
           <span className="gradient-neon-text text-glow-blue">Groovium</span> é um ecossistema que conecta{" "}
           <span className="gradient-neon-text text-glow-blue">artistas</span> e{" "}
-          <span className="gradient-neon-text text-glow-blue">fãs</span> de forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
+          <span className="gradient-neon-text text-glow-blue">fãs!</span>
         </h1>
+
+        <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-4">
+          De forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
+        </p>
 
         <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-10">
           Na prática, todo <span className="font-bold text-foreground">engajamento</span> se <span className="font-bold text-foreground">transforma</span> em <span className="font-bold text-foreground">recompensas</span> e <span className="font-bold text-foreground">benefícios</span>.
