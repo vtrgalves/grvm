@@ -20,13 +20,13 @@ const AboutSection = () => {
 
         <div className="max-w-3xl mx-auto text-center mb-12">
           <p className="text-lg text-muted-foreground mb-4">
-            Groovium é mais do que uma criptomoeda — é um <span className="text-primary font-semibold text-glow-blue">movimento</span>.
+            <span className="font-bold text-foreground">Groovium</span> é mais do que um ativo digital, é um <span className="text-primary font-semibold text-glow-blue">movimento</span>.
           </p>
           <p className="text-muted-foreground mb-4">
-            Criado para revolucionar a indústria musical, o projeto conecta artistas, fãs e criadores em um ecossistema onde todos são recompensados pela sua participação.
+            Trazendo os princípios na <span className="font-bold text-foreground">economia criativa</span> para a <span className="font-bold text-foreground">cena musical</span>, <span className="font-bold text-foreground">Groovium</span> conecta <span className="font-bold text-foreground">artistas</span>, <span className="font-bold text-foreground">fãs</span> e <span className="font-bold text-foreground">criadores</span> por meio de uma <span className="font-bold text-foreground">plataforma</span> participativa e repleta de recompensas. Basta se cadastrar para começar a ganhar e acumular <span className="font-bold text-foreground">GRVM</span>, a moeda corrente Groovium.
           </p>
           <p className="text-muted-foreground">
-            Através da tecnologia blockchain, cada batida, cada interação e cada contribuição ganha valor real.
+            Cada batida, cada interação e cada contribuição gera valor real na comunidade Groovium.
           </p>
         </div>
 
