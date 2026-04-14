@@ -25,16 +25,11 @@ const HeroSection = () => {
         </div>
 
         {/* Headline with glitch hint */}
-        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-glitch">
-          <span className="gradient-neon-text text-glow-blue">A moeda da música.</span>
-          <br />
-          <span className="text-foreground">Entre na frequência!</span>
+        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+          <span className="gradient-neon-text text-glow-blue">Groovium</span> é um ecossistema que conecta{" "}
+          <span className="gradient-neon-text text-glow-blue">artistas</span> e{" "}
+          <span className="gradient-neon-text text-glow-blue">fãs</span> de forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
         </h1>
-
-        {/* Subheadline */}
-        <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-4">
-          <span className="font-bold text-foreground">Groovium</span> é um ecossistema que conecta <span className="font-bold text-foreground">artistas</span> e <span className="font-bold text-foreground">fãs</span> de forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
-        </p>
 
         <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-10">
           Na prática, todo <span className="font-bold text-foreground">engajamento</span> se <span className="font-bold text-foreground">transforma</span> em <span className="font-bold text-foreground">recompensas</span> e <span className="font-bold text-foreground">benefícios</span>.
