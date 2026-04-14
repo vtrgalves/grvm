@@ -33,20 +33,21 @@ const HeroSection = () => {
 
         {/* Subheadline */}
         <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-4">
-          Groovium conecta artistas, fãs e tecnologia em um ecossistema
-          descentralizado onde cada interação gera valor.
+          <span className="font-bold text-foreground">Groovium</span> é um ecossistema que conecta <span className="font-bold text-foreground">artistas</span> e <span className="font-bold text-foreground">fãs</span> de forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
         </p>
 
         <p className="text-sm md:text-base text-muted-foreground/80 max-w-2xl mx-auto mb-10">
-          Transforme engajamento em recompensa. Viva a música como nunca antes —
-          agora na blockchain.
+          Na prática, todo <span className="font-bold text-foreground">engajamento</span> se <span className="font-bold text-foreground">transforma</span> em <span className="font-bold text-foreground">recompensas</span> e <span className="font-bold text-foreground">benefícios</span>.
+          <br />
+          Embarque nessa <span className="font-bold text-foreground">nova era tecnológica</span> e <span className="font-bold text-foreground">viva</span> a <span className="font-bold text-foreground">música</span> como nunca antes.
         </p>
 
         {/* CTA */}
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-3">
           <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform animate-neon-flicker">
-            Cadastre-se na rede!
+            Venha fazer parte desta rede!
           </button>
+          <p className="text-sm text-muted-foreground/60">Siga em frente para conhecer mais</p>
         </div>
       </div>
 
