@@ -2,9 +2,27 @@ import { Music, Zap, Globe } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const bullets = [
-  { icon: Music, text: "Conecte música e tecnologia", color: "text-primary", glowClass: "hover:box-glow-blue hover:border-primary/40" },
-  { icon: Zap, text: "Monetize engajamento real", color: "text-secondary", glowClass: "hover:box-glow-purple hover:border-secondary/40" },
-  { icon: Globe, text: "Participe de uma economia descentralizada", color: "text-accent", glowClass: "hover:box-glow-magenta hover:border-accent/40" },
+  {
+    icon: Music,
+    title: "Conecta música à nova tecnologia",
+    text: "Artistas, fãs e criadores vão viver a música como nunca antes.",
+    color: "text-primary",
+    glowClass: "hover:box-glow-blue hover:border-primary/40",
+  },
+  {
+    icon: Zap,
+    title: "Monetiza engajamento real",
+    text: "A participação é a moeda corrente que faz tudo acontecer.",
+    color: "text-secondary",
+    glowClass: "hover:box-glow-purple hover:border-secondary/40",
+  },
+  {
+    icon: Globe,
+    title: "Promove a economia criativa",
+    text: "Uma rede inclusiva em que toda comunidade é beneficiada.",
+    color: "text-accent",
+    glowClass: "hover:box-glow-magenta hover:border-accent/40",
+  },
 ];
 
 const AboutSection = () => {
@@ -19,19 +37,13 @@ const AboutSection = () => {
         </h2>
 
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-lg text-muted-foreground mb-4">
-            Groovium é mais do que uma criptomoeda — é um <span className="text-primary font-semibold text-glow-blue">movimento</span>.
-          </p>
-          <p className="text-muted-foreground mb-4">
-            Criado para revolucionar a indústria musical, o projeto conecta artistas, fãs e criadores em um ecossistema onde todos são recompensados pela sua participação.
-          </p>
-          <p className="text-muted-foreground">
-            Através da tecnologia blockchain, cada batida, cada interação e cada contribuição ganha valor real.
+          <p className="text-lg text-muted-foreground">
+            Esta plataforma movida por <span className="text-primary font-semibold text-glow-blue">ativos digitais</span> foi desenvolvida para transformar engajamento e participação em recompensas e benefícios.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {bullets.map(({ icon: Icon, text, color, glowClass }, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {bullets.map(({ icon: Icon, title, text, color, glowClass }, i) => (
             <div
               key={i}
               className={`flex flex-col items-center gap-4 p-6 rounded-xl glass-card glass-card-hover ${glowClass} transition-all duration-300 hover:scale-105 group animate-border-glow`}
@@ -39,7 +51,8 @@ const AboutSection = () => {
               <div className={`p-3 rounded-full bg-muted/50 ${color} group-hover:scale-110 transition-transform`}>
                 <Icon size={28} />
               </div>
-              <p className="font-body font-semibold text-foreground text-center">{text}</p>
+              <h3 className={`font-display font-bold text-center ${color}`}>{title}</h3>
+              <p className="font-body text-sm text-muted-foreground text-center">{text}</p>
             </div>
           ))}
         </div>
