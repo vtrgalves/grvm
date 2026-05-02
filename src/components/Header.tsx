@@ -7,7 +7,10 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <span className="font-display text-xl font-bold gradient-neon-text">GROOVIUM</span>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2 rounded-lg font-display text-sm font-semibold text-foreground border border-white/10 hover:border-primary/50 hover:text-primary transition-all">
+          <button
+            onClick={() => navigate("/login")}
+            className="px-5 py-2 rounded-lg font-display text-sm font-semibold text-foreground border border-white/10 hover:border-primary/50 hover:text-primary transition-all"
+          >
             Login
           </button>
           <button
