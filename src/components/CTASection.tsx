@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import SoundwaveBackground from "./SoundwaveBackground";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const CTASection = () => {
   const ref = useScrollReveal();
+  const navigate = useNavigate();
 
   return (
     <section ref={ref as React.RefObject<HTMLElement>} className="section-reveal py-24 md:py-32 relative overflow-hidden noise-bg">
@@ -20,8 +22,11 @@ const CTASection = () => {
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
           Não fique de fora da revolução que está transformando música em valor digital.
         </p>
-        <button className="px-10 py-5 rounded-xl font-display font-bold text-base uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-110 transition-transform animate-neon-flicker">
-          CONTINUE E SAIBA MAIS
+        <button
+          onClick={() => navigate("/signup")}
+          className="px-10 py-5 rounded-xl font-display font-bold text-base uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-110 transition-transform"
+        >
+          Começar agora
         </button>
       </div>
     </section>
