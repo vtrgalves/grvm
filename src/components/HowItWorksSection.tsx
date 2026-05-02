@@ -1,25 +1,25 @@
-import { Mic, Heart, Coins } from "lucide-react";
+import { Coins, ShoppingBag, TrendingUp } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const steps = [
   {
-    icon: Mic,
-    title: "Artistas ofertam",
-    desc: "Benefícios para fãs como acesso à bastidores e camarim (Definido pelo próprio artista)",
+    icon: Coins,
+    title: "Ganhe GRV",
+    desc: "Interaja com artistas, complete missões e ganhe Groovium (GRV) automaticamente.",
     glowClass: "hover:box-glow-blue border-primary/20",
     iconColor: "text-primary",
   },
   {
-    icon: Heart,
-    title: "Fãs interagem",
-    desc: "Fãs interagem, apoiam e participam da comunidade",
+    icon: ShoppingBag,
+    title: "Use GRV",
+    desc: "Troque seus GRV por NFTs, experiências exclusivas, sorteios e drops dos artistas.",
     glowClass: "hover:box-glow-purple border-secondary/20",
     iconColor: "text-secondary",
   },
   {
-    icon: Coins,
-    title: "Exclusividade Groovium",
-    desc: "Economia criativa gerando acesso ao mundo conectando artistas e fãs",
+    icon: TrendingUp,
+    title: "Evolua",
+    desc: "Suba níveis de Listener a Legend e desbloqueie benefícios cada vez maiores.",
     glowClass: "hover:box-glow-magenta border-accent/20",
     iconColor: "text-accent",
   },
@@ -33,10 +33,10 @@ const HowItWorksSection = () => {
       <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/4 blur-[120px]" />
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-center mb-6">
-          Como funciona o ecossistema <span className="gradient-neon-text text-glow-blue">Groovium</span>
+          Como funciona o <span className="gradient-neon-text text-glow-blue">Groovium</span>
         </h2>
         <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-16">
-          Um sistema baseado em frequência e valor, onde cada ação gera impacto dentro do ecossistema.
+          O loop é simples: ganhar → usar → evoluir. Música deixa de ser apenas consumo e vira economia.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
