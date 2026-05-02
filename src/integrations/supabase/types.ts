@@ -48,6 +48,7 @@ export type Database = {
           email: string | null
           grv_points: number
           id: string
+          level: string
           name: string
           photo_url: string | null
           profile_type: Database["public"]["Enums"]["profile_type"]
@@ -61,6 +62,7 @@ export type Database = {
           email?: string | null
           grv_points?: number
           id?: string
+          level?: string
           name: string
           photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
@@ -74,6 +76,7 @@ export type Database = {
           email?: string | null
           grv_points?: number
           id?: string
+          level?: string
           name?: string
           photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"]
@@ -115,7 +118,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_mission: { Args: { _mission_key: string }; Returns: Json }
+      compute_level: { Args: { points: number }; Returns: string }
     }
     Enums: {
       profile_type: "fan" | "musician"

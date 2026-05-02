@@ -104,14 +104,14 @@ const Welcome = () => {
         </div>
 
         <Button
-          onClick={() => navigate(`/missions?type=${type || "fan"}`)}
+          onClick={() => navigate(`/app`)}
           className={`w-full font-display text-base font-semibold py-6 ${
             isFan
               ? "bg-primary text-primary-foreground hover:bg-primary/90"
               : "bg-accent text-accent-foreground hover:bg-accent/90"
           } animate-pulse-glow`}
         >
-          {isFan ? "Continuar para o Feed" : "Ir para Meu Perfil"}
+          Ir para o Dashboard
         </Button>
       </div>
     </div>

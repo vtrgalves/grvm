@@ -1,50 +1,87 @@
 
+# MVP — Núcleo do Fã (Groovium)
 
-# Groovium (GRVM) — Landing Page Imersiva
+Foco: entregar o **loop completo do fã** (entra → ganha GRV → usa GRV → sobe de nível → volta) sobre a base já existente (signup, profiles, point_transactions, user_missions). Landing evolui, área autenticada nasce.
 
-## Visão Geral
-Landing page cyberpunk/Web3 para a criptomoeda Groovium, com estética neon, animações de ondas sonoras e experiência imersiva inspirada em música eletrônica.
+## 1. Autenticação
 
-## Design System
-- **Paleta**: Deep Blue (#0B1B2B) background, Neon Blue (#00D1FF), Vibrant Purple (#8A2EFF), Magenta (#FF2E9A)
-- **Efeitos**: Gradientes neon com glow, partículas flutuantes, ondas sonoras animadas via CSS/canvas
-- **Tipografia**: Bold futurista para headlines, clean sans-serif para corpo
+- Nova página **/login** com email+senha e botão **Entrar com Google** (via `lovable.auth.signInWithOAuth("google")`).
+- Header passa a ter botão "Login" funcional + redirect pós-signup já existente.
+- Hook `useAuth` global com `onAuthStateChange` + `getSession`, expondo `user`, `profile`, `loading`.
+- Componente `<ProtectedRoute>` para envolver rotas autenticadas; redireciona para `/login` se não logado.
+- Recuperação de senha fica fora deste MVP (anotado para próxima fase).
 
-## Estrutura (Seções)
+## 2. Layout autenticado (App Shell)
 
-1. **Hero Section** — Headline "A moeda da música. A frequência do futuro." com a imagem da moeda GRVM centralizada, ondas sonoras animadas ao fundo, partículas pulsantes, botões CTA com glow neon (Comprar GRVM / Ver Whitepaper)
+- Novo `AppLayout` com sidebar (desktop) / bottom-nav (mobile), header fixo com saldo GRV, avatar e nível.
+- Itens de navegação do fã: **Dashboard, Wallet, Missões, Níveis, NFTs, Experiências** (os 2 últimos com dados mockados).
+- Estética mantida: dark, glassmorphism, neon blue/pink — alinhada à memória do projeto.
 
-2. **Sobre o Projeto** — "O que é Groovium?" com texto descritivo e 3 bullets com ícones animados
+## 3. Dashboard do Fã (`/app`)
 
-3. **Como Funciona** — 3 etapas ilustradas (Artistas → Fãs → Recompensas) com cards conectados visualmente
+Cards principais:
+- **Saldo GRV** (lê `profiles.grv_points`) com animação pulse.
+- **Nível atual + barra de progresso** para o próximo nível (regra em `src/lib/levels.ts`).
+- **Missões ativas** (top 3 não concluídas de `user_missions`) com CTA "Ver todas".
+- **Atividade recente** (últimas 5 linhas de `point_transactions`).
+- **Meus NFTs** e **Experiências** — grids mockados (3 cards cada) marcados como "preview".
 
-4. **Tokenomics** — Distribuição visual com gráfico circular/barras estilizadas neon (Comunidade, Liquidez, Desenvolvimento)
+## 4. Wallet (`/app/wallet`)
 
-5. **Ecossistema** — 4 cards com glow hover (NFTs Musicais, Streaming Descentralizado, Marketplace, Rewards)
+- Header: saldo grande + selo "Modo Testnet Groovium".
+- Tabs **Ganhos / Gastos / Tudo** sobre `point_transactions` (já tem RLS por `user_id`).
+- Cada linha: ícone (recompensa/compra), descrição, data, valor com cor (+verde / -rosa).
+- Estado vazio gamificado ("Complete uma missão para começar").
 
-6. **Diferenciais** — "Por que Groovium?" com 4 itens destacados e texto de fechamento
+## 5. Missões (`/app/missions`)
 
-7. **Roadmap** — Timeline horizontal/vertical com 4 fases, efeito de progressão neon
+- Reaproveita a tela atual `Missions.tsx`, movida para dentro do `AppLayout`.
+- Adiciona botão **"Marcar como concluída"** (simulado nesta fase) que:
+  1. Atualiza `user_missions.completed = true, completed_at = now()`.
+  2. Insere linha em `point_transactions` com os pontos da missão.
+  3. Incrementa `profiles.grv_points` (via RPC `claim_mission` — ver técnico).
+  4. Dispara toast neon "+X GRV" e re-render do saldo.
+- Abas **Diárias / Semanais / Iniciais** — diárias/semanais ficam vazias com placeholder nesta fase.
 
-8. **CTA Final** — "Entre na frequência do futuro" com botão grande pulsante
+## 6. Níveis (`/app/levels`)
 
-9. **Footer** — Links (Whitepaper, Comunidade, Redes, Contato) + copyright
+5 níveis fixos (em `src/lib/levels.ts`):
 
-## Animações & Efeitos
-- Background com ondas sonoras animadas (CSS keyframes)
-- Partículas flutuantes com animação contínua
-- Efeitos de glow/pulse nos botões e cards ao hover
-- Scroll reveal suave nas seções (fade-in + slide-up)
-- Moeda GRVM com efeito de brilho pulsante
+```text
+Listener    0–499 GRV
+Supporter   500–1.499
+Insider     1.500–3.999
+Backstage   4.000–9.999
+Legend      10.000+
+```
 
-## Responsividade
-- Layout totalmente responsivo com breakpoints mobile-first
-- Cards empilhados em mobile, grid em desktop
-- Hero adaptado para telas menores
+- Timeline vertical com badges, marcando atual e próximos.
+- Cada nível lista 2–3 recompensas desbloqueadas (texto, sem CRUD ainda).
 
-## Implementação
-- Componentes React modulares por seção
-- Imagem da moeda incorporada como asset
-- Animações CSS puras + Tailwind utilities customizadas
-- Idioma: Português (BR)
+## 7. Landing — evolução
 
+- Hero: novo título **"A nova economia da música"** + subtítulo explicando GRV + CTA **"Começar agora"** → `/signup`.
+- Substituir/renomear seção "Como funciona" para o trio **Ganhar → Usar → Evoluir**.
+- Adicionar seção **Benefícios** com duas colunas (Para fãs / Para artistas).
+- Manter Sobre, Roadmap, Carrossel de Artistas, Footer.
+- Remover seções que não cabem no novo discurso (Tokenomics já está fora; revisar Differentials).
+
+## 8. Banco de dados (mudanças)
+
+- **RPC `claim_mission(mission_key text)`** (SECURITY DEFINER): valida dono, evita dupla contagem, faz as 3 escritas atômicas (mission, transaction, profile.grv_points). Evita race condition no client.
+- **Coluna `profiles.level`** (text) + trigger que recalcula nível ao mudar `grv_points`.
+- Sem novas tabelas para NFTs/Experiências nesta fase (mock no front).
+
+## 9. Detalhes técnicos
+
+- `src/hooks/useAuth.tsx` — Provider + hook.
+- `src/hooks/useProfile.tsx` — assina `profiles` via Supabase Realtime para atualizar saldo em tempo real após missões.
+- `src/lib/levels.ts` — `LEVELS`, `getLevel(points)`, `getProgressToNext(points)`.
+- `src/components/app/AppLayout.tsx`, `Sidebar.tsx`, `MobileNav.tsx`, `GrvBalance.tsx`, `LevelBadge.tsx`.
+- Rotas adicionadas em `App.tsx`: `/login`, `/app`, `/app/wallet`, `/app/missions`, `/app/levels`, `/app/nfts`, `/app/experiences` (todas dentro de `<ProtectedRoute><AppLayout>`).
+- Migration cria a função `claim_mission`, coluna `level` e trigger.
+- Realtime habilitado para `profiles` e `point_transactions`.
+
+## Fora do escopo (próximas fases)
+
+Área do Artista, Feed Social, Ranking, Explorer, Burn, Eventos, Clube VIP, NFTs/Experiências persistidos, recuperação de senha.

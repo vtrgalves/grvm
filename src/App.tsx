@@ -3,10 +3,20 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import AppLayout from "@/components/app/AppLayout";
 import Index from "./pages/Index.tsx";
 import Signup from "./pages/Signup.tsx";
+import Login from "./pages/Login.tsx";
 import Welcome from "./pages/Welcome.tsx";
 import Missions from "./pages/Missions.tsx";
+import Dashboard from "./pages/app/Dashboard.tsx";
+import Wallet from "./pages/app/Wallet.tsx";
+import MissionsApp from "./pages/app/MissionsApp.tsx";
+import Levels from "./pages/app/Levels.tsx";
+import NFTs from "./pages/app/NFTs.tsx";
+import Experiences from "./pages/app/Experiences.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -17,14 +27,24 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/missions" element={<Missions />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/missions" element={<Missions />} />
+            <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route index element={<Dashboard />} />
+              <Route path="wallet" element={<Wallet />} />
+              <Route path="missions" element={<MissionsApp />} />
+              <Route path="levels" element={<Levels />} />
+              <Route path="nfts" element={<NFTs />} />
+              <Route path="experiences" element={<Experiences />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

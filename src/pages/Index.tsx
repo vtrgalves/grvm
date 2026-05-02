@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import BenefitsSection from "@/components/BenefitsSection";
 
 
 import EcosystemSection from "@/components/EcosystemSection";
@@ -20,7 +21,7 @@ const Index = () => {
       <HeroSection />
       <AboutSection />
       <HowItWorksSection />
-      
+      <BenefitsSection />
       
       <EcosystemSection />
       <DifferentialsSection />

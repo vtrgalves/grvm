@@ -1,7 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import grooviumCoin from "@/assets/groovium-coin.png";
 import SoundwaveBackground from "./SoundwaveBackground";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-bg pt-20">
       {/* Deep black gradient bg */}
@@ -26,22 +28,29 @@ const HeroSection = () => {
 
         {/* Headline with glitch hint */}
         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-glitch">
-          <span className="gradient-neon-text text-glow-blue">Groovium</span>
+          <span className="gradient-neon-text text-glow-blue">A nova economia</span>
           <br />
-          <span className="text-foreground">A moeda da música</span>
-          <br />
-          <span className="text-foreground">Entre na frequência!</span>
+          <span className="text-foreground">da música</span>
         </h1>
 
         {/* Subheadline */}
         <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Um ecossistema que conecta artistas e fãs de forma interativa, descentralizada e contínua, gerando valor para toda a comunidade.
+          Groovium (GRV) é a moeda do ecossistema: você ganha por interagir, usa em experiências exclusivas e evolui dentro de uma comunidade onde música gera valor real.
         </p>
 
         {/* CTA */}
-        <div className="flex justify-center">
-          <button className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform animate-neon-flicker">
-            Continue e saiba mais
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            onClick={() => navigate("/signup")}
+            className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider bg-primary text-primary-foreground animate-pulse-glow hover:scale-105 transition-transform"
+          >
+            Começar agora
+          </button>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-8 py-4 rounded-lg font-display font-bold text-sm uppercase tracking-wider border border-white/15 text-foreground hover:border-primary/50 hover:text-primary transition-all"
+          >
+            Já tenho conta
           </button>
         </div>
       </div>
