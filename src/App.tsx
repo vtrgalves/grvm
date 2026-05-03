@@ -17,6 +17,8 @@ import MissionsApp from "./pages/app/MissionsApp.tsx";
 import Levels from "./pages/app/Levels.tsx";
 import NFTs from "./pages/app/NFTs.tsx";
 import Experiences from "./pages/app/Experiences.tsx";
+import Feed from "./pages/app/Feed.tsx";
+import Ranking from "./pages/app/Ranking.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,8 @@ const App = () => (
               <Route path="levels" element={<Levels />} />
               <Route path="nfts" element={<NFTs />} />
               <Route path="experiences" element={<Experiences />} />
+              <Route path="feed" element={<Feed />} />
+              <Route path="ranking" element={<Ranking />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
