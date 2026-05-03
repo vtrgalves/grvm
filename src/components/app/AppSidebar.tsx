@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 
 const items = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
+  { title: "Feed", url: "/app/feed", icon: Rss },
+  { title: "Ranking", url: "/app/ranking", icon: Crown },
   { title: "Wallet", url: "/app/wallet", icon: Wallet },
   { title: "Missões", url: "/app/missions", icon: Sparkles },
   { title: "Níveis", url: "/app/levels", icon: Trophy },
