@@ -14,6 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
+      artist_items: {
+        Row: {
+          active: boolean
+          artist_id: string
+          claimed_count: number
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          kind: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv: number
+          supply: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          artist_id: string
+          claimed_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          kind: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv?: number
+          supply?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          artist_id?: string
+          claimed_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv?: number
+          supply?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      item_claims: {
+        Row: {
+          artist_id: string
+          created_at: string
+          id: string
+          item_id: string
+          price_paid: number
+          user_id: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          price_paid?: number
+          user_id: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          price_paid?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_claims_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "artist_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       point_transactions: {
         Row: {
           action: string
@@ -206,8 +286,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      become_artist: { Args: never; Returns: Json }
+      claim_artist_item: { Args: { _item_id: string }; Returns: Json }
       claim_mission: { Args: { _mission_key: string }; Returns: Json }
       compute_level: { Args: { points: number }; Returns: string }
+      create_artist_item: {
+        Args: {
+          _description: string
+          _image_url: string
+          _kind: Database["public"]["Enums"]["artist_item_kind"]
+          _price_grv: number
+          _supply: number
+          _title: string
+        }
+        Returns: Json
+      }
       create_comment: {
         Args: { _content: string; _post_id: string }
         Returns: Json
@@ -216,6 +309,7 @@ export type Database = {
       toggle_like: { Args: { _post_id: string }; Returns: Json }
     }
     Enums: {
+      artist_item_kind: "nft" | "experience"
       profile_type: "fan" | "musician"
     }
     CompositeTypes: {
@@ -344,6 +438,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      artist_item_kind: ["nft", "experience"],
       profile_type: ["fan", "musician"],
     },
   },

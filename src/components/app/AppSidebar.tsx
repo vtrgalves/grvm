@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -7,7 +7,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const items = [
+const fanItems = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
   { title: "Feed", url: "/app/feed", icon: Rss },
   { title: "Ranking", url: "/app/ranking", icon: Crown },
@@ -18,14 +18,28 @@ const items = [
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
 ];
 
+const artistItem = { title: "Studio", url: "/app/studio", icon: Mic };
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
   const navigate = useNavigate();
+  const isArtist = profile?.profile_type === "musician";
 
   const isActive = (url: string, end?: boolean) => end ? pathname === url : pathname.startsWith(url);
+
+  const renderItem = (item: { title: string; url: string; icon: any; end?: boolean }) => (
+    <SidebarMenuItem key={item.url}>
+      <SidebarMenuButton asChild isActive={isActive(item.url, item.end)}>
+        <NavLink to={item.url} end={item.end} className="flex items-center gap-2">
+          <item.icon className="h-4 w-4" />
+          {!collapsed && <span>{item.title}</span>}
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 
   return (
     <Sidebar collapsible="icon">
@@ -40,20 +54,17 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Fã</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url, item.end)}>
-                    <NavLink to={item.url} end={item.end} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <SidebarMenu>{fanItems.map(renderItem)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {isArtist && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Artista</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>{renderItem(artistItem)}</SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

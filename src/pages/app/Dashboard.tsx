@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Coins, Trophy, Sparkles, Image as ImageIcon, Ticket, ArrowRight, TrendingUp } from "lucide-react";
+import { Coins, Trophy, Sparkles, Image as ImageIcon, Ticket, ArrowRight, TrendingUp, Mic } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { getLevel, getProgress } from "@/lib/levels";
@@ -44,6 +44,29 @@ const Dashboard = () => {
           Bem-vindo de volta à frequência da música.
         </p>
       </div>
+
+      {/* Artist CTA / Studio shortcut */}
+      <Link
+        to="/app/studio"
+        className="block glass-card rounded-2xl p-5 border border-accent/30 hover:border-accent transition-colors group"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <Mic className="w-6 h-6 text-background" />
+          </div>
+          <div className="flex-1">
+            <div className="font-display font-bold">
+              {profile.profile_type === "musician" ? "Abrir Studio" : "Tornar-se artista"}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {profile.profile_type === "musician"
+                ? "Publique novos drops e acompanhe sua audiência"
+                : "Publique NFTs e experiências, receba GRV direto dos fãs"}
+            </div>
+          </div>
+          <ArrowRight className="w-5 h-5 text-accent group-hover:translate-x-1 transition-transform" />
+        </div>
+      </Link>
 
       {/* Top cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
