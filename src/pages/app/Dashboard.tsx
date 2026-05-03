@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Coins, Trophy, Sparkles, Image as ImageIcon, Ticket, ArrowRight, TrendingUp } from "lucide-react";
+import { Coins, Trophy, Sparkles, Image as ImageIcon, Ticket, ArrowRight, TrendingUp, Mic } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { getLevel, getProgress } from "@/lib/levels";
