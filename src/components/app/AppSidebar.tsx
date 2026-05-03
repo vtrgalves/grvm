@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -7,7 +7,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const items = [
+const fanItems = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
   { title: "Feed", url: "/app/feed", icon: Rss },
   { title: "Ranking", url: "/app/ranking", icon: Crown },
@@ -17,6 +17,8 @@ const items = [
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
 ];
+
+const artistItem = { title: "Studio", url: "/app/studio", icon: Mic };
 
 export function AppSidebar() {
   const { state } = useSidebar();
