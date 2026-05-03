@@ -19,6 +19,8 @@ import NFTs from "./pages/app/NFTs.tsx";
 import Experiences from "./pages/app/Experiences.tsx";
 import Feed from "./pages/app/Feed.tsx";
 import Ranking from "./pages/app/Ranking.tsx";
+import Studio from "./pages/app/Studio.tsx";
+import StudioNewItem from "./pages/app/StudioNewItem.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
