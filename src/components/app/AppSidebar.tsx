@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -16,6 +16,7 @@ const fanItems = [
   { title: "Níveis", url: "/app/levels", icon: Trophy },
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
+  { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
 const artistItem = { title: "Studio", url: "/app/studio", icon: Mic };
