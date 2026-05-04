@@ -306,6 +306,21 @@ export type Database = {
         Returns: Json
       }
       create_post: { Args: { _content: string }; Returns: Json }
+      get_explorer_feed: {
+        Args: { _filter?: string; _limit?: number }
+        Returns: {
+          action: string
+          created_at: string
+          description: string
+          id: string
+          points: number
+          tx_hash: string
+          user_id: string
+          user_level: string
+          user_name: string
+        }[]
+      }
+      get_explorer_stats: { Args: never; Returns: Json }
       toggle_like: { Args: { _post_id: string }; Returns: Json }
     }
     Enums: {
