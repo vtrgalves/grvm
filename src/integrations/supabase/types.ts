@@ -281,6 +281,80 @@ export type Database = {
         }
         Relationships: []
       }
+      vip_claims: {
+        Row: {
+          cost_paid: number
+          created_at: string
+          id: string
+          perk_id: string
+          user_id: string
+        }
+        Insert: {
+          cost_paid?: number
+          created_at?: string
+          id?: string
+          perk_id: string
+          user_id: string
+        }
+        Update: {
+          cost_paid?: number
+          created_at?: string
+          id?: string
+          perk_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_claims_perk_id_fkey"
+            columns: ["perk_id"]
+            isOneToOne: false
+            referencedRelation: "vip_perks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vip_perks: {
+        Row: {
+          active: boolean
+          claimed_count: number
+          cost_grv: number
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          required_level: string
+          required_points: number
+          supply: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          claimed_count?: number
+          cost_grv?: number
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          required_level: string
+          required_points?: number
+          supply?: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          claimed_count?: number
+          cost_grv?: number
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          required_level?: string
+          required_points?: number
+          supply?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -289,6 +363,7 @@ export type Database = {
       become_artist: { Args: never; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
       claim_mission: { Args: { _mission_key: string }; Returns: Json }
+      claim_vip_perk: { Args: { _perk_id: string }; Returns: Json }
       compute_level: { Args: { points: number }; Returns: string }
       create_artist_item: {
         Args: {

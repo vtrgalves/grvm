@@ -22,6 +22,7 @@ import Ranking from "./pages/app/Ranking.tsx";
 import Studio from "./pages/app/Studio.tsx";
 import StudioNewItem from "./pages/app/StudioNewItem.tsx";
 import Explorer from "./pages/app/Explorer.tsx";
+import VipClub from "./pages/app/VipClub.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="studio" element={<Studio />} />
               <Route path="studio/new" element={<StudioNewItem />} />
               <Route path="explorer" element={<Explorer />} />
+              <Route path="vip" element={<VipClub />} />
 
             </Route>
             <Route path="*" element={<NotFound />} />
