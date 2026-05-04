@@ -52,6 +52,7 @@ const App = () => (
               <Route path="studio" element={<Studio />} />
               <Route path="studio/new" element={<StudioNewItem />} />
               <Route path="explorer" element={<Explorer />} />
+              <Route path="vip" element={<VipClub />} />
 
             </Route>
             <Route path="*" element={<NotFound />} />
