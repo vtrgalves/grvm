@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Heart, MessageCircle, Send, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,25 +10,29 @@ import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-interface PostAuthor { name: string; level: string; photo_url: string | null; }
-interface Post {
+interface FeedPost {
   id: string;
   user_id: string;
   content: string;
   likes_count: number;
   comments_count: number;
   created_at: string;
-  author?: PostAuthor;
-  liked_by_me?: boolean;
+  author_name: string | null;
+  author_handle: string | null;
+  author_level: string | null;
+  author_photo: string | null;
+  author_type: "fan" | "musician" | null;
+  liked_by_me: boolean;
 }
 interface Comment {
   id: string; post_id: string; user_id: string; content: string; created_at: string;
-  author?: PostAuthor;
+  author?: { name: string; level: string; photo_url: string | null; handle: string | null };
 }
 
 const Feed = () => {
   const { user } = useAuth();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [tab, setTab] = useState<"all" | "following">("all");
+  const [posts, setPosts] = useState<FeedPost[]>([]);
   const [draft, setDraft] = useState("");
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<string | null>(null);
@@ -35,52 +40,22 @@ const Feed = () => {
   const [commentDraft, setCommentDraft] = useState("");
 
   const loadPosts = async () => {
-    const { data: rows } = await supabase
-      .from("posts")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50);
-    if (!rows) return;
-
-    const userIds = Array.from(new Set(rows.map(r => r.user_id)));
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("user_id, name, level, photo_url")
-      .in("user_id", userIds);
-    const profileMap = new Map((profiles ?? []).map(p => [p.user_id, p]));
-
-    let likedSet = new Set<string>();
-    if (user) {
-      const { data: likes } = await supabase
-        .from("post_likes")
-        .select("post_id")
-        .eq("user_id", user.id)
-        .in("post_id", rows.map(r => r.id));
-      likedSet = new Set((likes ?? []).map(l => l.post_id));
-    }
-
-    setPosts(rows.map(r => ({
-      ...r,
-      author: profileMap.get(r.user_id) as PostAuthor | undefined,
-      liked_by_me: likedSet.has(r.id),
-    })));
+    const { data, error } = await supabase.rpc("get_feed", {
+      _only_following: tab === "following", _limit: 50,
+    });
+    if (error) { toast.error("Erro ao carregar feed"); return; }
+    setPosts((data ?? []) as FeedPost[]);
   };
 
-  useEffect(() => { loadPosts(); }, [user]);
+  useEffect(() => { loadPosts(); }, [user, tab]);
 
-  // Realtime: novos posts
   useEffect(() => {
-    const channel = supabase
+    const ch = supabase
       .channel("feed-posts")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, () => loadPosts())
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "posts" }, (payload) => {
-        setPosts(prev => prev.map(p => p.id === (payload.new as Post).id
-          ? { ...p, likes_count: (payload.new as Post).likes_count, comments_count: (payload.new as Post).comments_count }
-          : p));
-      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, loadPosts)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, []);
+    return () => { supabase.removeChannel(ch); };
+  }, [tab]);
 
   const handlePost = async () => {
     if (!draft.trim()) return;
@@ -95,34 +70,26 @@ const Feed = () => {
   };
 
   const handleLike = async (postId: string) => {
-    // optimistic
     setPosts(prev => prev.map(p => p.id === postId ? {
-      ...p,
-      liked_by_me: !p.liked_by_me,
+      ...p, liked_by_me: !p.liked_by_me,
       likes_count: p.likes_count + (p.liked_by_me ? -1 : 1),
     } : p));
-    const { data, error } = await supabase.rpc("toggle_like", { _post_id: postId });
-    if (error) { toast.error("Erro ao curtir"); loadPosts(); return; }
-    if ((data as any)?.liked) {
-      // reward toast only on like (not unlike)
-      // We don't know if it was first time; backend handled it silently.
-    }
+    const { error } = await supabase.rpc("toggle_like", { _post_id: postId });
+    if (error) { toast.error("Erro ao curtir"); loadPosts(); }
   };
 
   const loadComments = async (postId: string) => {
     const { data: rows } = await supabase
-      .from("post_comments")
-      .select("*")
-      .eq("post_id", postId)
+      .from("post_comments").select("*").eq("post_id", postId)
       .order("created_at", { ascending: true });
     if (!rows) return;
     const userIds = Array.from(new Set(rows.map(r => r.user_id)));
     const { data: profiles } = await supabase
-      .from("profiles").select("user_id, name, level, photo_url").in("user_id", userIds);
+      .from("profiles").select("user_id, name, level, photo_url, handle").in("user_id", userIds);
     const map = new Map((profiles ?? []).map(p => [p.user_id, p]));
     setCommentsByPost(prev => ({
       ...prev,
-      [postId]: rows.map(r => ({ ...r, author: map.get(r.user_id) as PostAuthor | undefined })),
+      [postId]: rows.map(r => ({ ...r, author: map.get(r.user_id) as any })),
     }));
   };
 
@@ -151,14 +118,20 @@ const Feed = () => {
         <p className="text-sm text-muted-foreground mt-1">Conecte-se com outros fãs e ganhe GRV ao interagir.</p>
       </div>
 
+      <div className="flex gap-2">
+        {(["all", "following"] as const).map(t => (
+          <Button key={t} size="sm" variant={tab === t ? "default" : "outline"} onClick={() => setTab(t)}
+            className={tab === t ? "bg-gradient-to-r from-primary to-accent text-background font-bold" : ""}>
+            {t === "all" ? "🌐 Todos" : "⭐ Seguindo"}
+          </Button>
+        ))}
+      </div>
+
       <Card className="glass-card border-primary/20">
         <CardContent className="p-4 space-y-3">
-          <Textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value.slice(0, 500))}
+          <Textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 500))}
             placeholder="O que está tocando agora? Compartilhe com a comunidade..."
-            className="resize-none bg-background/50 border-border/50 min-h-[80px]"
-          />
+            className="resize-none bg-background/50 border-border/50 min-h-[80px]" />
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">{draft.length}/500 · +10 GRV ao publicar</span>
             <Button onClick={handlePost} disabled={!draft.trim() || posting} size="sm" className="gap-2">
@@ -170,19 +143,26 @@ const Feed = () => {
 
       <div className="space-y-4">
         {posts.length === 0 && (
-          <p className="text-center text-muted-foreground py-12">Seja o primeiro a postar no feed!</p>
+          <p className="text-center text-muted-foreground py-12">
+            {tab === "following" ? "Siga artistas para ver posts aqui." : "Seja o primeiro a postar no feed!"}
+          </p>
         )}
-        {posts.map(post => (
+        {posts.map(post => {
+          const profileLink = post.author_handle ? `/u/${post.author_handle}` : "#";
+          return (
           <Card key={post.id} className="glass-card border-border/40">
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center font-display font-bold text-background">
-                  {post.author?.name?.[0]?.toUpperCase() ?? "G"}
-                </div>
+                <Link to={profileLink} className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center font-display font-bold text-background flex-shrink-0">
+                  {post.author_name?.[0]?.toUpperCase() ?? "G"}
+                </Link>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">{post.author?.name ?? "Usuário"}</p>
+                  <Link to={profileLink} className="font-semibold text-sm truncate hover:text-primary transition-colors">
+                    {post.author_name ?? "Usuário"}
+                    {post.author_type === "musician" && <span className="ml-1 text-accent">🎤</span>}
+                  </Link>
                   <p className="text-xs text-muted-foreground">
-                    <span className="text-accent">{post.author?.level ?? "Listener"}</span>
+                    <span className="text-accent">{post.author_level ?? "Listener"}</span>
                     {" · "}
                     {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
                   </p>
@@ -190,19 +170,15 @@ const Feed = () => {
               </div>
               <p className="whitespace-pre-wrap text-sm">{post.content}</p>
               <div className="flex items-center gap-4 pt-2 border-t border-border/40">
-                <button
-                  onClick={() => handleLike(post.id)}
+                <button onClick={() => handleLike(post.id)}
                   className={`flex items-center gap-1.5 text-sm transition-colors ${
                     post.liked_by_me ? "text-secondary" : "text-muted-foreground hover:text-secondary"
-                  }`}
-                >
+                  }`}>
                   <Heart className={`w-4 h-4 ${post.liked_by_me ? "fill-current" : ""}`} />
                   {post.likes_count}
                 </button>
-                <button
-                  onClick={() => toggleComments(post.id)}
-                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
+                <button onClick={() => toggleComments(post.id)}
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <MessageCircle className="w-4 h-4" />
                   {post.comments_count}
                 </button>
@@ -212,9 +188,9 @@ const Feed = () => {
                 <div className="space-y-3 pt-3 border-t border-border/40">
                   {(commentsByPost[post.id] ?? []).map(c => (
                     <div key={c.id} className="flex items-start gap-2">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 flex items-center justify-center font-display text-xs text-background font-bold flex-shrink-0">
+                      <Link to={c.author?.handle ? `/u/${c.author.handle}` : "#"} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/60 to-accent/60 flex items-center justify-center font-display text-xs text-background font-bold flex-shrink-0">
                         {c.author?.name?.[0]?.toUpperCase() ?? "G"}
-                      </div>
+                      </Link>
                       <div className="flex-1 bg-background/40 rounded-lg px-3 py-2">
                         <p className="text-xs font-semibold">{c.author?.name ?? "Usuário"}</p>
                         <p className="text-sm">{c.content}</p>
@@ -222,12 +198,10 @@ const Feed = () => {
                     </div>
                   ))}
                   <div className="flex gap-2">
-                    <Textarea
-                      value={openComments === post.id ? commentDraft : ""}
+                    <Textarea value={openComments === post.id ? commentDraft : ""}
                       onChange={(e) => setCommentDraft(e.target.value.slice(0, 300))}
                       placeholder="Comentar... (+5 GRV)"
-                      className="resize-none bg-background/50 min-h-[40px] text-sm"
-                    />
+                      className="resize-none bg-background/50 min-h-[40px] text-sm" />
                     <Button size="icon" onClick={() => submitComment(post.id)} disabled={!commentDraft.trim()}>
                       <Send className="w-4 h-4" />
                     </Button>
@@ -236,7 +210,7 @@ const Feed = () => {
               )}
             </CardContent>
           </Card>
-        ))}
+        );})}
       </div>
     </div>
   );
