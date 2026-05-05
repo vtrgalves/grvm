@@ -94,6 +94,92 @@ export type Database = {
           },
         ]
       }
+      live_drop_claims: {
+        Row: {
+          artist_id: string
+          created_at: string
+          drop_id: string
+          id: string
+          price_paid: number
+          user_id: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          drop_id: string
+          id?: string
+          price_paid?: number
+          user_id: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          drop_id?: string
+          id?: string
+          price_paid?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_drop_claims_drop_id_fkey"
+            columns: ["drop_id"]
+            isOneToOne: false
+            referencedRelation: "live_drops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_drops: {
+        Row: {
+          active: boolean
+          artist_id: string
+          claimed_count: number
+          created_at: string
+          description: string | null
+          ends_at: string
+          id: string
+          image_url: string | null
+          kind: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv: number
+          starts_at: string
+          supply: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          artist_id: string
+          claimed_count?: number
+          created_at?: string
+          description?: string | null
+          ends_at: string
+          id?: string
+          image_url?: string | null
+          kind: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv?: number
+          starts_at: string
+          supply?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          artist_id?: string
+          claimed_count?: number
+          created_at?: string
+          description?: string | null
+          ends_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv?: number
+          starts_at?: string
+          supply?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       point_transactions: {
         Row: {
           action: string
@@ -362,6 +448,7 @@ export type Database = {
     Functions: {
       become_artist: { Args: never; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
+      claim_live_drop: { Args: { _drop_id: string }; Returns: Json }
       claim_mission: { Args: { _mission_key: string }; Returns: Json }
       claim_vip_perk: { Args: { _perk_id: string }; Returns: Json }
       compute_level: { Args: { points: number }; Returns: string }
@@ -380,6 +467,19 @@ export type Database = {
         Args: { _content: string; _post_id: string }
         Returns: Json
       }
+      create_live_drop: {
+        Args: {
+          _description: string
+          _ends_at: string
+          _image_url: string
+          _kind: Database["public"]["Enums"]["artist_item_kind"]
+          _price_grv: number
+          _starts_at: string
+          _supply: number
+          _title: string
+        }
+        Returns: Json
+      }
       create_post: { Args: { _content: string }; Returns: Json }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
@@ -396,6 +496,25 @@ export type Database = {
         }[]
       }
       get_explorer_stats: { Args: never; Returns: Json }
+      get_live_drops: {
+        Args: never
+        Returns: {
+          artist_id: string
+          artist_name: string
+          claimed_by_me: boolean
+          claimed_count: number
+          description: string
+          ends_at: string
+          id: string
+          image_url: string
+          kind: Database["public"]["Enums"]["artist_item_kind"]
+          price_grv: number
+          starts_at: string
+          status: string
+          supply: number
+          title: string
+        }[]
+      }
       toggle_like: { Args: { _post_id: string }; Returns: Json }
     }
     Enums: {
