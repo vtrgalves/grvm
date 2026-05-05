@@ -59,8 +59,6 @@ const App = () => (
               <Route path="live" element={<LiveDrops />} />
 
             </Route>
-
-            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
