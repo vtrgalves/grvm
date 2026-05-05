@@ -25,6 +25,8 @@ import Explorer from "./pages/app/Explorer.tsx";
 import VipClub from "./pages/app/VipClub.tsx";
 import LiveDrops from "./pages/app/LiveDrops.tsx";
 import StudioNewDrop from "./pages/app/StudioNewDrop.tsx";
+import PublicProfile from "./pages/app/PublicProfile.tsx";
+import ProfileEdit from "./pages/app/ProfileEdit.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
