@@ -59,7 +59,10 @@ const App = () => (
               <Route path="explorer" element={<Explorer />} />
               <Route path="vip" element={<VipClub />} />
               <Route path="live" element={<LiveDrops />} />
-
+              <Route path="profile" element={<ProfileEdit />} />
+            </Route>
+            <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route index element={<PublicProfile />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
