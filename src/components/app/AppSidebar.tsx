@@ -14,6 +14,7 @@ const fanItems = [
   { title: "Wallet", url: "/app/wallet", icon: Wallet },
   { title: "Missões", url: "/app/missions", icon: Sparkles },
   { title: "Níveis", url: "/app/levels", icon: Trophy },
+  { title: "Drops ao Vivo", url: "/app/live", icon: Radio },
   { title: "Clube VIP", url: "/app/vip", icon: Gem },
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
