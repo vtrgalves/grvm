@@ -23,6 +23,8 @@ import Studio from "./pages/app/Studio.tsx";
 import StudioNewItem from "./pages/app/StudioNewItem.tsx";
 import Explorer from "./pages/app/Explorer.tsx";
 import VipClub from "./pages/app/VipClub.tsx";
+import LiveDrops from "./pages/app/LiveDrops.tsx";
+import StudioNewDrop from "./pages/app/StudioNewDrop.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
