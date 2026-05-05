@@ -59,6 +59,27 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       item_claims: {
         Row: {
           artist_id: string
@@ -297,10 +318,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          bio: string | null
           city: string | null
           created_at: string
           email: string | null
           grv_points: number
+          handle: string | null
           id: string
           level: string
           name: string
@@ -311,10 +334,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          bio?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
           grv_points?: number
+          handle?: string | null
           id?: string
           level?: string
           name: string
@@ -325,10 +350,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          bio?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
           grv_points?: number
+          handle?: string | null
           id?: string
           level?: string
           name?: string
@@ -496,6 +523,23 @@ export type Database = {
         }[]
       }
       get_explorer_stats: { Args: never; Returns: Json }
+      get_feed: {
+        Args: { _limit?: number; _only_following?: boolean }
+        Returns: {
+          author_handle: string
+          author_level: string
+          author_name: string
+          author_photo: string
+          author_type: Database["public"]["Enums"]["profile_type"]
+          comments_count: number
+          content: string
+          created_at: string
+          id: string
+          liked_by_me: boolean
+          likes_count: number
+          user_id: string
+        }[]
+      }
       get_live_drops: {
         Args: never
         Returns: {
@@ -515,6 +559,8 @@ export type Database = {
           title: string
         }[]
       }
+      get_public_profile: { Args: { _handle: string }; Returns: Json }
+      toggle_follow: { Args: { _target: string }; Returns: Json }
       toggle_like: { Args: { _post_id: string }; Returns: Json }
     }
     Enums: {

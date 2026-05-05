@@ -25,6 +25,8 @@ import Explorer from "./pages/app/Explorer.tsx";
 import VipClub from "./pages/app/VipClub.tsx";
 import LiveDrops from "./pages/app/LiveDrops.tsx";
 import StudioNewDrop from "./pages/app/StudioNewDrop.tsx";
+import PublicProfile from "./pages/app/PublicProfile.tsx";
+import ProfileEdit from "./pages/app/ProfileEdit.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -57,7 +59,10 @@ const App = () => (
               <Route path="explorer" element={<Explorer />} />
               <Route path="vip" element={<VipClub />} />
               <Route path="live" element={<LiveDrops />} />
-
+              <Route path="profile" element={<ProfileEdit />} />
+            </Route>
+            <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route index element={<PublicProfile />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

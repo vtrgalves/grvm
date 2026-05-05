@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes, Gem, Radio } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes, Gem, Radio, User } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const fanItems = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
+  { title: "Meu Perfil", url: "/app/profile", icon: User },
   { title: "Feed", url: "/app/feed", icon: Rss },
   { title: "Ranking", url: "/app/ranking", icon: Crown },
   { title: "Wallet", url: "/app/wallet", icon: Wallet },
