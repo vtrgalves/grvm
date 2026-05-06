@@ -68,7 +68,7 @@ export function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupLabel>Artista</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>{renderItem(artistItem)}</SidebarMenu>
+              <SidebarMenu>{artistItems.map(renderItem)}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
