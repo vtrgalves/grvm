@@ -22,7 +22,10 @@ const fanItems = [
   { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
-const artistItem = { title: "Studio", url: "/app/studio", icon: Mic };
+const artistItems = [
+  { title: "Dashboard", url: "/app/studio/dashboard", icon: BarChart3 },
+  { title: "Studio", url: "/app/studio", icon: Mic, end: true },
+];
 
 export function AppSidebar() {
   const { state } = useSidebar();
