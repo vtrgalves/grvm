@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import NotificationBell from "./NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { getLevel } from "@/lib/levels";
 import { Coins } from "lucide-react";
@@ -19,6 +20,7 @@ export default function AppLayout() {
               <SidebarTrigger />
             </div>
             <div className="flex items-center gap-3">
+              <NotificationBell />
               {profile && (
                 <>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30">
