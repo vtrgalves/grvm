@@ -20,6 +20,7 @@ import Experiences from "./pages/app/Experiences.tsx";
 import Feed from "./pages/app/Feed.tsx";
 import Ranking from "./pages/app/Ranking.tsx";
 import Studio from "./pages/app/Studio.tsx";
+import StudioDashboard from "./pages/app/StudioDashboard.tsx";
 import StudioNewItem from "./pages/app/StudioNewItem.tsx";
 import Explorer from "./pages/app/Explorer.tsx";
 import VipClub from "./pages/app/VipClub.tsx";
