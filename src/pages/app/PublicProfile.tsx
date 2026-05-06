@@ -85,13 +85,16 @@ export default function PublicProfile() {
                 <p className="text-sm text-muted-foreground">@{profile.handle}</p>
               </div>
               {!profile.is_self && (
-                <Button onClick={toggleFollow} disabled={busy}
-                  variant={profile.is_following ? "outline" : "default"}
-                  className={profile.is_following ? "" : "bg-gradient-to-r from-primary to-accent text-background font-bold"}>
-                  {profile.is_following
-                    ? <><UserMinus className="w-4 h-4 mr-1" /> Seguindo</>
-                    : <><UserPlus className="w-4 h-4 mr-1" /> Seguir</>}
-                </Button>
+                <div className="flex gap-2">
+                  <TipDialog toUserId={profile.user_id} toName={profile.name} />
+                  <Button onClick={toggleFollow} disabled={busy}
+                    variant={profile.is_following ? "outline" : "default"}
+                    className={profile.is_following ? "" : "bg-gradient-to-r from-primary to-accent text-background font-bold"}>
+                    {profile.is_following
+                      ? <><UserMinus className="w-4 h-4 mr-1" /> Seguindo</>
+                      : <><UserPlus className="w-4 h-4 mr-1" /> Seguir</>}
+                  </Button>
+                </div>
               )}
             </div>
 
