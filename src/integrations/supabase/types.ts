@@ -508,6 +508,7 @@ export type Database = {
         Returns: Json
       }
       create_post: { Args: { _content: string }; Returns: Json }
+      get_artist_dashboard: { Args: never; Returns: Json }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
         Returns: {

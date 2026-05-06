@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes, Gem, Radio, User } from "lucide-react";
+import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes, Gem, Radio, User, BarChart3 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -22,7 +22,10 @@ const fanItems = [
   { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
-const artistItem = { title: "Studio", url: "/app/studio", icon: Mic };
+const artistItems = [
+  { title: "Dashboard", url: "/app/studio/dashboard", icon: BarChart3 },
+  { title: "Studio", url: "/app/studio", icon: Mic, end: true },
+];
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -65,7 +68,7 @@ export function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupLabel>Artista</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>{renderItem(artistItem)}</SidebarMenu>
+              <SidebarMenu>{artistItems.map(renderItem)}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}

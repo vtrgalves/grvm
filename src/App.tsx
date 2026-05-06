@@ -20,6 +20,7 @@ import Experiences from "./pages/app/Experiences.tsx";
 import Feed from "./pages/app/Feed.tsx";
 import Ranking from "./pages/app/Ranking.tsx";
 import Studio from "./pages/app/Studio.tsx";
+import StudioDashboard from "./pages/app/StudioDashboard.tsx";
 import StudioNewItem from "./pages/app/StudioNewItem.tsx";
 import Explorer from "./pages/app/Explorer.tsx";
 import VipClub from "./pages/app/VipClub.tsx";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="feed" element={<Feed />} />
               <Route path="ranking" element={<Ranking />} />
               <Route path="studio" element={<Studio />} />
+              <Route path="studio/dashboard" element={<StudioDashboard />} />
               <Route path="studio/new" element={<StudioNewItem />} />
               <Route path="studio/new-drop" element={<StudioNewDrop />} />
               <Route path="explorer" element={<Explorer />} />
