@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import NotificationBell from "./NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { getLevel } from "@/lib/levels";
 import { Coins } from "lucide-react";
