@@ -55,6 +55,7 @@ const App = () => (
               <Route path="feed" element={<Feed />} />
               <Route path="ranking" element={<Ranking />} />
               <Route path="studio" element={<Studio />} />
+              <Route path="studio/dashboard" element={<StudioDashboard />} />
               <Route path="studio/new" element={<StudioNewItem />} />
               <Route path="studio/new-drop" element={<StudioNewDrop />} />
               <Route path="explorer" element={<Explorer />} />
