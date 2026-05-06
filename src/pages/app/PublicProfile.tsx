@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { UserPlus, UserMinus, MapPin, Trophy, Sparkles, Image as ImageIcon, Ticket, ArrowLeft, Mic } from "lucide-react";
+import TipDialog from "@/components/app/TipDialog";
 
 interface PublicProfile {
   user_id: string; handle: string; name: string;
