@@ -201,6 +201,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          body: string | null
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          link: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          link?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          link?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       point_transactions: {
         Row: {
           action: string
@@ -367,6 +403,33 @@ export type Database = {
         }
         Relationships: []
       }
+      tips: {
+        Row: {
+          amount: number
+          created_at: string
+          from_user: string
+          id: string
+          message: string | null
+          to_user: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          from_user: string
+          id?: string
+          message?: string | null
+          to_user: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          from_user?: string
+          id?: string
+          message?: string | null
+          to_user?: string
+        }
+        Relationships: []
+      }
       user_missions: {
         Row: {
           completed: boolean
@@ -473,6 +536,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _notify: {
+        Args: {
+          _actor: string
+          _body: string
+          _kind: Database["public"]["Enums"]["notification_kind"]
+          _link: string
+          _title: string
+          _uid: string
+        }
+        Returns: undefined
+      }
       become_artist: { Args: never; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
       claim_live_drop: { Args: { _drop_id: string }; Returns: Json }
@@ -561,11 +635,24 @@ export type Database = {
         }[]
       }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
+      mark_all_notifications_read: { Args: never; Returns: Json }
+      send_tip: {
+        Args: { _amount: number; _message: string; _to: string }
+        Returns: Json
+      }
       toggle_follow: { Args: { _target: string }; Returns: Json }
       toggle_like: { Args: { _post_id: string }; Returns: Json }
     }
     Enums: {
       artist_item_kind: "nft" | "experience"
+      notification_kind:
+        | "follow"
+        | "like"
+        | "comment"
+        | "tip"
+        | "sale"
+        | "drop_live"
+        | "drop_sale"
       profile_type: "fan" | "musician"
     }
     CompositeTypes: {
@@ -695,6 +782,15 @@ export const Constants = {
   public: {
     Enums: {
       artist_item_kind: ["nft", "experience"],
+      notification_kind: [
+        "follow",
+        "like",
+        "comment",
+        "tip",
+        "sale",
+        "drop_live",
+        "drop_sale",
+      ],
       profile_type: ["fan", "musician"],
     },
   },
