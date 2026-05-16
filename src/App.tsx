@@ -28,6 +28,7 @@ import LiveDrops from "./pages/app/LiveDrops.tsx";
 import StudioNewDrop from "./pages/app/StudioNewDrop.tsx";
 import PublicProfile from "./pages/app/PublicProfile.tsx";
 import ProfileEdit from "./pages/app/ProfileEdit.tsx";
+import Badges from "./pages/app/Badges.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="vip" element={<VipClub />} />
               <Route path="live" element={<LiveDrops />} />
               <Route path="profile" element={<ProfileEdit />} />
+              <Route path="badges" element={<Badges />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />

@@ -19,10 +19,16 @@ interface PublicProfile {
   items: Array<{ id: string; kind: "nft" | "experience"; title: string; image_url: string | null; price_grv: number; supply: number; claimed_count: number }>;
 }
 
+interface UserBadge {
+  id: string; slug: string; title: string; description: string; icon: string;
+  rarity: "common" | "rare" | "epic" | "legendary"; burned_grv: number;
+}
+
 export default function PublicProfile() {
   const { handle } = useParams();
   const { user } = useAuth();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
+  const [badges, setBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
@@ -30,7 +36,12 @@ export default function PublicProfile() {
     if (!handle) return;
     const { data, error } = await supabase.rpc("get_public_profile", { _handle: handle });
     if (error) toast.error(error.message);
-    setProfile(data as unknown as PublicProfile | null);
+    const p = data as unknown as PublicProfile | null;
+    setProfile(p);
+    if (p?.user_id) {
+      const { data: bd } = await supabase.rpc("get_user_badges", { _user_id: p.user_id });
+      setBadges((bd as UserBadge[]) || []);
+    }
     setLoading(false);
   };
 
@@ -113,6 +124,24 @@ export default function PublicProfile() {
           </div>
         </div>
       </div>
+
+      {badges.length > 0 && (
+        <section>
+          <h2 className="font-display text-xl font-bold mb-4">Conquistas</h2>
+          <div className="flex flex-wrap gap-3">
+            {badges.map(b => (
+              <div key={b.id} title={`${b.title} — ${b.description} (${b.burned_grv} GRV queimados)`}
+                className="glass-card border border-border/40 rounded-xl px-3 py-2 flex items-center gap-2">
+                <span className="text-2xl">{b.icon}</span>
+                <div>
+                  <div className="font-display font-bold text-sm">{b.title}</div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{b.rarity}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {profile.profile_type === "musician" && (
         <section>

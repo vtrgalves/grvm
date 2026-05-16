@@ -59,6 +59,51 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          active: boolean
+          burn_cost: number
+          claimed_count: number
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          rarity: Database["public"]["Enums"]["badge_rarity"]
+          required_level: string | null
+          slug: string
+          supply: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          burn_cost?: number
+          claimed_count?: number
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          required_level?: string | null
+          slug: string
+          supply?: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          burn_cost?: number
+          claimed_count?: number
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          rarity?: Database["public"]["Enums"]["badge_rarity"]
+          required_level?: string | null
+          slug?: string
+          supply?: number
+          title?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -430,6 +475,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_id: string
+          burned_grv: number
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          burned_grv?: number
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          burned_grv?: number
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_missions: {
         Row: {
           completed: boolean
@@ -548,6 +625,7 @@ export type Database = {
         Returns: undefined
       }
       become_artist: { Args: never; Returns: Json }
+      burn_for_badge: { Args: { _badge_id: string }; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
       claim_live_drop: { Args: { _drop_id: string }; Returns: Json }
       claim_mission: { Args: { _mission_key: string }; Returns: Json }
@@ -583,6 +661,22 @@ export type Database = {
       }
       create_post: { Args: { _content: string }; Returns: Json }
       get_artist_dashboard: { Args: never; Returns: Json }
+      get_badges_catalog: {
+        Args: never
+        Returns: {
+          burn_cost: number
+          claimed_count: number
+          description: string
+          icon: string
+          id: string
+          owned: boolean
+          rarity: Database["public"]["Enums"]["badge_rarity"]
+          required_level: string
+          slug: string
+          supply: number
+          title: string
+        }[]
+      }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
         Returns: {
@@ -635,6 +729,19 @@ export type Database = {
         }[]
       }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
+      get_user_badges: {
+        Args: { _user_id: string }
+        Returns: {
+          burned_grv: number
+          description: string
+          earned_at: string
+          icon: string
+          id: string
+          rarity: Database["public"]["Enums"]["badge_rarity"]
+          slug: string
+          title: string
+        }[]
+      }
       mark_all_notifications_read: { Args: never; Returns: Json }
       send_tip: {
         Args: { _amount: number; _message: string; _to: string }
@@ -645,6 +752,7 @@ export type Database = {
     }
     Enums: {
       artist_item_kind: "nft" | "experience"
+      badge_rarity: "common" | "rare" | "epic" | "legendary"
       notification_kind:
         | "follow"
         | "like"
@@ -782,6 +890,7 @@ export const Constants = {
   public: {
     Enums: {
       artist_item_kind: ["nft", "experience"],
+      badge_rarity: ["common", "rare", "epic", "legendary"],
       notification_kind: [
         "follow",
         "like",
