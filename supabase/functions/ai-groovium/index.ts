@@ -11,7 +11,8 @@ type Action =
   | "artist_bio"
   | "drop_concept"
   | "experience_suggestion"
-  | "artists_to_follow";
+  | "artists_to_follow"
+  | "suggestion";
 
 interface ReqBody {
   action: Action;
@@ -55,6 +56,16 @@ Sugira UMA experiência única para fãs. Retorne JSON: { "event_type": "tipo de
 Cidade: ${p.city ?? "Brasil"}
 
 Sugira 5 artistas (podem ser fictícios mas plausíveis) que esse fã amaria descobrir. Retorne JSON: { "artists": [{ "name": "nome do artista", "genre": "gênero", "reason": "por que seguir (1 frase)", "vibe": "uma palavra que define" }] }`,
+  }),
+  suggestion: (p) => ({
+    system:
+      "Você é o assistente do ecossistema Groovium. Responda em PT-BR com UMA única frase motivacional curta (máx 180 chars), tom futurista e direto, sem emojis em excesso. Retorne JSON: { \"text\": \"...\" }",
+    user: `Nome: ${p.name ?? "Groover"}
+Nível atual: ${p.level ?? "Listener"}
+GRV atual: ${p.grv ?? 0}
+Gêneros: ${(p.genres ?? []).join(", ") || "—"}
+
+Gere UMA dica curta e personalizada para o próximo passo deste fã (ex: completar missão, descobrir artista, subir de nível).`,
   }),
 };
 
