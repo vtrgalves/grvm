@@ -20,6 +20,7 @@ const fanItems = [
   { title: "Clube VIP", url: "/app/vip", icon: Gem },
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
+  { title: "IA Groovium", url: "/app/ai", icon: Wand2 },
   { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
