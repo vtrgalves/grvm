@@ -6,7 +6,7 @@ import { useGrvFx } from "./GrvFxProvider";
 import { toast } from "sonner";
 
 export default function DailyCheckinCard() {
-  const { user, refresh } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const { notifyGain } = useGrvFx();
   const [status, setStatus] = useState<{ checked_today: boolean; streak: number } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function DailyCheckinCard() {
     if (data?.success) {
       notifyGain(data.points, `Streak ${data.streak}`);
       setStatus({ checked_today: true, streak: data.streak });
-      await refresh?.();
+      await refreshProfile();
     } else {
       toast("Você já fez check-in hoje");
     }
