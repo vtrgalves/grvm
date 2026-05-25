@@ -65,6 +65,7 @@ const App = () => (
               <Route path="live" element={<LiveDrops />} />
               <Route path="profile" element={<ProfileEdit />} />
               <Route path="badges" element={<Badges />} />
+              <Route path="ai" element={<AiGroovium />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />
