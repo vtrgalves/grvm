@@ -284,3 +284,8 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+@keyframes crate-reel {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-2400px); }
+}
