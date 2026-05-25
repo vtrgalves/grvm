@@ -12,6 +12,7 @@ import LiveActivityFeed from "@/components/app/LiveActivityFeed";
 import FeaturedArtists from "@/components/app/FeaturedArtists";
 import FeaturedItems from "@/components/app/FeaturedItems";
 import AiSuggestion from "@/components/app/AiSuggestion";
+import ActiveBoosts from "@/components/app/ActiveBoosts";
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -88,6 +89,7 @@ const Dashboard = () => {
           <FeaturedArtists />
         </div>
         <div className="space-y-6">
+          <ActiveBoosts />
           <AiSuggestion />
           <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
