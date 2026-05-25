@@ -531,6 +531,45 @@ export type Database = {
           },
         ]
       }
+      user_boosts: {
+        Row: {
+          cost_paid: number
+          created_at: string
+          effect: string
+          expires_at: string
+          icon: string
+          id: string
+          name: string
+          rarity: string
+          slug: string
+          user_id: string
+        }
+        Insert: {
+          cost_paid?: number
+          created_at?: string
+          effect: string
+          expires_at: string
+          icon?: string
+          id?: string
+          name: string
+          rarity?: string
+          slug: string
+          user_id: string
+        }
+        Update: {
+          cost_paid?: number
+          created_at?: string
+          effect?: string
+          expires_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          rarity?: string
+          slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_missions: {
         Row: {
           completed: boolean
@@ -648,6 +687,19 @@ export type Database = {
         }
         Returns: undefined
       }
+      activate_boost: {
+        Args: {
+          _cost: number
+          _duration_min: number
+          _effect: string
+          _icon: string
+          _name: string
+          _rarity: string
+          _required_points: number
+          _slug: string
+        }
+        Returns: Json
+      }
       become_artist: { Args: never; Returns: Json }
       burn_for_badge: { Args: { _badge_id: string }; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
@@ -685,6 +737,19 @@ export type Database = {
       }
       create_post: { Args: { _content: string }; Returns: Json }
       daily_checkin: { Args: never; Returns: Json }
+      get_active_boosts: {
+        Args: never
+        Returns: {
+          created_at: string
+          effect: string
+          expires_at: string
+          icon: string
+          id: string
+          name: string
+          rarity: string
+          slug: string
+        }[]
+      }
       get_artist_dashboard: { Args: never; Returns: Json }
       get_badges_catalog: {
         Args: never
