@@ -104,6 +104,30 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_checkins: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          streak: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          streak?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          streak?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -660,6 +684,7 @@ export type Database = {
         Returns: Json
       }
       create_post: { Args: { _content: string }; Returns: Json }
+      daily_checkin: { Args: never; Returns: Json }
       get_artist_dashboard: { Args: never; Returns: Json }
       get_badges_catalog: {
         Args: never
@@ -677,6 +702,7 @@ export type Database = {
           title: string
         }[]
       }
+      get_daily_status: { Args: never; Returns: Json }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
         Returns: {

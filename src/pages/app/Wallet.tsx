@@ -58,8 +58,8 @@ const Wallet = () => {
           {(profile?.grv_points ?? 0).toLocaleString("pt-BR")}
         </div>
         <div className="font-display text-sm text-muted-foreground mt-1">GRV</div>
-        <div className="inline-block mt-4 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-xs text-accent uppercase tracking-wider">
-          Modo Testnet Groovium
+        <div className="inline-flex items-center gap-2 mt-4 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-xs text-accent uppercase tracking-wider font-display">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Modo Simulado · BETA
         </div>
       </div>
 

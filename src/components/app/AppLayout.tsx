@@ -2,6 +2,9 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import NotificationBell from "./NotificationBell";
+import BetaBadge from "./BetaBadge";
+import WelcomeOverlay from "./WelcomeOverlay";
+import { GrvFxProvider } from "./GrvFxProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { getLevel } from "@/lib/levels";
 import { Coins } from "lucide-react";
@@ -12,12 +15,15 @@ export default function AppLayout() {
 
   return (
     <SidebarProvider>
+      <GrvFxProvider>
+      <WelcomeOverlay />
       <div className="min-h-screen flex w-full bg-background text-foreground">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <header className="h-14 flex items-center justify-between border-b border-border/40 px-4 glass-card sticky top-0 z-30">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
+              <BetaBadge />
             </div>
             <div className="flex items-center gap-3">
               <NotificationBell />
@@ -48,6 +54,7 @@ export default function AppLayout() {
           </main>
         </div>
       </div>
+      </GrvFxProvider>
     </SidebarProvider>
   );
 }

@@ -4,6 +4,7 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
+import BetaBadge from "./BetaBadge";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -76,6 +77,11 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
+        {!collapsed && (
+          <div className="px-3 pb-2 flex justify-center">
+            <BetaBadge />
+          </div>
+        )}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={async () => { await signOut(); navigate("/"); }}>
