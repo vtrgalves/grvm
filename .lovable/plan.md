@@ -1,87 +1,126 @@
 
-# MVP — Núcleo do Fã (Groovium)
+# Groovium BETA — Plataforma viva simulada (Web 2.0 + estética Web3)
 
-Foco: entregar o **loop completo do fã** (entra → ganha GRV → usa GRV → sobe de nível → volta) sobre a base já existente (signup, profiles, point_transactions, user_missions). Landing evolui, área autenticada nasce.
+Objetivo: deixar a plataforma com sensação de "já está rodando" — saldo inicial, artistas, NFTs, experiências, feed, ranking, transações e animações de GRV em tempo real — tudo simulado, marcado como **BETA**, sem blockchain real.
 
-## 1. Autenticação
+A base já existe (auth, GRV, missões, drops, VIP, badges, IA, tipping, notificações, feed, ranking). O trabalho aqui é principalmente: **seed de dados**, **UX BETA/Web3 em construção**, **microinterações de ganho de GRV** e **fluxos visuais "vivos"**.
 
-- Nova página **/login** com email+senha e botão **Entrar com Google** (via `lovable.auth.signInWithOAuth("google")`).
-- Header passa a ter botão "Login" funcional + redirect pós-signup já existente.
-- Hook `useAuth` global com `onAuthStateChange` + `getSession`, expondo `user`, `profile`, `loading`.
-- Componente `<ProtectedRoute>` para envolver rotas autenticadas; redireciona para `/login` se não logado.
-- Recuperação de senha fica fora deste MVP (anotado para próxima fase).
+---
 
-## 2. Layout autenticado (App Shell)
+## 1. Modo BETA (global)
 
-- Novo `AppLayout` com sidebar (desktop) / bottom-nav (mobile), header fixo com saldo GRV, avatar e nível.
-- Itens de navegação do fã: **Dashboard, Wallet, Missões, Níveis, NFTs, Experiências** (os 2 últimos com dados mockados).
-- Estética mantida: dark, glassmorphism, neon blue/pink — alinhada à memória do projeto.
+- Componente `BetaBadge` no header (ao lado do sino) e no rodapé da sidebar — chip neon pulsante `BETA*`.
+- Ao clicar → `BetaDialog` (shadcn Dialog) explicando que GRV/NFTs/experiências são fictícios para testes e que na Web3 real os usuários conectarão wallet. Botão **Entendi** com `localStorage` para não reabrir automaticamente.
+- Auto-abrir o modal uma única vez no primeiro login (flag `grv_beta_seen`).
 
-## 3. Dashboard do Fã (`/app`)
+## 2. Barra "Web3 em construção"
 
-Cards principais:
-- **Saldo GRV** (lê `profiles.grv_points`) com animação pulse.
-- **Nível atual + barra de progresso** para o próximo nível (regra em `src/lib/levels.ts`).
-- **Missões ativas** (top 3 não concluídas de `user_missions`) com CTA "Ver todas".
-- **Atividade recente** (últimas 5 linhas de `point_transactions`).
-- **Meus NFTs** e **Experiências** — grids mockados (3 cards cada) marcados como "preview".
+- Faixa fixa no topo do `Dashboard` (acima das saudações): 🚧 **WEB3 EM CONSTRUÇÃO** — "Adquira Grooviums em Web3 (Em breve)" + botão **Cadastrar Wallet**.
+- Botão abre `WalletConnectDialog` com 3 cards: MetaMask, Phantom, WalletConnect. Cada card mostra estado **Em construção** (badge cinza-neon) e toast "Disponível no lançamento Web3". Animação glow/scan-line no contorno do modal.
+- Dispensável (X) — não obrigatório fechar.
 
-## 4. Wallet (`/app/wallet`)
+## 3. Saldo inicial e onboarding
 
-- Header: saldo grande + selo "Modo Testnet Groovium".
-- Tabs **Ganhos / Gastos / Tudo** sobre `point_transactions` (já tem RLS por `user_id`).
-- Cada linha: ícone (recompensa/compra), descrição, data, valor com cor (+verde / -rosa).
-- Estado vazio gamificado ("Complete uma missão para começar").
+- O signup já dá +100/+200 GRV. **Ajuste** o trigger `handle_new_user` para conceder **+500 GRV** ao fã (mantém +200 ao artista + bônus separado se quiser).
+- Toast/overlay animado na primeira entrada pós-signup: "Bem-vindo ao Groovium. Você recebeu 500 GRV para começar sua jornada." (usa flag `grv_welcome_seen`).
 
-## 5. Missões (`/app/missions`)
+## 4. Ganho de GRV em tempo real (camada visual)
 
-- Reaproveita a tela atual `Missions.tsx`, movida para dentro do `AppLayout`.
-- Adiciona botão **"Marcar como concluída"** (simulado nesta fase) que:
-  1. Atualiza `user_missions.completed = true, completed_at = now()`.
-  2. Insere linha em `point_transactions` com os pontos da missão.
-  3. Incrementa `profiles.grv_points` (via RPC `claim_mission` — ver técnico).
-  4. Dispara toast neon "+X GRV" e re-render do saldo.
-- Abas **Diárias / Semanais / Iniciais** — diárias/semanais ficam vazias com placeholder nesta fase.
+- Novo provider `GrvFxProvider` (Context) com `notifyGain(points, reason)`.
+- Quando qualquer RPC retorna `points`/`amount` (claim_mission, toggle_like, create_post, create_comment, toggle_follow, claim_artist_item, claim_live_drop, claim_vip_perk, daily_checkin), dispara:
+  - Toast custom neon `+N GRV` com ícone Coins.
+  - Animação flutuante "+N GRV" subindo do botão clicado (motion div absoluto, fade-up 800ms).
+  - Pulso glow no chip de saldo do header.
+- O saldo do header recarrega `profile` via `useAuth().refresh()` após cada ação (já em uso em alguns lugares — padronizar).
 
-## 6. Níveis (`/app/levels`)
+## 5. Login diário (streak)
 
-5 níveis fixos (em `src/lib/levels.ts`):
+- Nova tabela `daily_checkins(user_id, day date, streak int)` + RPC `daily_checkin()` que dá **+20 GRV** uma vez por dia e incrementa streak.
+- Card no Dashboard: "🔥 Streak X dias — Resgatar +20 GRV" (desabilita se já feito hoje).
 
-```text
-Listener    0–499 GRV
-Supporter   500–1.499
-Insider     1.500–3.999
-Backstage   4.000–9.999
-Legend      10.000+
-```
+## 6. Seed de conteúdo (plataforma "viva")
 
-- Timeline vertical com badges, marcando atual e próximos.
-- Cada nível lista 2–3 recompensas desbloqueadas (texto, sem CRUD ainda).
+Migration de seed (idempotente via `ON CONFLICT`):
 
-## 7. Landing — evolução
+- **3 artistas fictícios** (profiles `profile_type='musician'` com `user_id` fixo UUID determinístico — sem `auth.users`, só registros em `profiles` para listagem/exibição):
+  - Neon Frequency — Synthwave/EDM
+  - Luna Vox — Pop Futurista
+  - CyberGroove — Hip Hop Futurista
+  - Cada um com bio, handle, photo_url (gerado), level, grv_points alto.
+- **NFTs/Itens** (`artist_items`): 3 por artista (Neon Pulse #001, Frequency Core, VIP Wave Pass / Luna Genesis, Vox Signature, Aurora Sound Pass / CyberBeat Drop, Urban Hologram, Street Wave Pass).
+- **Experiências** (`artist_items` kind=experience ou `vip_perks`): VIP Listening Session, Meet & Greet Digital, Backstage Live, Hologram Experience, Studio Access.
+- **Posts seed** no feed (5–8 posts dos artistas fictícios).
+- **Ranking seed**: como profiles têm `grv_points`, esses artistas já aparecem. Adicionar 5 perfis "fan" fictícios para popular top fãs (Lucas Neon, Ana Wave, CyberMike, etc.).
 
-- Hero: novo título **"A nova economia da música"** + subtítulo explicando GRV + CTA **"Começar agora"** → `/signup`.
-- Substituir/renomear seção "Como funciona" para o trio **Ganhar → Usar → Evoluir**.
-- Adicionar seção **Benefícios** com duas colunas (Para fãs / Para artistas).
-- Manter Sobre, Roadmap, Carrossel de Artistas, Footer.
-- Remover seções que não cabem no novo discurso (Tokenomics já está fora; revisar Differentials).
+Observação: `profiles.user_id` não tem FK para `auth.users` no schema atual, então seeds funcionam.
 
-## 8. Banco de dados (mudanças)
+## 7. Atividade automática (feed/explorer)
 
-- **RPC `claim_mission(mission_key text)`** (SECURITY DEFINER): valida dono, evita dupla contagem, faz as 3 escritas atômicas (mission, transaction, profile.grv_points). Evita race condition no client.
-- **Coluna `profiles.level`** (text) + trigger que recalcula nível ao mudar `grv_points`.
-- Sem novas tabelas para NFTs/Experiências nesta fase (mock no front).
+- Edge function cron `simulate-activity` (a cada 2 min via pg_cron + pg_net):
+  - Insere 1–2 `point_transactions` aleatórias dos perfis fictícios ("+X GRV por seguir Neon Frequency", "+50 GRV missão diária", etc.) — só para popular Explorer/Ranking dinâmico.
+  - Ocasionalmente cria um `post` curto de artista fictício.
+- Marca essas transações com `action='simulated_*'` para poder filtrar/limpar depois.
 
-## 9. Detalhes técnicos
+## 8. Dashboard reformulado
 
-- `src/hooks/useAuth.tsx` — Provider + hook.
-- `src/hooks/useProfile.tsx` — assina `profiles` via Supabase Realtime para atualizar saldo em tempo real após missões.
-- `src/lib/levels.ts` — `LEVELS`, `getLevel(points)`, `getProgressToNext(points)`.
-- `src/components/app/AppLayout.tsx`, `Sidebar.tsx`, `MobileNav.tsx`, `GrvBalance.tsx`, `LevelBadge.tsx`.
-- Rotas adicionadas em `App.tsx`: `/login`, `/app`, `/app/wallet`, `/app/missions`, `/app/levels`, `/app/nfts`, `/app/experiences` (todas dentro de `<ProtectedRoute><AppLayout>`).
-- Migration cria a função `claim_mission`, coluna `level` e trigger.
-- Realtime habilitado para `profiles` e `point_transactions`.
+Reorganizar `src/pages/app/Dashboard.tsx` em blocos gamificados:
 
-## Fora do escopo (próximas fases)
+1. Barra Web3 em construção (topo)
+2. Saudação + streak diário (resgatar +20)
+3. Cards: Saldo GRV (com pulso) | Nível + progresso | Posição no ranking ("Você está em #N")
+4. **Atividade ao vivo** (últimas tx globais via `get_explorer_feed` — atualiza a cada 10s) com glow neon
+5. Missões ativas (já existe — manter)
+6. Artistas recomendados (3 cards horizontais com os artistas seed)
+7. NFTs em destaque (grid de 3 dos itens seed)
+8. Experiências (3 cards)
+9. Sugestão IA Groovium (1 frase do `ai-groovium` action `suggestion`) — "Você está próximo do nível Insider"
 
-Área do Artista, Feed Social, Ranking, Explorer, Burn, Eventos, Clube VIP, NFTs/Experiências persistidos, recuperação de senha.
+## 9. Wallet — etiqueta "Modo Simulado"
+
+- No `Wallet.tsx` o card já diz "Modo Testnet Groovium". Trocar por chip **Modo Simulado · BETA** com tooltip explicando o BETA.
+
+## 10. NFTs — link OpenSea
+
+- `NFTs.tsx`: adicionar seção "NFTs Oficiais Groovium" no topo com botão **Ver Coleção** → abre `https://opensea.io/collection/groovium` em nova aba. Manter grid de itens existente abaixo.
+
+## 11. IA Groovium — sugestões contextuais
+
+- Adicionar no edge function `ai-groovium` a action `suggestion` (recebe nível atual + GRV atual + gêneros) e retorna 1 frase curta motivacional ("Faltam 320 GRV para Insider — complete 'Curtir 5 músicas' para chegar lá").
+- Usar no Dashboard como card "Assistente Groovium".
+
+## 12. Animações e microinterações
+
+- Tailwind: adicionar keyframes `grv-pop` (scale 0.8→1.1→1 + glow) e `grv-float` (translateY -40px + fade).
+- Hover scale nos cards de artista/NFT/experiência.
+- Partículas leves (reutiliza `Particles.tsx`) no fundo do Dashboard.
+
+---
+
+## Resumo técnico (para o dev)
+
+**Migrations:**
+- Alterar `handle_new_user`: fã = 500 GRV.
+- Criar tabela `daily_checkins` + RPC `daily_checkin`.
+- Adicionar action `suggestion` no edge function `ai-groovium`.
+- Seed determinística de 3 artistas + 5 fãs + 9 itens + 5 experiências + posts.
+- Habilitar `pg_cron` + `pg_net` e agendar `simulate-activity` (via supabase--insert, não migration, pois inclui anon key).
+
+**Edge functions:**
+- `simulate-activity` (nova): insere tx/posts aleatórios.
+- `ai-groovium` (existente): nova action `suggestion`.
+
+**Frontend:**
+- `BetaBadge.tsx`, `BetaDialog.tsx`, `WalletConnectDialog.tsx`, `Web3ConstructionBar.tsx`, `DailyCheckin.tsx`, `LiveActivityFeed.tsx`, `GrvFxProvider.tsx` (toast/animação de ganho), `WelcomeOverlay.tsx`.
+- Refatorar `Dashboard.tsx` na nova ordem.
+- Atualizar `Wallet.tsx` (chip simulado), `NFTs.tsx` (botão OpenSea), `AppLayout.tsx` (BetaBadge no header), `AppSidebar.tsx` (BetaBadge no footer), `App.tsx` (envolver com `GrvFxProvider`).
+- Adicionar keyframes em `tailwind.config.ts` + `index.css`.
+
+**Sem mudanças em:** auth fluxo, RLS existentes (apenas adições), tipografia/cores (mantém cyberpunk neon).
+
+---
+
+## Fora de escopo (não fazer agora)
+
+- Wallet real, pagamentos reais, mint real de NFT.
+- Áudio real / som de feedback (apenas visual).
+- Mensagens diretas, comentários aninhados, upload de imagens.
