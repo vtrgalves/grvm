@@ -104,6 +104,48 @@ export type Database = {
         }
         Relationships: []
       }
+      crate_openings: {
+        Row: {
+          cost_paid: number
+          crate_name: string
+          crate_slug: string
+          created_at: string
+          id: string
+          prize_grv: number
+          prize_icon: string
+          prize_name: string
+          prize_rarity: string
+          prize_type: string
+          user_id: string
+        }
+        Insert: {
+          cost_paid?: number
+          crate_name: string
+          crate_slug: string
+          created_at?: string
+          id?: string
+          prize_grv?: number
+          prize_icon?: string
+          prize_name: string
+          prize_rarity: string
+          prize_type: string
+          user_id: string
+        }
+        Update: {
+          cost_paid?: number
+          crate_name?: string
+          crate_slug?: string
+          created_at?: string
+          id?: string
+          prize_grv?: number
+          prize_icon?: string
+          prize_name?: string
+          prize_rarity?: string
+          prize_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_checkins: {
         Row: {
           created_at: string
@@ -767,6 +809,33 @@ export type Database = {
           title: string
         }[]
       }
+      get_crate_global_feed: {
+        Args: { _limit?: number }
+        Returns: {
+          crate_name: string
+          created_at: string
+          id: string
+          prize_icon: string
+          prize_name: string
+          prize_rarity: string
+          user_name: string
+        }[]
+      }
+      get_crate_history: {
+        Args: { _limit?: number }
+        Returns: {
+          cost_paid: number
+          crate_name: string
+          crate_slug: string
+          created_at: string
+          id: string
+          prize_grv: number
+          prize_icon: string
+          prize_name: string
+          prize_rarity: string
+          prize_type: string
+        }[]
+      }
       get_daily_status: { Args: never; Returns: Json }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
@@ -834,6 +903,7 @@ export type Database = {
         }[]
       }
       mark_all_notifications_read: { Args: never; Returns: Json }
+      open_crate: { Args: { _slug: string }; Returns: Json }
       send_tip: {
         Args: { _amount: number; _message: string; _to: string }
         Returns: Json

@@ -13,6 +13,7 @@ import FeaturedArtists from "@/components/app/FeaturedArtists";
 import FeaturedItems from "@/components/app/FeaturedItems";
 import AiSuggestion from "@/components/app/AiSuggestion";
 import ActiveBoosts from "@/components/app/ActiveBoosts";
+import RecentCrateRewards from "@/components/app/RecentCrateRewards";
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -90,6 +91,7 @@ const Dashboard = () => {
         </div>
         <div className="space-y-6">
           <ActiveBoosts />
+          <RecentCrateRewards />
           <AiSuggestion />
           <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
