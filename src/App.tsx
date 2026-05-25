@@ -29,6 +29,7 @@ import StudioNewDrop from "./pages/app/StudioNewDrop.tsx";
 import PublicProfile from "./pages/app/PublicProfile.tsx";
 import ProfileEdit from "./pages/app/ProfileEdit.tsx";
 import Badges from "./pages/app/Badges.tsx";
+import AiGroovium from "./pages/app/AiGroovium.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
