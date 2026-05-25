@@ -30,6 +30,7 @@ import PublicProfile from "./pages/app/PublicProfile.tsx";
 import ProfileEdit from "./pages/app/ProfileEdit.tsx";
 import Badges from "./pages/app/Badges.tsx";
 import AiGroovium from "./pages/app/AiGroovium.tsx";
+import Boosts from "./pages/app/Boosts.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="profile" element={<ProfileEdit />} />
               <Route path="badges" element={<Badges />} />
               <Route path="ai" element={<AiGroovium />} />
+              <Route path="boosts" element={<Boosts />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />
