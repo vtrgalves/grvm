@@ -15,9 +15,10 @@ export default function AiSuggestion() {
         payload: { level: profile.level, grv: profile.grv_points, genres: profile.selected_genres ?? [], name: profile.name },
       },
     }).then(({ data, error }) => {
-      if (error || !data?.text) {
-        setText(`Faltam alguns GRV para o próximo nível — complete uma missão para acelerar.`);
-      } else setText(String(data.text).slice(0, 220));
+      const t = (data as any)?.result?.text;
+      if (error || !t) {
+        setText("Continue completando missões e curtindo drops — o próximo nível está logo ali.");
+      } else setText(String(t).slice(0, 220));
     });
   }, [profile?.grv_points, profile?.level]);
 
