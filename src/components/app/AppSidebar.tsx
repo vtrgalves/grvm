@@ -77,6 +77,11 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
+        {!collapsed && (
+          <div className="px-3 pb-2 flex justify-center">
+            <BetaBadge />
+          </div>
+        )}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={async () => { await signOut(); navigate("/"); }}>
