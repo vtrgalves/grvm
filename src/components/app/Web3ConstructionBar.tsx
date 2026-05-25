@@ -16,14 +16,14 @@ export default function Web3ConstructionBar() {
             <div className="font-display font-bold text-sm flex items-center gap-2">
               🚧 WEB3 EM CONSTRUÇÃO
             </div>
-            <div className="text-xs text-muted-foreground">Adquira Grooviums em Web3 (Em breve)</div>
+            <div className="text-xs text-muted-foreground">Conecte sua wallet no lançamento oficial do Groovium.</div>
           </div>
         </div>
         <button
           onClick={() => setOpen(true)}
           className="relative inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-background font-display font-bold text-sm hover:scale-105 transition-transform"
         >
-          <WalletIcon className="w-4 h-4" /> Cadastrar Wallet
+          <WalletIcon className="w-4 h-4" /> Entrar na Waitlist
         </button>
       </div>
       <WalletConnectDialog open={open} onOpenChange={setOpen} />
