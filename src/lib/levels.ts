@@ -1,41 +1,18 @@
 export interface LevelDef {
   name: string;
   min: number;
-  max: number; // inclusive upper bound; Infinity for last
+  max: number;
   rewards: string[];
 }
 
 export const LEVELS: LevelDef[] = [
-  {
-    name: "Listener",
-    min: 0,
-    max: 499,
-    rewards: ["Acesso ao feed", "Ganho de GRV em interações", "Missões iniciais"],
-  },
-  {
-    name: "Supporter",
-    min: 500,
-    max: 1499,
-    rewards: ["Badge Supporter", "NFT de boas-vindas", "Acesso a drops semanais"],
-  },
-  {
-    name: "Insider",
-    min: 1500,
-    max: 3999,
-    rewards: ["Conteúdos exclusivos", "Sorteios mensais", "Descontos em experiências"],
-  },
-  {
-    name: "Backstage",
-    min: 4000,
-    max: 9999,
-    rewards: ["Meet & Greet virtuais", "NFTs raros", "Acesso antecipado a shows"],
-  },
-  {
-    name: "Legend",
-    min: 10000,
-    max: Infinity,
-    rewards: ["Clube VIP Groovium", "Experiências secretas", "Status de Lenda"],
-  },
+  { name: "Listener", min: 0, max: 499, rewards: ["Acesso ao feed", "Ganho de GRV em interações", "Missões iniciais"] },
+  { name: "Supporter", min: 500, max: 1499, rewards: ["Badge Supporter", "NFT de boas-vindas", "Drops semanais"] },
+  { name: "Insider", min: 1500, max: 3999, rewards: ["Conteúdos exclusivos", "Sorteios mensais", "Descontos em experiências"] },
+  { name: "Backstage", min: 4000, max: 9999, rewards: ["Meet & Greet virtuais", "NFTs raros", "Acesso antecipado"] },
+  { name: "Legend", min: 10000, max: 24999, rewards: ["Clube VIP Groovium", "Experiências secretas", "Status de Lenda"] },
+  { name: "Groove Master", min: 25000, max: 49999, rewards: ["Avatar holográfico", "Boost de GRV permanente", "NFT épico"] },
+  { name: "Genesis Holder", min: 50000, max: Infinity, rewards: ["Status Genesis", "Experiências lendárias", "NFT Genesis exclusivo"] },
 ];
 
 export function getLevel(points: number): LevelDef {

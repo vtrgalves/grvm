@@ -32,6 +32,12 @@ export default function DailyCheckinCard() {
 
   if (!status) return null;
   const done = status.checked_today;
+  const nextStreak = done ? status.streak : Math.max(1, status.streak + (status.streak === 0 ? 0 : 1));
+  const nextReward =
+    nextStreak >= 30 ? 1000 :
+    nextStreak >= 15 ? 500 :
+    nextStreak >= 7  ? 300 :
+    nextStreak >= 3  ? 120 : 50;
 
   return (
     <button
@@ -47,12 +53,14 @@ export default function DailyCheckinCard() {
           {done ? `🔥 Streak ${status.streak} dia${status.streak > 1 ? "s" : ""}` : "Check-in diário"}
         </div>
         <div className="text-xs text-muted-foreground">
-          {done ? "Volte amanhã para manter o streak" : `Resgate +20 GRV · streak atual ${status.streak}`}
+          {done
+            ? "Volte amanhã para manter o streak"
+            : `+${nextReward} GRV hoje · 7d=300 · 15d=500 · 30d=1000`}
         </div>
       </div>
       {!done && (
         <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/15 border border-primary/30 font-display font-bold text-primary text-sm">
-          <Gift className="w-4 h-4" /> +20
+          <Gift className="w-4 h-4" /> +{nextReward}
         </div>
       )}
     </button>
