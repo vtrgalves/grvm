@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
+  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, ExternalLink, Globe, HelpCircle, Link2, Loader2,
   RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
