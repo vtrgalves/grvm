@@ -53,6 +53,22 @@ const HeroSection = () => {
             Já tenho conta
           </button>
         </div>
+
+        {/* Web3 tech ribbon */}
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-4 text-xs font-display uppercase tracking-widest">
+            <span className="flex items-center gap-1.5 text-primary">
+              <span className="text-base leading-none">⚡</span> Powered by Chainlink CRE
+            </span>
+            <span className="w-px h-3 bg-border" />
+            <span className="flex items-center gap-1.5 text-foreground">
+              <span className="text-base leading-none">◎</span> Future Solana Ecosystem
+            </span>
+          </div>
+          <p className="text-[11px] md:text-xs text-muted-foreground max-w-xl">
+            O ecossistema GRVM utiliza infraestrutura Oracle Chainlink CRE e será expandido futuramente para a blockchain Solana.
+          </p>
+        </div>
       </div>
 
       {/* Bottom fade */}
