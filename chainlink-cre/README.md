@@ -1,60 +1,53 @@
-# Groovium · Chainlink CRE Integration — "Proof of Support Oracle"
+# Groovium Chainlink CRE — Groove Oracle
 
-This folder contains the **Chainlink Runtime Environment (CRE)** workflow that powers Groovium's `Proof of Support Oracle` feature.
+Hybrid Oracle workflow that calculates a **Groove Score** (Web2 reputation) and
+anchors a SHA-256 **Proof of Support** on **Solana Devnet** via the Memo Program.
 
-## What it does
-
-```
-Groovium DB (Supabase)
-        ↓
-   CRE Workflow
-        ↓
-  External API (CoinGecko)
-        ↓
-   AI (Lovable AI Gateway / Gemini)
-        ↓
-   Groove Score (0–10)
-        ↓
-   Simulated onchain proof  →  Dashboard live update
-```
-
-When a user completes a mission, opens a crate, or hits **Sync Oracle** in the Dashboard, the CRE workflow:
-
-1. Reads engagement metrics from Supabase (`compute_engagement_metrics` RPC).
-2. Fetches a real external API datapoint (CoinGecko trending).
-3. Calls an LLM (Lovable AI Gateway → Gemini 3 Flash) to classify the fan and generate an insight.
-4. Computes a deterministic **Groove Score**.
-5. Writes a simulated onchain proof (`tx_hash`, `block_number`) into `oracle_activity`.
-
-## Structure
+## Architecture
 
 ```
-/chainlink-cre
-  /workflows         # CRE workflow YAML
-  /scripts           # CRE CLI helpers (simulate/deploy)
-  /oracle            # Score logic + simulated onchain proof
-  /prompts           # System prompts for the AI step
+[ Supabase metrics ] ─┐
+[ CoinGecko / MusicBrainz ] ─┤─► [ Groove Score ] ─► [ Lovable AI ] ─► [ Solana Memo TX ] ─► [ oracle_activity ]
 ```
 
-## CRE CLI usage
+- **Web2:** GRVM economy, boosts, crates, missions, NFT-like items.
+- **Web3:** reputation only — Groove Score + SHA-256 hash → real Solana Devnet TXID.
+
+## Files
+
+- `workflows/groove-oracle.yaml` — CRE workflow definition.
+- `oracle/score.js` — Groove Score calculation.
+- `oracle/solana-proof.js` — Memo program transaction.
+- `oracle/onchain.js` — legacy EVM stub (kept for reference).
+- `prompts/groove-oracle.system.md` — AI prompt.
+- `scripts/generate-wallet.js` — generate a Solana service wallet locally.
+- `scripts/simulate.sh` — local dry-run.
+
+## Commands
 
 ```bash
-# install
-npm install -g @chainlink/cre-cli
+# Generate a wallet (run once)
+node chainlink-cre/scripts/generate-wallet.js
 
-# simulate locally
-cre workflow simulate ./workflows/groove-oracle.yaml --input ./scripts/sample-input.json
+# Local simulate
+cre workflow simulate ./workflows/groove-oracle.yaml --input scripts/sample-input.json
 
-# deploy
-cre workflow deploy ./workflows/groove-oracle.yaml
+# Deploy (sandbox / devnet)
+cre workflow deploy ./workflows/groove-oracle.yaml --env devnet
 ```
 
-The same business logic lives in `supabase/functions/oracle-analyze/index.ts` so the workflow can also run server-side without CRE for fallback.
+## Environment
 
-## Hackathon scope
+| Var                  | Purpose                                         |
+| -------------------- | ----------------------------------------------- |
+| `SOLANA_RPC_URL`     | Solana RPC (default `https://api.devnet.solana.com`) |
+| `SOLANA_PRIVATE_KEY` | base58 secret key for the service wallet         |
+| `LOVABLE_API_KEY`    | Lovable AI Gateway (Gemini)                     |
 
-- ✅ CRE workflow orchestrating DB + external API + AI + onchain-proof
-- ✅ Real AI integration (Lovable AI Gateway)
-- ✅ Real external API (CoinGecko)
-- ✅ Live dashboard updates (Supabase realtime)
-- 🧪 Onchain proof is simulated (tx hash + block number) — production target: Chainlink Functions + EVM contract emitting `GrooveScoreUpdated(address fan, uint256 score)`.
+Only the backend / edge function has the private key — never the client.
+
+## Live integration
+
+The edge function `supabase/functions/oracle-analyze` mirrors this workflow at
+runtime and writes the resulting Solana TXID, slot and explorer URL into the
+`oracle_activity` table.

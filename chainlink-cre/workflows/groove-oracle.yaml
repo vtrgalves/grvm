@@ -1,112 +1,71 @@
-# Chainlink CRE workflow definition
-# Groovium — Proof of Support Oracle
-#
-# This workflow is executed by the Chainlink Runtime Environment when a
-# Groovium user triggers a sync (manual button, mission completion,
-# crate opening, or boost activation).
-#
-# Run locally:
-#   cre workflow simulate ./groove-oracle.yaml \
-#     --input ../scripts/sample-input.json
-#
-# Deploy:
-#   cre workflow deploy ./groove-oracle.yaml
-
-name: groovium-proof-of-support
-version: "1.0.0"
+name: groove-oracle
+version: 0.2.0
 description: >
-  Transforms Groovium fan engagement metrics into a verifiable on-chain
-  Groove Score using Chainlink CRE + AI orchestration.
+  Groovium Proof-of-Support Oracle. Calculates a GRVM reputation
+  score (Groove Score) from on-platform engagement + external signals
+  and anchors a SHA-256 proof on Solana Devnet via the Memo Program.
 
 triggers:
-  - id: groovium_event
-    type: webhook
-    schema:
-      type: object
-      required: [user_id, trigger]
-      properties:
-        user_id: { type: string, format: uuid }
-        trigger:
-          type: string
-          enum: [manual_sync, mission_complete, crate_opened, boost_activated, level_up]
+  - type: http
+    method: POST
+    auth: supabase-jwt
 
 steps:
-  - id: fetch_metrics
-    name: Read engagement metrics from Supabase
-    type: http.request
-    config:
-      method: POST
-      url: ${env.SUPABASE_URL}/rest/v1/rpc/compute_engagement_metrics
-      headers:
-        apikey: ${secrets.SUPABASE_SERVICE_ROLE_KEY}
-        Authorization: Bearer ${secrets.SUPABASE_SERVICE_ROLE_KEY}
-        Content-Type: application/json
-      body: |
-        { "_uid": "${trigger.user_id}" }
+  - id: fetch-metrics
+    uses: supabase.rpc
+    with:
+      function: compute_engagement_metrics
+      params: { _uid: "{{ input.user_id }}" }
 
-  - id: fetch_external_signal
-    name: Fetch external market signal (CoinGecko)
-    type: http.request
-    config:
-      method: GET
-      url: https://api.coingecko.com/api/v3/search/trending
+  - id: fetch-external
+    uses: http.parallel
+    with:
+      requests:
+        - https://api.coingecko.com/api/v3/simple/price?ids=ethereum,chainlink&vs_currencies=usd&include_24hr_change=true
+        - https://api.coingecko.com/api/v3/search/trending
+        - https://musicbrainz.org/ws/2/artist/?query=tag:electronic&fmt=json&limit=1
+    fallback: skip
 
-  - id: ai_analysis
-    name: AI · Classify fan & generate insight
-    type: llm.chat
-    depends_on: [fetch_metrics, fetch_external_signal]
-    config:
-      provider: lovable-ai-gateway
+  - id: groove-score
+    uses: js
+    script: ./oracle/score.js
+
+  - id: ai-insight
+    uses: lovable-ai
+    with:
       model: google/gemini-3-flash-preview
-      response_format: json
-      system_prompt_file: ../prompts/groove-oracle.system.md
-      user_input: |
-        Metrics: ${steps.fetch_metrics.output}
-        Trending: ${steps.fetch_external_signal.output.coins[0].item.symbol}
+      prompt-file: ./prompts/groove-oracle.system.md
+      response_format: json_object
 
-  - id: compute_score
-    name: Compute deterministic Groove Score
-    type: script
-    config:
-      language: javascript
-      file: ../oracle/score.js
-      input: ${steps.fetch_metrics.output}
+  - id: solana-proof
+    uses: js
+    script: ./oracle/solana-proof.js
+    with:
+      cluster: devnet
+      memo:
+        g: groovium-cre
+        h: "{{ steps.groove-score.output.oracle_hash }}"
+        s: "{{ steps.groove-score.output.score }}"
+        r: "{{ steps.ai-insight.output.rank }}"
 
-  - id: emit_onchain_proof
-    name: Emit simulated onchain proof
-    type: script
-    depends_on: [compute_score, ai_analysis]
-    config:
-      language: javascript
-      file: ../oracle/onchain.js
-      input:
-        user_id: ${trigger.user_id}
-        score: ${steps.compute_score.output.score}
-        insight: ${steps.ai_analysis.output.insight}
-        profile: ${steps.ai_analysis.output.profile}
-
-  - id: persist_to_supabase
-    name: Persist oracle activity
-    type: http.request
-    depends_on: [emit_onchain_proof]
-    config:
-      method: POST
-      url: ${env.SUPABASE_URL}/rest/v1/rpc/record_oracle_sync
-      headers:
-        apikey: ${secrets.SUPABASE_SERVICE_ROLE_KEY}
-        Authorization: Bearer ${secrets.SUPABASE_SERVICE_ROLE_KEY}
-        Content-Type: application/json
-      body: |
-        {
-          "_uid": "${trigger.user_id}",
-          "_score": ${steps.compute_score.output.score},
-          "_insight": "${steps.ai_analysis.output.insight}",
-          "_profile": "${steps.ai_analysis.output.profile}",
-          "_trigger": "${trigger.trigger}",
-          "_metrics": ${steps.fetch_metrics.output}
-        }
+  - id: persist
+    uses: supabase.rpc
+    with:
+      function: record_oracle_sync
+      params:
+        _uid: "{{ input.user_id }}"
+        _score: "{{ steps.groove-score.output.score }}"
+        _insight: "{{ steps.ai-insight.output.insight }}"
+        _profile: "{{ steps.ai-insight.output.profile }}"
+        _rank: "{{ steps.ai-insight.output.rank }}"
+        _tx_hash: "{{ steps.solana-proof.output.signature }}"
+        _slot: "{{ steps.solana-proof.output.slot }}"
+        _explorer_url: "{{ steps.solana-proof.output.explorer_url }}"
+        _oracle_hash: "{{ steps.groove-score.output.oracle_hash }}"
+        _chain: solana-devnet
 
 outputs:
-  groove_score: ${steps.compute_score.output.score}
-  tx_hash: ${steps.emit_onchain_proof.output.tx_hash}
-  insight: ${steps.ai_analysis.output.insight}
+  groove_score: "{{ steps.groove-score.output.score }}"
+  rank: "{{ steps.ai-insight.output.rank }}"
+  tx_signature: "{{ steps.solana-proof.output.signature }}"
+  explorer_url: "{{ steps.solana-proof.output.explorer_url }}"

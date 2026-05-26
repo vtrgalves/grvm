@@ -450,10 +450,14 @@ export type Database = {
           ai_profile: string | null
           ai_rank: string | null
           block_number: number | null
+          chain: string | null
           created_at: string
+          explorer_url: string | null
           external_data: Json | null
           groove_score: number
           id: string
+          oracle_hash: string | null
+          slot: number | null
           trigger_event: string | null
           tx_hash: string
           user_id: string
@@ -464,10 +468,14 @@ export type Database = {
           ai_profile?: string | null
           ai_rank?: string | null
           block_number?: number | null
+          chain?: string | null
           created_at?: string
+          explorer_url?: string | null
           external_data?: Json | null
           groove_score: number
           id?: string
+          oracle_hash?: string | null
+          slot?: number | null
           trigger_event?: string | null
           tx_hash: string
           user_id: string
@@ -478,10 +486,14 @@ export type Database = {
           ai_profile?: string | null
           ai_rank?: string | null
           block_number?: number | null
+          chain?: string | null
           created_at?: string
+          explorer_url?: string | null
           external_data?: Json | null
           groove_score?: number
           id?: string
+          oracle_hash?: string | null
+          slot?: number | null
           trigger_event?: string | null
           tx_hash?: string
           user_id?: string
@@ -652,6 +664,27 @@ export type Database = {
           selected_genres?: string[] | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      service_config: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: Json
         }
         Relationships: []
       }
@@ -1059,6 +1092,24 @@ export type Database = {
               _rank?: string
               _score: number
               _trigger: string
+              _uid: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              _chain?: string
+              _explorer_url?: string
+              _external?: Json
+              _insight: string
+              _metrics: Json
+              _oracle_hash?: string
+              _profile: string
+              _rank?: string
+              _score: number
+              _slot?: number
+              _trigger: string
+              _tx_hash?: string
               _uid: string
             }
             Returns: Json
