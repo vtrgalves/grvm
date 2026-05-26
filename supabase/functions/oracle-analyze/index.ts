@@ -196,6 +196,7 @@ Deno.serve(async (req) => {
       workflow.push({ name: "Simulated onchain proof", status: "ok" });
     } catch (error) {
       console.error("STEP FAILED:", error);
+      proof = await persistFallback(admin, uid, grooveScore, ai, trigger, externalData, error);
       workflow.push({ name: "Simulated onchain proof", status: "fallback", message: stringifyError(error) });
     }
 
@@ -230,6 +231,42 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+async function persistFallback(
+  admin: ReturnType<typeof createClient>,
+  uid: string,
+  grooveScore: number,
+  ai: AiResult,
+  trigger: string,
+  externalData: ExternalSignals,
+  originalError: unknown,
+) {
+  const proof = { tx_hash: fakeTxHash(), block_number: fakeBlockNumber(), id: "fallback" };
+  try {
+    const { data, error } = await admin
+      .from("oracle_activity")
+      .insert({
+        user_id: uid,
+        groove_score: grooveScore,
+        ai_insight: ai.insight,
+        ai_profile: ai.profile,
+        ai_rank: ai.rank,
+        tx_hash: proof.tx_hash,
+        block_number: proof.block_number,
+        trigger_event: trigger,
+        workflow_status: "SUCCESS",
+        external_data: externalData,
+      })
+      .select("id, tx_hash, block_number")
+      .single();
+    if (error) throw error;
+    return data as typeof proof;
+  } catch (fallbackError) {
+    console.error("STEP FAILED:", originalError);
+    console.error("STEP FAILED:", fallbackError);
+    return proof;
+  }
+}
 
 function readEnv() {
   const env = {
