@@ -3,6 +3,7 @@ import { Coins, ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { SolanaLogo } from "@/components/web3/SolanaLogo";
 
 interface Tx { id: string; action: string; points: number; description: string | null; created_at: string; }
 
