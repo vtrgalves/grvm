@@ -202,8 +202,20 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           <h2 className="font-display text-xl md:text-2xl font-black gradient-neon-text flex items-center gap-2">
             🎧 Proof of Support Oracle
           </h2>
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            <a
+              href="https://chain.link/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-primary/40 bg-primary/5 text-[10px] font-display uppercase tracking-wider text-primary hover:border-primary/70 transition-colors"
+            >
+              <svg viewBox="0 0 32 32" className="w-3 h-3" fill="currentColor"><path d="M16 2 3 9.5v13L16 30l13-7.5v-13L16 2zm0 4.4 9.2 5.3v8.6L16 25.6l-9.2-5.3v-8.6L16 6.4z" /></svg>
+              Powered by Chainlink CRE
+            </a>
+            <span className="text-[10px] text-muted-foreground">· GRVM Reputation Score</span>
+          </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Última sincronização {timeAgo(data?.latest?.created_at)}.
+            Workflow Oracle utilizando IA + APIs externas + reputação musical gamificada · última sync {timeAgo(data?.latest?.created_at)}.
           </p>
         </div>
         <Button onClick={sync} disabled={loading} size="sm"
