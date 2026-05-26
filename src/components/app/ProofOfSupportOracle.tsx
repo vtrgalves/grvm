@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Activity, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
+  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
   RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -136,7 +136,9 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       await load();
     } catch (e: any) {
       console.error("[Oracle CRE]", e);
-      toast.error(e?.message ?? "Falha ao conectar Oracle. Tente novamente.");
+      toast.error(e?.message ?? "Falha ao conectar Oracle. Tente novamente.", {
+        description: "O Dashboard continuará exibindo o último score e histórico disponível.",
+      });
       setProgress(0);
     } finally {
       clearInterval(stepTimer);
@@ -154,6 +156,8 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
   const scoreColor = rawScore >= 700 ? "text-primary" : rawScore >= 400 ? "text-accent" : "text-muted-foreground";
   const shortHash = (h?: string) => h ? `${h.slice(0, 10)}...${h.slice(-6)}` : "0x000000";
   const ext = data?.latest?.external_data ?? {};
+  const externalOffline = Boolean(ext.api_offline || ext.coingecko_ok === false || ext.musicbrainz_ok === false);
+  const aiOffline = ext.ai_ok === false || (Array.isArray(ext.warnings) && ext.warnings.some((w: string) => w.toLowerCase().includes("ia")));
 
   return (
     <TooltipProvider delayDuration={150}>
