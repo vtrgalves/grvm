@@ -194,7 +194,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
               Powered by Chainlink CRE
             </span>
             <span className="text-[9px] font-display uppercase tracking-widest px-2 py-0.5 rounded-full border border-accent/40 text-accent bg-accent/5">
-              Simulated CRE · Beta
+              Verified on Solana Devnet
             </span>
             {externalOffline && <StatusBadge label="External API Offline" />}
             {aiOffline && <StatusBadge label="IA temporariamente indisponível" />}
