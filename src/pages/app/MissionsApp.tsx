@@ -46,7 +46,10 @@ const MissionsApp = () => {
         <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
           <Trophy className="w-6 h-6 text-primary" /> Missões
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">Complete missões e ganhe GRVM instantaneamente.</p>
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+          <span className="text-[10px] font-display uppercase tracking-wider text-primary/80 border border-primary/30 rounded-full px-2 py-0.5">⚡ Oracle Synced</span>
+        </div>
+        <p className="text-muted-foreground text-sm mt-1.5">Complete missões e ganhe GRVM instantaneamente.</p>
       </div>
 
       <div className="glass-card rounded-2xl p-5">
