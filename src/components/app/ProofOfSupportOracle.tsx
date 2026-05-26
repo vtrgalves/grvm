@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Activity, Brain, CheckCircle2, Cpu, HelpCircle, Link2, Loader2,
+  Activity, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
   RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -14,9 +14,11 @@ interface OracleData {
     groove_score: number;
     ai_insight: string;
     ai_profile: string;
+    ai_rank: string | null;
     tx_hash: string;
     block_number: number;
     workflow_status: string;
+    external_data: Record<string, any> | null;
     created_at: string;
   } | null;
   metrics: any;
@@ -24,6 +26,7 @@ interface OracleData {
     id: string;
     score: number;
     insight: string;
+    rank: string | null;
     tx_hash: string;
     block_number: number;
     trigger_event: string;
@@ -32,12 +35,52 @@ interface OracleData {
 }
 
 const WORKFLOW_STEPS = [
-  { label: "Coletando métricas", icon: Activity },
-  { label: "Consultando APIs externas", icon: Link2 },
-  { label: "IA analisando perfil", icon: Brain },
+  { label: "Coletando métricas do fã", icon: Activity },
+  { label: "APIs externas (CoinGecko · MusicBrainz)", icon: Globe },
+  { label: "Calculando Groove Score (0–1000)", icon: Zap },
+  { label: "IA analisando perfil (Gemini)", icon: Brain },
   { label: "Registrando prova onchain", icon: ShieldCheck },
-  { label: "Calculando Groove Score", icon: Zap },
 ];
+
+const RANK_STYLES: Record<string, string> = {
+  Rookie: "border-muted-foreground/40 text-muted-foreground bg-muted/10",
+  Rising: "border-accent/50 text-accent bg-accent/10",
+  Viral: "border-primary/60 text-primary bg-primary/10",
+  Legendary: "border-secondary/60 text-secondary bg-secondary/10",
+};
+
+function useCountUp(target: number, duration = 900) {
+  const [value, setValue] = useState(target);
+  const startRef = useRef<number | null>(null);
+  const fromRef = useRef(target);
+  useEffect(() => {
+    fromRef.current = value;
+    startRef.current = null;
+    let raf = 0;
+    const tick = (t: number) => {
+      if (startRef.current === null) startRef.current = t;
+      const p = Math.min(1, (t - startRef.current) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(fromRef.current + (target - fromRef.current) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target]);
+  return value;
+}
+
+function timeAgo(iso?: string) {
+  if (!iso) return "—";
+  const diff = Math.max(0, Date.now() - new Date(iso).getTime());
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "agora mesmo";
+  if (m < 60) return `há ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `há ${h}h`;
+  return `há ${Math.floor(h / 24)}d`;
+}
 
 export default function ProofOfSupportOracle({ initialData = null }: { initialData?: OracleData | null }) {
   const [data, setData] = useState<OracleData | null>(initialData);
@@ -63,12 +106,12 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
     setPrevScore(data?.latest?.groove_score ?? null);
 
     const stepTimer = setInterval(() => {
-      setRunningStep(s => {
+      setRunningStep((s) => {
         const next = Math.min(s + 1, WORKFLOW_STEPS.length - 1);
-        setProgress(Math.min(95, 10 + next * 18));
+        setProgress(Math.min(92, 10 + next * 18));
         return next;
       });
-    }, 650);
+    }, 700);
 
     try {
       const { data: res, error } = await supabase.functions.invoke("oracle-analyze", {
@@ -76,39 +119,41 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       });
       clearInterval(stepTimer);
       if (error) throw error;
-      if ((res as any)?.error) throw new Error((res as any).message || (res as any).error);
+      const r = res as any;
+      if (!r?.success) throw new Error(r?.error || "Falha ao conectar Oracle. Tente novamente.");
 
       setRunningStep(WORKFLOW_STEPS.length - 1);
       setProgress(100);
 
-      const newScore = Number((res as any).groove_score ?? 0);
-      const reward = Math.max(40, Math.round(newScore * 15));
+      const reward = Math.max(40, Math.round((r.grooveScore ?? 0) * 0.15));
       setLastReward(reward);
 
-      toast.success(`+${reward} GRV recebidos`, {
-        description: "Atividade social validada pelo Oracle CRE",
+      toast.success(`Oracle sincronizado · +${reward} GRV`, {
+        description: `${r.rank ?? "Rookie"} · Score ${r.grooveScore}/1000`,
         icon: "⚡",
       });
 
       await load();
     } catch (e: any) {
-      console.error("[Groovium Dashboard]", e);
-      toast.error(e?.message ?? "Falha ao sincronizar oracle");
+      console.error("[Oracle CRE]", e);
+      toast.error(e?.message ?? "Falha ao conectar Oracle. Tente novamente.");
       setProgress(0);
     } finally {
       clearInterval(stepTimer);
-      setTimeout(() => { setRunningStep(-1); setLoading(false); setProgress(0); }, 1200);
+      setTimeout(() => { setRunningStep(-1); setLoading(false); setProgress(0); }, 900);
     }
   };
 
-  const score = data?.latest?.groove_score ?? 0;
+  const rawScore = Number(data?.latest?.groove_score ?? 0);
+  const score = useCountUp(rawScore);
   const delta = useMemo(
-    () => (prevScore !== null ? Number((score - prevScore).toFixed(2)) : 0),
-    [score, prevScore]
+    () => (prevScore !== null ? Math.round(rawScore - prevScore) : 0),
+    [rawScore, prevScore],
   );
-  const scoreColor = score >= 7 ? "text-primary" : score >= 4 ? "text-accent" : "text-muted-foreground";
-  const scoreLabel = score >= 8 ? "Em ascensão" : score >= 5 ? "Em crescimento" : score >= 2 ? "Despertando" : "Iniciante";
+  const rank = data?.latest?.ai_rank ?? (rawScore >= 800 ? "Legendary" : rawScore >= 550 ? "Viral" : rawScore >= 300 ? "Rising" : "Rookie");
+  const scoreColor = rawScore >= 700 ? "text-primary" : rawScore >= 400 ? "text-accent" : "text-muted-foreground";
   const shortHash = (h?: string) => h ? `${h.slice(0, 10)}...${h.slice(-6)}` : "0x000000";
+  const ext = data?.latest?.external_data ?? {};
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -137,7 +182,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
                 </button>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
-                <p className="text-xs">O Oracle CRE conecta IA, dados externos e blockchain para validar reputação musical dentro do Groovium.</p>
+                <p className="text-xs">Workflow real: APIs (CoinGecko · MusicBrainz) + IA (Gemini) + persistência Supabase + prova onchain simulada.</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -145,7 +190,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             🎧 Proof of Support Oracle
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Blockchain e reputação onchain simuladas para demonstração do ecossistema.
+            Última sincronização {timeAgo(data?.latest?.created_at)}.
           </p>
         </div>
         <Button onClick={sync} disabled={loading} size="sm"
@@ -175,25 +220,24 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <Zap className="w-3 h-3 text-primary" /> Groove Score
           </div>
           <div className="flex items-end gap-2">
-            <div className={`font-display text-5xl md:text-6xl font-black ${scoreColor} drop-shadow-[0_0_18px_hsl(var(--primary)/0.5)] inline-block`}>
-              {score.toFixed(2)}
+            <div className={`font-display text-5xl md:text-6xl font-black ${scoreColor} drop-shadow-[0_0_18px_hsl(var(--primary)/0.5)] inline-block tabular-nums`}>
+              {score}
             </div>
-            <div className="text-xs text-muted-foreground pb-2">/ 10</div>
+            <div className="text-xs text-muted-foreground pb-2">/ 1000</div>
           </div>
-          {/* Visual neon bar */}
           <div className="mt-3 h-1.5 rounded-full bg-background/70 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-primary via-accent to-secondary transition-all duration-700"
-              style={{ width: `${(score / 10) * 100}%`, boxShadow: "0 0 10px hsl(var(--primary) / 0.7)" }}
+              style={{ width: `${(rawScore / 1000) * 100}%`, boxShadow: "0 0 10px hsl(var(--primary) / 0.7)" }}
             />
           </div>
           <div className="flex items-center justify-between mt-3 gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-[10px] font-display uppercase tracking-wider text-primary">
-              <TrendingUp className="w-3 h-3" /> {scoreLabel}
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-display uppercase tracking-wider ${RANK_STYLES[rank] ?? RANK_STYLES.Rookie}`}>
+              <TrendingUp className="w-3 h-3" /> {rank}
             </span>
             {delta !== 0 && (
               <span className={`text-[10px] font-mono ${delta > 0 ? "text-primary" : "text-destructive"}`}>
-                {delta > 0 ? "+" : ""}{delta.toFixed(2)} hoje
+                {delta > 0 ? "+" : ""}{delta} pts
               </span>
             )}
           </div>
@@ -248,7 +292,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
         <div className="md:col-span-2 rounded-xl border border-accent/30 bg-background/40 backdrop-blur p-4 relative overflow-hidden hover:border-accent/60 transition-colors">
           <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-accent/20 blur-3xl" />
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
-            <Brain className="w-3 h-3 text-accent" /> IA Insights
+            <Brain className="w-3 h-3 text-accent" /> IA Insights · Gemini
           </div>
           {data?.latest?.ai_profile && (
             <div className="mb-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/30 text-[10px] font-display uppercase tracking-wider text-accent">
@@ -256,7 +300,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             </div>
           )}
           <p className="font-display text-sm md:text-base leading-relaxed text-foreground/90">
-            {data?.latest?.ai_insight ?? "Clique em Sync Oracle para gerar sua primeira análise de IA."}
+            {data?.latest?.ai_insight ?? "Clique em Sync Oracle para rodar o workflow CRE e gerar sua análise."}
           </p>
         </div>
 
@@ -284,28 +328,41 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           </div>
         </div>
 
+        {/* External signals */}
+        <div className="md:col-span-3 rounded-xl border border-border/40 bg-background/40 backdrop-blur p-4 hover:border-accent/40 transition-colors">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+            <Globe className="w-3 h-3 text-accent" /> Sinais externos consultados
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-mono">
+            <ExtCell label="ETH/USD" value={ext.eth_usd ? `$${Number(ext.eth_usd).toLocaleString()}` : "—"} />
+            <ExtCell label="ETH 24h" value={ext.eth_change_24h != null ? `${Number(ext.eth_change_24h).toFixed(2)}%` : "—"}
+              color={Number(ext.eth_change_24h ?? 0) >= 0 ? "text-primary" : "text-destructive"} />
+            <ExtCell label="Trending" value={ext.trending_coin ?? "—"} />
+            <ExtCell label="Music seed" value={ext.music_seed ?? "—"} truncate />
+          </div>
+        </div>
+
         {/* History */}
         <div className="md:col-span-3 rounded-xl border border-border/40 bg-background/40 backdrop-blur p-4 hover:border-primary/40 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              <Cpu className="w-3 h-3 text-primary" /> Últimas sincronizações
+              <Cpu className="w-3 h-3 text-primary" /> Histórico de sincronizações
             </div>
-            <span className="text-[10px] text-muted-foreground">
-              Last sync: {data?.latest?.created_at ? new Date(data.latest.created_at).toLocaleTimeString("pt-BR") : "—"}
-            </span>
+            <span className="text-[10px] text-muted-foreground">{data?.history?.length ?? 0} execuções</span>
           </div>
           {!data?.history?.length ? (
             <p className="text-xs text-muted-foreground text-center py-3">Nenhuma execução ainda.</p>
           ) : (
             <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
               {data.history.map((h) => {
-                const reward = Math.max(40, Math.round(h.score * 15));
+                const reward = Math.max(40, Math.round(h.score * 0.15));
                 return (
                   <div key={h.id} className="flex items-center gap-3 text-[11px] font-mono p-2 rounded-md hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all">
                     <span className="text-muted-foreground/70 w-12">
                       {new Date(h.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                     </span>
-                    <span className="text-primary font-bold">Score {h.score.toFixed(2)}</span>
+                    <span className="text-primary font-bold w-20">Score {Math.round(h.score)}</span>
+                    {h.rank && <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded border ${RANK_STYLES[h.rank] ?? RANK_STYLES.Rookie}`}>{h.rank}</span>}
                     <span className="text-accent">+{reward} GRV</span>
                     <span className="text-muted-foreground/60 truncate flex-1 text-right">{shortHash(h.tx_hash)}</span>
                   </div>
@@ -317,5 +374,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       </div>
     </div>
     </TooltipProvider>
+  );
+}
+
+function ExtCell({ label, value, color, truncate }: { label: string; value: string; color?: string; truncate?: boolean }) {
+  return (
+    <div className="rounded-md border border-border/40 bg-background/60 px-2.5 py-1.5">
+      <div className="text-[9px] uppercase tracking-widest text-muted-foreground/70">{label}</div>
+      <div className={`text-[12px] ${color ?? "text-foreground"} ${truncate ? "truncate" : ""}`}>{value}</div>
+    </div>
   );
 }
