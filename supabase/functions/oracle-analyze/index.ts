@@ -30,6 +30,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const trigger = (body?.trigger as string) || "manual_sync";
+    console.log("[Groovium Dashboard] Oracle workflow started", { uid, trigger });
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -37,6 +38,7 @@ Deno.serve(async (req) => {
     const { data: metrics, error: mErr } = await admin.rpc("compute_engagement_metrics", { _uid: uid });
     if (mErr) throw mErr;
     const m = metrics as Record<string, number>;
+    console.log("[Groovium Dashboard] Oracle metrics loaded", { uid, metrics: m });
 
     // 2. Compute Groove Score (0-10)
     const raw =
@@ -52,6 +54,7 @@ Deno.serve(async (req) => {
       m.badges * 0.4 +
       m.tips_sent * 0.2;
     const grooveScore = Math.min(10, Math.max(0, Number(raw.toFixed(2))));
+    console.log("[Groovium Dashboard] Oracle score computed", { uid, grooveScore });
 
     // 3. External API: CoinGecko trending (real)
     let trendingCoin = "BTC";
@@ -61,7 +64,9 @@ Deno.serve(async (req) => {
         const cgData = await cg.json();
         trendingCoin = cgData?.coins?.[0]?.item?.symbol ?? "BTC";
       }
-    } catch (_) { /* non-fatal */ }
+    } catch (e) {
+      console.log("[Groovium Dashboard] CoinGecko signal unavailable", String((e as Error).message || e));
+    }
 
     // 4. AI Insight via Lovable AI Gateway
     const prompt = `Você é o Proof of Support Oracle do Groovium. Analise as métricas do fã abaixo e gere DOIS textos curtos em português brasileiro:
@@ -122,6 +127,7 @@ Responda APENAS um JSON válido (sem markdown) com:
       _metrics: metrics,
     });
     if (rErr) throw rErr;
+    console.log("[Groovium Dashboard] Oracle proof recorded", { uid, tx_hash: (rec as any)?.tx_hash });
 
     return json({
       success: true,
@@ -143,7 +149,7 @@ Responda APENAS um JSON válido (sem markdown) com:
       },
     });
   } catch (e) {
-    console.error("oracle-analyze", e);
+    console.error("[Groovium Dashboard] oracle-analyze", e);
     return json({ error: String((e as Error).message || e) }, 500);
   }
 });
