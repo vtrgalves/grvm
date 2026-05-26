@@ -50,6 +50,8 @@ const Dashboard = () => {
 
       <DailyCheckinCard />
 
+      <ProofOfSupportOracle />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card rounded-2xl p-6 border border-primary/20 box-glow-blue">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
