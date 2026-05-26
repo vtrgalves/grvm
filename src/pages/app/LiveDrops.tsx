@@ -100,7 +100,7 @@ const DropCard = ({ drop, onClaim, claiming }: { drop: Drop; onClaim: (id: strin
 
         <div className="flex items-center justify-between pt-2 border-t border-border/40">
           <div className="font-display font-bold">
-            {drop.price_grv > 0 ? <span className="gradient-neon-text">{drop.price_grv} GRV</span> : <span className="text-accent">GRÁTIS</span>}
+            {drop.price_grv > 0 ? <span className="gradient-neon-text">{drop.price_grv} GRVM</span> : <span className="text-accent">GRÁTIS</span>}
           </div>
           {drop.claimed_by_me ? (
             <Button size="sm" disabled variant="outline">

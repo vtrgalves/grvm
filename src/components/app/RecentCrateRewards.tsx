@@ -26,7 +26,7 @@ export default function RecentCrateRewards() {
           </div>
           <div className="flex-1">
             <div className="font-display font-bold text-sm">Abrir sua primeira Crate</div>
-            <div className="text-[10px] text-muted-foreground">NFTs, boosts e GRV te esperam</div>
+            <div className="text-[10px] text-muted-foreground">NFTs, boosts e GRVM te esperam</div>
           </div>
           <ArrowRight className="w-4 h-4 text-accent group-hover:translate-x-1 transition-transform" />
         </div>

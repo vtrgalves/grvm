@@ -20,7 +20,7 @@ export function GrvFxProvider({ children }: { children: ReactNode }) {
     toast(
       <span className="flex items-center gap-2 font-display font-bold">
         <Coins className={`w-4 h-4 ${points > 0 ? "text-primary" : "text-accent"}`} />
-        <span className={points > 0 ? "text-primary" : "text-accent"}>{sign}{points} GRV</span>
+        <span className={points > 0 ? "text-primary" : "text-accent"}>{sign}{points} GRVM</span>
         {reason && <span className="text-xs text-muted-foreground font-normal">· {reason}</span>}
       </span>,
       { duration: 2500 }
@@ -40,7 +40,7 @@ export function GrvFxProvider({ children }: { children: ReactNode }) {
             className={`font-display font-black text-2xl animate-grv-float ${p.points > 0 ? "text-primary" : "text-accent"}`}
             style={{ textShadow: "0 0 20px currentColor" }}
           >
-            {p.points > 0 ? "+" : ""}{p.points} GRV
+            {p.points > 0 ? "+" : ""}{p.points} GRVM
           </div>
         ))}
       </div>

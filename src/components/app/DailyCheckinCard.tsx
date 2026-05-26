@@ -55,7 +55,7 @@ export default function DailyCheckinCard() {
         <div className="text-xs text-muted-foreground">
           {done
             ? "Volte amanhã para manter o streak"
-            : `+${nextReward} GRV hoje · 7d=300 · 15d=500 · 30d=1000`}
+            : `+${nextReward} GRVM hoje · 7d=300 · 15d=500 · 30d=1000`}
         </div>
       </div>
       {!done && (

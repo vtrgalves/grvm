@@ -72,7 +72,7 @@ export default function WelcomeOverlay() {
           <span className="font-display text-4xl md:text-5xl font-black text-primary tabular-nums">
             +{count.toLocaleString("pt-BR")}
           </span>
-          <span className="font-display text-sm text-primary/70">GRV</span>
+          <span className="font-display text-sm text-primary/70">GRVM</span>
         </div>
 
         <div className="text-left space-y-2 mb-6">

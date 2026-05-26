@@ -58,7 +58,7 @@ const Welcome = () => {
           <div className={`text-5xl md:text-6xl font-display font-black mb-2 ${isFan ? "text-primary" : "text-accent"}`}>
             +{animatedPoints}
           </div>
-          <div className="text-lg font-display text-muted-foreground">GRV</div>
+          <div className="text-lg font-display text-muted-foreground">GRVM</div>
 
           <div className={`mt-6 transition-all duration-500 ${showContent ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             <h2 className="font-display text-lg font-bold mb-4 text-foreground">

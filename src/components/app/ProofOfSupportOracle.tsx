@@ -135,7 +135,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       const reward = Math.max(40, Math.round((r.grooveScore ?? 0) * 0.15));
       setLastReward(reward);
 
-      toast.success(`Oracle sincronizado · +${reward} GRV`, {
+      toast.success(`Oracle sincronizado · +${reward} GRVM`, {
         description: `${r.rank ?? "Rookie"} · Score ${r.grooveScore}/1000`,
         icon: "⚡",
       });
@@ -256,7 +256,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           </div>
           {lastReward !== null && !loading && (
             <div className="mt-3 px-3 py-2 rounded-lg bg-accent/10 border border-accent/30 text-xs font-display text-accent flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5" /> +{lastReward} GRV recebidos
+              <Sparkles className="w-3.5 h-3.5" /> +{lastReward} GRVM recebidos
             </div>
           )}
         </div>
@@ -382,7 +382,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
                     </span>
                     <span className="text-primary font-bold w-20">Score {Math.round(h.score)}</span>
                     {h.rank && <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded border ${RANK_STYLES[h.rank] ?? RANK_STYLES.Rookie}`}>{h.rank}</span>}
-                    <span className="text-accent">+{reward} GRV</span>
+                    <span className="text-accent">+{reward} GRVM</span>
                     <span className="text-muted-foreground/60 truncate flex-1 text-right">{shortHash(h.tx_hash)}</span>
                   </div>
                 );

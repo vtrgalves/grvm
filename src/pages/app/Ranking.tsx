@@ -45,7 +45,7 @@ const Ranking = () => {
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
-          <Trophy className="w-7 h-7 text-primary" /> Ranking GRV
+          <Trophy className="w-7 h-7 text-primary" /> Ranking GRVM
         </h1>
         <p className="text-sm text-muted-foreground mt-1">Os fãs e artistas que mais movimentam a frequência.</p>
       </div>
@@ -89,7 +89,7 @@ const Ranking = () => {
                     <p className="font-display font-bold text-primary">
                       {r.grv_points.toLocaleString("pt-BR")}
                     </p>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">GRV</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">GRVM</p>
                   </div>
                 </CardContent>
               </Card>
@@ -100,7 +100,7 @@ const Ranking = () => {
 
       {user && myPos === -1 && (
         <p className="text-center text-xs text-muted-foreground">
-          Você ainda não aparece no top 100. Continue ganhando GRV!
+          Você ainda não aparece no top 100. Continue ganhando GRVM!
         </p>
       )}
     </div>

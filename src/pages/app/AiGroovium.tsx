@@ -226,7 +226,7 @@ function ExperienceSuggestion() {
             <Badge variant="outline" className="mb-2">{result.event_type}</Badge>
             <h3 className="font-display text-xl mb-2 gradient-neon-text">{result.name}</h3>
             <p className="text-sm text-muted-foreground mb-3">{result.description}</p>
-            <div className="text-primary font-bold">≈ {result.estimated_grv} GRV</div>
+            <div className="text-primary font-bold">≈ {result.estimated_grv} GRVM</div>
           </NeonCard>
         )}
       </CardContent>

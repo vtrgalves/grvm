@@ -74,7 +74,7 @@ const VipClub = () => {
             <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text">Clube VIP</h1>
             <p className="text-muted-foreground text-sm">
               Benefícios exclusivos por nível. Você é <span className="text-accent font-bold">{userLevel.name}</span> com{" "}
-              <span className="text-primary font-bold">{profile.grv_points.toLocaleString("pt-BR")} GRV</span>.
+              <span className="text-primary font-bold">{profile.grv_points.toLocaleString("pt-BR")} GRVM</span>.
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ const VipClub = () => {
                   {perk.cost_grv > 0 ? (
                     <span className="flex items-center gap-1">
                       <Coins className="w-3 h-3 text-primary" />
-                      <span className="font-display font-bold text-primary">{perk.cost_grv} GRV</span>
+                      <span className="font-display font-bold text-primary">{perk.cost_grv} GRVM</span>
                     </span>
                   ) : (
                     <span className="flex items-center gap-1 text-accent">
@@ -150,7 +150,7 @@ const VipClub = () => {
                     disabled={busy === perk.id || (perk.cost_grv > 0 && !canAfford)}
                     className="bg-gradient-to-r from-primary to-accent text-background font-display font-bold"
                   >
-                    {busy === perk.id ? "..." : perk.cost_grv > 0 ? (canAfford ? "Resgatar" : "GRV insuficiente") : "Resgatar"}
+                    {busy === perk.id ? "..." : perk.cost_grv > 0 ? (canAfford ? "Resgatar" : "GRVM insuficiente") : "Resgatar"}
                   </Button>
                 )}
               </div>

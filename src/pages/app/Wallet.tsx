@@ -41,7 +41,7 @@ const Wallet = () => {
               <div className="text-xs text-muted-foreground">{new Date(t.created_at).toLocaleString("pt-BR")}</div>
             </div>
             <div className={`font-display font-bold text-sm ${t.points >= 0 ? "text-primary" : "text-accent"}`}>
-              {t.points >= 0 ? "+" : ""}{t.points} GRV
+              {t.points >= 0 ? "+" : ""}{t.points} GRVM
             </div>
           </div>
         ))}
@@ -57,7 +57,7 @@ const Wallet = () => {
         <div className="font-display text-5xl md:text-6xl font-black gradient-neon-text">
           {(profile?.grv_points ?? 0).toLocaleString("pt-BR")}
         </div>
-        <div className="font-display text-sm text-muted-foreground mt-1">GRV</div>
+        <div className="font-display text-sm text-muted-foreground mt-1">GRVM</div>
         <div className="inline-flex items-center gap-2 mt-4 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-xs text-accent uppercase tracking-wider font-display">
           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Modo Simulado · BETA
         </div>

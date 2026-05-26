@@ -14,7 +14,7 @@ export default function BetaDialog({ open, onOpenChange }: Props) {
           </div>
           <DialogTitle className="font-display text-2xl gradient-neon-text">Groovium · Modo BETA</DialogTitle>
           <DialogDescription className="text-sm leading-relaxed pt-2">
-            Todos os créditos <span className="text-primary font-bold">GRV</span>, recompensas, NFTs, experiências e interações atuais são <span className="text-accent">fictícios</span> e utilizados apenas para testes da plataforma e validação da economia gamificada.
+            Todos os créditos <span className="text-primary font-bold">GRVM</span>, recompensas, NFTs, experiências e interações atuais são <span className="text-accent">fictícios</span> e utilizados apenas para testes da plataforma e validação da economia gamificada.
             <br /><br />
             No lançamento oficial da plataforma Web3, os usuários poderão conectar suas wallets e participar da economia real do ecossistema Groovium.
           </DialogDescription>

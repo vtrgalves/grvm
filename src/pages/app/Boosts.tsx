@@ -36,7 +36,7 @@ export default function Boosts() {
   const activate = async (b: BoostDef) => {
     if (!profile) return;
     if (activeSlugs.has(b.slug)) { toast("Boost já ativo"); return; }
-    if (profile.grv_points < b.cost) { toast.error("GRV insuficiente"); return; }
+    if (profile.grv_points < b.cost) { toast.error("GRVM insuficiente"); return; }
     if (profile.grv_points < b.requiredPoints) { toast.error("Nível insuficiente"); return; }
 
     setLoading(b.slug);
@@ -69,7 +69,7 @@ export default function Boosts() {
           </div>
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
             <Coins className="w-4 h-4 text-primary" />
-            <span className="font-display font-bold text-primary">{(profile?.grv_points ?? 0).toLocaleString("pt-BR")} GRV</span>
+            <span className="font-display font-bold text-primary">{(profile?.grv_points ?? 0).toLocaleString("pt-BR")} GRVM</span>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function Boosts() {
                     <span>Duração: <b className="text-foreground">{b.durationMin >= 60 ? `${b.durationMin / 60}h` : `${b.durationMin}min`}</b></span>
                     {b.requiredPoints > 0 && (
                       <span className="inline-flex items-center gap-1">
-                        <Lock className="w-3 h-3" /> {b.requiredPoints} GRV
+                        <Lock className="w-3 h-3" /> {b.requiredPoints} GRVM
                       </span>
                     )}
                   </div>
@@ -158,10 +158,10 @@ export default function Boosts() {
                   >
                     {loading === b.slug ? "Ativando..." :
                       isActiveBoost ? "✓ Ativo" :
-                      locked ? `🔒 ${b.requiredPoints} GRV` :
-                      cantAfford ? `GRV insuficiente` :
+                      locked ? `🔒 ${b.requiredPoints} GRVM` :
+                      cantAfford ? `GRVM insuficiente` :
                       <span className="inline-flex items-center gap-2 justify-center">
-                        <Coins className="w-4 h-4" /> Ativar · {b.cost.toLocaleString("pt-BR")} GRV
+                        <Coins className="w-4 h-4" /> Ativar · {b.cost.toLocaleString("pt-BR")} GRVM
                       </span>}
                   </button>
                 </div>

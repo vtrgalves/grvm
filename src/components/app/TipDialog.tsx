@@ -25,7 +25,7 @@ export default function TipDialog({ toUserId, toName, trigger }: { toUserId: str
     const { error } = await supabase.rpc("send_tip", { _to: toUserId, _amount: amount, _message: message });
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success(`+${amount} GRV enviados para ${toName}!`, { description: "Obrigado por apoiar 🎵" });
+    toast.success(`+${amount} GRVM enviados para ${toName}!`, { description: "Obrigado por apoiar 🎵" });
     refreshProfile();
     setOpen(false); setMessage(""); setAmount(50);
   };
@@ -56,7 +56,7 @@ export default function TipDialog({ toUserId, toName, trigger }: { toUserId: str
             ))}
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Valor personalizado (GRV)</label>
+            <label className="text-xs text-muted-foreground">Valor personalizado (GRVM)</label>
             <Input type="number" min={1} max={100000} value={amount}
               onChange={e => setAmount(parseInt(e.target.value) || 0)} />
           </div>
@@ -67,12 +67,12 @@ export default function TipDialog({ toUserId, toName, trigger }: { toUserId: str
           </div>
           {profile && (
             <p className="text-xs text-muted-foreground">
-              Seu saldo: <span className="font-bold text-primary">{profile.grv_points} GRV</span>
+              Seu saldo: <span className="font-bold text-primary">{profile.grv_points} GRVM</span>
             </p>
           )}
           <Button onClick={submit} disabled={busy}
             className="w-full bg-gradient-to-r from-primary to-accent text-background font-bold">
-            {busy ? "Enviando..." : `Enviar ${amount} GRV`}
+            {busy ? "Enviando..." : `Enviar ${amount} GRVM`}
           </Button>
         </div>
       </DialogContent>

@@ -35,7 +35,7 @@ const HeroSection = () => {
 
         {/* Subheadline */}
         <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10">
-          Groovium (GRV) é a moeda do ecossistema: você ganha por interagir, usa em experiências exclusivas e evolui dentro de uma comunidade onde música gera valor real.
+          Groovium (GRVM) é a moeda do ecossistema: você ganha por interagir, usa em experiências exclusivas e evolui dentro de uma comunidade onde música gera valor real.
         </p>
 
         {/* CTA */}

@@ -30,7 +30,7 @@ export default function FeaturedItems({ kind, title, to }: { kind: "nft" | "expe
                 : <div className="w-full h-full flex items-center justify-center text-3xl">🎨</div>}
               <div className="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-background/95 to-transparent">
                 <div className="text-[10px] font-display font-bold truncate">{i.title}</div>
-                <div className="text-[10px] text-primary">{i.price_grv} GRV</div>
+                <div className="text-[10px] text-primary">{i.price_grv} GRVM</div>
               </div>
             </div>
           </Link>

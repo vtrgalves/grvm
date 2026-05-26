@@ -91,8 +91,8 @@ const Explorer = () => {
 
   const statCards = useMemo(() => ([
     { label: "Transações", value: stats?.total_tx ?? 0, icon: Activity, color: "text-primary border-primary/30" },
-    { label: "GRV Emitidos", value: stats?.total_grv_minted ?? 0, icon: Coins, color: "text-primary border-primary/30" },
-    { label: "GRV Queimados", value: stats?.total_grv_burned ?? 0, icon: Flame, color: "text-accent border-accent/30" },
+    { label: "GRVM Emitidos", value: stats?.total_grv_minted ?? 0, icon: Coins, color: "text-primary border-primary/30" },
+    { label: "GRVM Queimados", value: stats?.total_grv_burned ?? 0, icon: Flame, color: "text-accent border-accent/30" },
     { label: "Carteiras", value: stats?.total_wallets ?? 0, icon: Users, color: "text-secondary border-secondary/30" },
     { label: "Atividade 24h", value: stats?.tx_24h ?? 0, icon: Zap, color: "text-primary border-primary/30" },
   ]), [stats]);
@@ -180,7 +180,7 @@ const Explorer = () => {
                     </button>
                   </div>
                   <div className={`font-display font-bold text-sm shrink-0 ${positive ? "text-primary" : "text-accent"}`}>
-                    {positive ? "+" : ""}{r.points} GRV
+                    {positive ? "+" : ""}{r.points} GRVM
                   </div>
                 </div>
               );

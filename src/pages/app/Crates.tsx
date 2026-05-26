@@ -41,7 +41,7 @@ export default function Crates() {
 
   const openCrate = async (c: CrateDef) => {
     if (!profile) return;
-    if (profile.grv_points < c.cost) { toast.error("GRV insuficiente"); return; }
+    if (profile.grv_points < c.cost) { toast.error("GRVM insuficiente"); return; }
 
     setOpening(c);
     setResult(null);
@@ -83,7 +83,7 @@ export default function Crates() {
           </div>
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
             <Coins className="w-4 h-4 text-primary" />
-            <span className="font-display font-bold text-primary">{(profile?.grv_points ?? 0).toLocaleString("pt-BR")} GRV</span>
+            <span className="font-display font-bold text-primary">{(profile?.grv_points ?? 0).toLocaleString("pt-BR")} GRVM</span>
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function Crates() {
                   : "bg-gradient-to-r from-primary to-accent text-background hover:scale-[1.02] animate-pulse-glow"
                 }`}>
                 <span className="inline-flex items-center gap-2 justify-center">
-                  <Coins className="w-4 h-4" /> Abrir · {c.cost.toLocaleString("pt-BR")} GRV
+                  <Coins className="w-4 h-4" /> Abrir · {c.cost.toLocaleString("pt-BR")} GRVM
                 </span>
               </button>
             </div>
@@ -247,7 +247,7 @@ export default function Crates() {
                 {result.grv_awarded > 0 && (
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/40 mb-6">
                     <Sparkles className="w-4 h-4 text-primary" />
-                    <span className="font-display font-bold text-primary">+{result.grv_awarded} GRV creditados</span>
+                    <span className="font-display font-bold text-primary">+{result.grv_awarded} GRVM creditados</span>
                   </div>
                 )}
 
@@ -259,7 +259,7 @@ export default function Crates() {
                   <button onClick={() => openCrate(opening)}
                     disabled={(profile?.grv_points ?? 0) < opening.cost}
                     className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-background font-display font-black text-sm hover:scale-[1.02] animate-pulse-glow disabled:opacity-50">
-                    Abrir outra · {opening.cost} GRV
+                    Abrir outra · {opening.cost} GRVM
                   </button>
                 </div>
               </div>

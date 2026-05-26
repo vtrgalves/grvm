@@ -55,10 +55,10 @@ const Studio = () => {
           Torne-se artista Groovium
         </h1>
         <p className="text-muted-foreground">
-          Publique NFTs e experiências exclusivas. Fãs pagam em GRV e você recebe direto no seu saldo, sem intermediários.
+          Publique NFTs e experiências exclusivas. Fãs pagam em GRVM e você recebe direto no seu saldo, sem intermediários.
         </p>
         <ul className="text-sm text-left max-w-md mx-auto space-y-2 text-muted-foreground">
-          <li>✨ Crie drops em segundos (gratuitos ou pagos em GRV)</li>
+          <li>✨ Crie drops em segundos (gratuitos ou pagos em GRVM)</li>
           <li>💎 Receba 90% de cada venda direto no saldo</li>
           <li>🎧 Conecte-se com sua base de fãs em tempo real</li>
         </ul>
@@ -98,7 +98,7 @@ const Studio = () => {
           <Users className="w-5 h-5 text-accent/60 mt-2" />
         </div>
         <div className="glass-card rounded-2xl p-5 border border-secondary/30">
-          <div className="text-xs text-muted-foreground uppercase tracking-wider">Faturado (GRV)</div>
+          <div className="text-xs text-muted-foreground uppercase tracking-wider">Faturado (GRVM)</div>
           <div className="font-display text-3xl font-bold text-secondary mt-1">{totalRevenue.toLocaleString("pt-BR")}</div>
           <TrendingUp className="w-5 h-5 text-secondary/60 mt-2" />
         </div>
@@ -127,7 +127,7 @@ const Studio = () => {
                 </div>
                 <div className="text-right">
                   <div className="font-display font-bold text-primary text-sm">
-                    {it.price_grv > 0 ? `${it.price_grv} GRV` : "Grátis"}
+                    {it.price_grv > 0 ? `${it.price_grv} GRVM` : "Grátis"}
                   </div>
                 </div>
               </div>

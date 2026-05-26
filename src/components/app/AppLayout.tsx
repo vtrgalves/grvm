@@ -32,7 +32,7 @@ export default function AppLayout() {
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30">
                     <Coins className="w-4 h-4 text-primary" />
                     <span className="font-display font-bold text-primary text-sm">
-                      {profile.grv_points.toLocaleString("pt-BR")} GRV
+                      {profile.grv_points.toLocaleString("pt-BR")} GRVM
                     </span>
                   </div>
                   {level && (

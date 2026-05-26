@@ -65,7 +65,7 @@ const Feed = () => {
     if (error) { toast.error("Erro ao publicar"); return; }
     setDraft("");
     const points = (data as any)?.points;
-    if (points) toast.success(`+${points} GRV`, { description: "Publicação criada!" });
+    if (points) toast.success(`+${points} GRVM`, { description: "Publicação criada!" });
     loadPosts();
   };
 
@@ -107,7 +107,7 @@ const Feed = () => {
     if (error) { toast.error("Erro ao comentar"); return; }
     setCommentDraft("");
     const points = (data as any)?.points;
-    if (points) toast.success(`+${points} GRV`);
+    if (points) toast.success(`+${points} GRVM`);
     loadComments(postId);
   };
 
@@ -115,7 +115,7 @@ const Feed = () => {
     <div className="space-y-6 max-w-2xl mx-auto">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text">Feed Social</h1>
-        <p className="text-sm text-muted-foreground mt-1">Conecte-se com outros fãs e ganhe GRV ao interagir.</p>
+        <p className="text-sm text-muted-foreground mt-1">Conecte-se com outros fãs e ganhe GRVM ao interagir.</p>
       </div>
 
       <div className="flex gap-2">
@@ -133,7 +133,7 @@ const Feed = () => {
             placeholder="O que está tocando agora? Compartilhe com a comunidade..."
             className="resize-none bg-background/50 border-border/50 min-h-[80px]" />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">{draft.length}/500 · +10 GRV ao publicar</span>
+            <span className="text-xs text-muted-foreground">{draft.length}/500 · +10 GRVM ao publicar</span>
             <Button onClick={handlePost} disabled={!draft.trim() || posting} size="sm" className="gap-2">
               <Sparkles className="w-4 h-4" /> Publicar
             </Button>
@@ -200,7 +200,7 @@ const Feed = () => {
                   <div className="flex gap-2">
                     <Textarea value={openComments === post.id ? commentDraft : ""}
                       onChange={(e) => setCommentDraft(e.target.value.slice(0, 300))}
-                      placeholder="Comentar... (+5 GRV)"
+                      placeholder="Comentar... (+5 GRVM)"
                       className="resize-none bg-background/50 min-h-[40px] text-sm" />
                     <Button size="icon" onClick={() => submitComment(post.id)} disabled={!commentDraft.trim()}>
                       <Send className="w-4 h-4" />

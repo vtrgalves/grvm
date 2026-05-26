@@ -67,7 +67,7 @@ function DashboardSkeleton() {
         <div className="relative h-4 w-96 max-w-full rounded bg-muted/30" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {["GRV shimmer", "Oracle loader", "Ranking pulse"].map((label) => (
+        {["GRVM shimmer", "Oracle loader", "Ranking pulse"].map((label) => (
           <div key={label} className="glass-card rounded-2xl p-6 border border-primary/20 animate-pulse">
             <div className="h-4 w-28 bg-muted/30 rounded mb-4" />
             <div className="h-10 w-36 bg-primary/20 rounded mb-3" />
@@ -182,7 +182,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card rounded-2xl p-6 border border-primary/20 box-glow-blue">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-            <Coins className="w-4 h-4 text-primary" /> Saldo GRV
+            <Coins className="w-4 h-4 text-primary" /> Saldo GRVM
           </div>
           <div className="font-display text-3xl md:text-4xl font-black text-primary animate-pulse-glow inline-block">
             {grv.toLocaleString("pt-BR")}
@@ -199,7 +199,7 @@ const Dashboard = () => {
           </div>
           <Progress value={progress.pct} className="h-2 mb-2" />
           <div className="text-xs text-muted-foreground">
-            {progress.next ? <>Faltam <span className="text-accent font-bold">{progress.toNext} GRV</span> para {progress.next.name}</> : "Nível máximo!"}
+            {progress.next ? <>Faltam <span className="text-accent font-bold">{progress.toNext} GRVM</span> para {progress.next.name}</> : "Nível máximo!"}
           </div>
         </div>
 
@@ -324,7 +324,7 @@ const Dashboard = () => {
                 <div className="font-display font-bold text-sm">
                   {dashboardProfile.profile_type === "musician" ? "Abrir Studio" : "Tornar-se artista"}
                 </div>
-                <div className="text-[10px] text-muted-foreground">Publique drops e receba GRV</div>
+                <div className="text-[10px] text-muted-foreground">Publique drops e receba GRVM</div>
               </div>
               <ArrowRight className="w-4 h-4 text-accent group-hover:translate-x-1 transition-transform" />
             </div>
@@ -340,7 +340,7 @@ const Dashboard = () => {
               <Link key={i.id} to="/app/nfts" className="group rounded-xl overflow-hidden border border-border/40 hover:border-primary/50 transition-all hover-scale">
                 <div className="aspect-square bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
                   {i.image_url ? <img src={i.image_url} alt={i.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center text-3xl">💎</div>}
-                  <div className="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-background/95 to-transparent"><div className="text-[10px] font-display font-bold truncate">{i.title}</div><div className="text-[10px] text-primary">{i.price_grv} GRV</div></div>
+                  <div className="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-background/95 to-transparent"><div className="text-[10px] font-display font-bold truncate">{i.title}</div><div className="text-[10px] text-primary">{i.price_grv} GRVM</div></div>
                 </div>
               </Link>
             ))}

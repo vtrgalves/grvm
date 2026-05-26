@@ -66,7 +66,7 @@ export default function ItemsGrid({ kind }: Props) {
     const { data, error } = await supabase.rpc("claim_artist_item", { _item_id: item.id });
     setBusy(null);
     if (error) return toast.error(error.message);
-    toast.success(item.price_grv > 0 ? `🎉 Adquirido por ${item.price_grv} GRV!` : "✨ Reivindicado!");
+    toast.success(item.price_grv > 0 ? `🎉 Adquirido por ${item.price_grv} GRVM!` : "✨ Reivindicado!");
     await refreshProfile();
     await load();
   };
@@ -116,7 +116,7 @@ export default function ItemsGrid({ kind }: Props) {
                 </div>
                 <div className="flex items-center justify-between mt-auto">
                   <div className="font-display font-bold text-primary">
-                    {it.price_grv > 0 ? `${it.price_grv} GRV` : "Grátis"}
+                    {it.price_grv > 0 ? `${it.price_grv} GRVM` : "Grátis"}
                   </div>
                   {owned ? (
                     <Button size="sm" disabled variant="secondary"><Check className="w-3 h-3 mr-1" /> Seu</Button>
@@ -131,7 +131,7 @@ export default function ItemsGrid({ kind }: Props) {
                       onClick={() => claim(it)}
                       className="bg-gradient-to-r from-primary to-accent text-background font-bold"
                     >
-                      {busy === it.id ? "..." : it.price_grv > 0 ? (insufficient ? "GRV insuficiente" : "Comprar") : "Resgatar"}
+                      {busy === it.id ? "..." : it.price_grv > 0 ? (insufficient ? "GRVM insuficiente" : "Comprar") : "Resgatar"}
                     </Button>
                   )}
                 </div>

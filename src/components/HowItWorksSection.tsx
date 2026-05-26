@@ -4,15 +4,15 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 const steps = [
   {
     icon: Coins,
-    title: "Ganhe GRV",
-    desc: "Interaja com artistas, complete missões e ganhe Groovium (GRV) automaticamente.",
+    title: "Ganhe GRVM",
+    desc: "Interaja com artistas, complete missões e ganhe Groovium (GRVM) automaticamente.",
     glowClass: "hover:box-glow-blue border-primary/20",
     iconColor: "text-primary",
   },
   {
     icon: ShoppingBag,
-    title: "Use GRV",
-    desc: "Troque seus GRV por NFTs, experiências exclusivas, sorteios e drops dos artistas.",
+    title: "Use GRVM",
+    desc: "Troque seus GRVM por NFTs, experiências exclusivas, sorteios e drops dos artistas.",
     glowClass: "hover:box-glow-purple border-secondary/20",
     iconColor: "text-secondary",
   },

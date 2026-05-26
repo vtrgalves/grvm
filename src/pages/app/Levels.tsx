@@ -26,7 +26,7 @@ const Levels = () => {
         </div>
         <Progress value={progress.pct} className="h-2 mb-2" />
         <div className="text-xs text-muted-foreground">
-          {progress.next ? <>Faltam <span className="text-accent font-bold">{progress.toNext} GRV</span> para <span className="text-foreground">{progress.next.name}</span></> : "Nível máximo!"}
+          {progress.next ? <>Faltam <span className="text-accent font-bold">{progress.toNext} GRVM</span> para <span className="text-foreground">{progress.next.name}</span></> : "Nível máximo!"}
         </div>
       </div>
 
@@ -48,7 +48,7 @@ const Levels = () => {
                 <div className="flex-1">
                   <div className="font-display font-bold text-lg">{lvl.name}</div>
                   <div className="text-xs text-muted-foreground">
-                    {lvl.min.toLocaleString("pt-BR")}{lvl.max === Infinity ? "+" : `–${lvl.max.toLocaleString("pt-BR")}`} GRV
+                    {lvl.min.toLocaleString("pt-BR")}{lvl.max === Infinity ? "+" : `–${lvl.max.toLocaleString("pt-BR")}`} GRVM
                   </div>
                 </div>
                 {isCurrent && (

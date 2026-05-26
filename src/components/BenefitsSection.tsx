@@ -2,7 +2,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { Heart, Music, Check } from "lucide-react";
 
 const fanBenefits = [
-  "Ganha GRV ao curtir, comentar e compartilhar",
+  "Ganha GRVM ao curtir, comentar e compartilhar",
   "Troca por NFTs, sorteios e experiências",
   "Sobe de nível: Listener → Legend",
   "Acesso antecipado a drops e shows",
