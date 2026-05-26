@@ -67,7 +67,7 @@ const Missions = () => {
             {isFan ? "Missão Inicial" : "Missão de Boas-Vindas"}
           </h1>
           <p className="text-muted-foreground text-sm">
-            Complete todas e ganhe <span className={`font-bold ${isFan ? "text-primary" : "text-accent"}`}>+{completionBonus} GRV</span> de bônus!
+            Complete todas e ganhe <span className={`font-bold ${isFan ? "text-primary" : "text-accent"}`}>+{completionBonus} GRVM</span> de bônus!
           </p>
         </div>
 
@@ -76,7 +76,7 @@ const Missions = () => {
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-muted-foreground">{completedCount}/{missions.length} missões</span>
             <span className={`text-sm font-bold font-display ${isFan ? "text-primary" : "text-accent"}`}>
-              +{earnedPoints} GRV
+              +{earnedPoints} GRVM
             </span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -133,7 +133,7 @@ const Missions = () => {
               </p>
             </div>
             <span className={`text-sm font-display font-bold ${allComplete ? (isFan ? "text-primary" : "text-accent") : "text-muted-foreground/50"}`}>
-              +{completionBonus} GRV
+              +{completionBonus} GRVM
             </span>
           </div>
         </div>

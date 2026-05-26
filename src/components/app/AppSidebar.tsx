@@ -5,6 +5,7 @@ import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
 import BetaBadge from "./BetaBadge";
+import Web3Badges from "@/components/web3/Web3Badges";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -80,7 +81,8 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         {!collapsed && (
-          <div className="px-3 pb-2 flex justify-center">
+          <div className="px-3 pb-2 flex flex-col items-center gap-2">
+            <Web3Badges variant="compact" />
             <BetaBadge />
           </div>
         )}

@@ -60,7 +60,7 @@ export default function PublicProfile() {
       is_following: following,
       followers: profile.followers + (following ? 1 : -1),
     });
-    if (following && profile.profile_type === "musician") toast.success("+5 GRV", { description: "Novo artista seguido!" });
+    if (following && profile.profile_type === "musician") toast.success("+5 GRVM", { description: "Novo artista seguido!" });
   };
 
   if (loading) return <div className="text-center text-muted-foreground py-20">Carregando...</div>;
@@ -113,7 +113,7 @@ export default function PublicProfile() {
 
             <div className="flex flex-wrap gap-4 text-sm">
               <span className="flex items-center gap-1 text-accent"><Trophy className="w-4 h-4" /> {profile.level}</span>
-              <span className="flex items-center gap-1 gradient-neon-text font-bold"><Sparkles className="w-4 h-4" /> {profile.grv_points} GRV</span>
+              <span className="flex items-center gap-1 gradient-neon-text font-bold"><Sparkles className="w-4 h-4" /> {profile.grv_points} GRVM</span>
               {profile.city && <span className="flex items-center gap-1 text-muted-foreground"><MapPin className="w-4 h-4" /> {profile.city}</span>}
             </div>
 
@@ -130,7 +130,7 @@ export default function PublicProfile() {
           <h2 className="font-display text-xl font-bold mb-4">Conquistas</h2>
           <div className="flex flex-wrap gap-3">
             {badges.map(b => (
-              <div key={b.id} title={`${b.title} — ${b.description} (${b.burned_grv} GRV queimados)`}
+              <div key={b.id} title={`${b.title} — ${b.description} (${b.burned_grv} GRVM queimados)`}
                 className="glass-card border border-border/40 rounded-xl px-3 py-2 flex items-center gap-2">
                 <span className="text-2xl">{b.icon}</span>
                 <div>
@@ -160,7 +160,7 @@ export default function PublicProfile() {
                     <p className="font-display font-bold text-sm truncate">{it.title}</p>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">{it.claimed_count}/{it.supply}</span>
-                      <span className="font-bold gradient-neon-text">{it.price_grv > 0 ? `${it.price_grv} GRV` : "GRÁTIS"}</span>
+                      <span className="font-bold gradient-neon-text">{it.price_grv > 0 ? `${it.price_grv} GRVM` : "GRÁTIS"}</span>
                     </div>
                   </div>
                 </div>

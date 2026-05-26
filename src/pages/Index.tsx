@@ -7,6 +7,7 @@ import BenefitsSection from "@/components/BenefitsSection";
 
 
 import EcosystemSection from "@/components/EcosystemSection";
+import Web3StackSection from "@/components/Web3StackSection";
 import DifferentialsSection from "@/components/DifferentialsSection";
 import RoadmapSection from "@/components/RoadmapSection";
 import CTASection from "@/components/CTASection";
@@ -25,6 +26,7 @@ const Index = () => {
       
       <EcosystemSection />
       <DifferentialsSection />
+      <Web3StackSection />
       <RoadmapSection />
       <CTASection />
       <ArtistsCarousel />

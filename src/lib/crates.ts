@@ -88,8 +88,8 @@ export const RARITY_META: Record<CrateRarity, { label: string; icon: string; col
 
 // Reels for spinning roulette animation (purely visual)
 export const REEL_POOL = [
-  { icon: "🪙", name: "50 GRV" },
-  { icon: "💠", name: "500 GRV" },
+  { icon: "🪙", name: "50 GRVM" },
+  { icon: "💠", name: "500 GRVM" },
   { icon: "⚡", name: "XP Booster" },
   { icon: "🌊", name: "CyberWave" },
   { icon: "💎", name: "Neon Pulse" },

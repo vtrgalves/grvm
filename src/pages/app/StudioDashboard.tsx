@@ -52,7 +52,7 @@ export default function StudioDashboard() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <KPI icon={<Coins className="w-5 h-5" />} label="Receita GRV" value={data.totals.revenue_grv} hint={`+${data.totals.revenue_24h} em 24h`} accent />
+        <KPI icon={<Coins className="w-5 h-5" />} label="Receita GRVM" value={data.totals.revenue_grv} hint={`+${data.totals.revenue_24h} em 24h`} accent />
         <KPI icon={<TrendingUp className="w-5 h-5" />} label="Vendas" value={data.totals.sales_count} hint={`+${data.totals.sales_24h} em 24h`} />
         <KPI icon={<Users className="w-5 h-5" />} label="Seguidores" value={data.totals.followers} />
         <KPI icon={<Radio className="w-5 h-5" />} label="Drops/Itens ativos" value={data.totals.items_active + data.totals.drops_active} hint={`${data.totals.drops_active} ao vivo`} />
@@ -62,7 +62,7 @@ export default function StudioDashboard() {
       <section className="glass-card rounded-xl p-5 border border-border/40">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display font-bold flex items-center gap-2"><Activity className="w-4 h-4 text-primary" /> Receita — últimos 14 dias</h2>
-          <span className="text-xs text-muted-foreground">{data.series.reduce((a, s) => a + s.revenue, 0)} GRV no período</span>
+          <span className="text-xs text-muted-foreground">{data.series.reduce((a, s) => a + s.revenue, 0)} GRVM no período</span>
         </div>
         <div className="flex items-end gap-1 h-40">
           {data.series.map((s, i) => (
@@ -72,7 +72,7 @@ export default function StudioDashboard() {
                 style={{ height: `${(s.revenue / maxRevenue) * 100}%`, minHeight: s.revenue > 0 ? "4px" : "1px" }}
               />
               <div className="absolute -top-8 opacity-0 group-hover:opacity-100 transition bg-background border border-border/60 rounded px-2 py-1 text-xs whitespace-nowrap z-10">
-                {s.revenue} GRV · {s.sales} vendas
+                {s.revenue} GRVM · {s.sales} vendas
               </div>
             </div>
           ))}
@@ -101,7 +101,7 @@ export default function StudioDashboard() {
                     <p className="font-bold text-sm truncate">{it.title}</p>
                     <p className="text-xs text-muted-foreground">{it.claims}/{it.supply} vendidos</p>
                   </div>
-                  <span className="font-display font-bold text-sm gradient-neon-text">{it.revenue} GRV</span>
+                  <span className="font-display font-bold text-sm gradient-neon-text">{it.revenue} GRVM</span>
                 </li>
               ))}
             </ul>
@@ -159,7 +159,7 @@ export default function StudioDashboard() {
                   </p>
                   <p className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString("pt-BR")}</p>
                 </div>
-                <span className="font-display font-bold gradient-neon-text">+{r.price} GRV</span>
+                <span className="font-display font-bold gradient-neon-text">+{r.price} GRVM</span>
               </li>
             ))}
           </ul>

@@ -32,7 +32,7 @@ const MissionsApp = () => {
     if (error) { toast.error(error.message); return; }
     const result = data as { success: boolean; reason?: string; points?: number };
     if (!result.success) { toast.info("Missão já concluída"); return; }
-    toast.success(`+${result.points} GRV! 🎵`);
+    toast.success(`+${result.points} GRVM! 🎵`);
     setCompleted(prev => new Set(prev).add(key));
     refreshProfile();
   };
@@ -46,7 +46,10 @@ const MissionsApp = () => {
         <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
           <Trophy className="w-6 h-6 text-primary" /> Missões
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">Complete missões e ganhe GRV instantaneamente.</p>
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+          <span className="text-[10px] font-display uppercase tracking-wider text-primary/80 border border-primary/30 rounded-full px-2 py-0.5">⚡ Oracle Synced</span>
+        </div>
+        <p className="text-muted-foreground text-sm mt-1.5">Complete missões e ganhe GRVM instantaneamente.</p>
       </div>
 
       <div className="glass-card rounded-2xl p-5">
@@ -75,7 +78,7 @@ const MissionsApp = () => {
                 <p className={`text-sm font-medium ${done ? "line-through text-muted-foreground" : "text-foreground"}`}>
                   {m.label}
                 </p>
-                <span className="text-xs font-display font-bold text-primary">+{m.points} GRV</span>
+                <span className="text-xs font-display font-bold text-primary">+{m.points} GRVM</span>
               </div>
               {done ? (
                 <span className="text-xs text-muted-foreground">Concluída</span>

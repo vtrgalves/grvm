@@ -228,11 +228,11 @@ const GRAILS: CommunityNft[] = [
 ];
 
 const ACTIVITY_SEED = [
-  "Lucas Neon comprou Genesis Aura por 12.000 GRV",
-  "Ana Wave vendeu Neon Pulse por 80 GRV",
+  "Lucas Neon comprou Genesis Aura por 12.000 GRVM",
+  "Ana Wave vendeu Neon Pulse por 80 GRVM",
   "CyberMike encontrou uma NFT lendária 🔥",
-  "DJ Helix listou Quantum Sound Genesis por 120.000 GRV",
-  "Sasha Orbit recebeu uma oferta de 60.000 GRV",
+  "DJ Helix listou Quantum Sound Genesis por 120.000 GRVM",
+  "Sasha Orbit recebeu uma oferta de 60.000 GRVM",
   "Mara Synth mintou Wave Access ⚡",
   "Groovium Lab revelou um novo grail 💎",
 ];
@@ -409,7 +409,7 @@ function CommunityCard({ nft }: { nft: CommunityNft }) {
         <div className="text-[10px] text-muted-foreground truncate">por {nft.artist}</div>
         <div className="text-[10px] text-muted-foreground">Supply {nft.supply}</div>
         <div className="flex items-end justify-between pt-1">
-          <div className="font-display font-black text-primary text-sm">{formatGrv(nft.priceGrv)} GRV</div>
+          <div className="font-display font-black text-primary text-sm">{formatGrv(nft.priceGrv)} GRVM</div>
           <Button
             size="sm"
             className="h-7 px-2 text-[10px] bg-gradient-to-r from-primary to-accent text-background font-bold"
@@ -445,7 +445,7 @@ function GrailCard({ nft }: { nft: CommunityNft }) {
           <div className="font-display text-xl font-black gradient-neon-text">{nft.name}</div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{nft.artist}</div>
           <div className="flex items-end justify-between pt-2">
-            <div className="font-display font-black text-accent text-2xl">{formatGrv(nft.priceGrv)} GRV</div>
+            <div className="font-display font-black text-accent text-2xl">{formatGrv(nft.priceGrv)} GRVM</div>
             <div className="text-[10px] text-muted-foreground">Supply {nft.supply}</div>
           </div>
         </div>
@@ -492,8 +492,8 @@ function MarketStats() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {[
-        { label: "Floor Price", value: "50 GRV", icon: "💠" },
-        { label: "Volume 24h", value: "284k GRV", icon: "📈" },
+        { label: "Floor Price", value: "50 GRVM", icon: "💠" },
+        { label: "Volume 24h", value: "284k GRVM", icon: "📈" },
         { label: "Holders", value: "1.842", icon: "👥" },
         { label: "Total Supply", value: "12.500", icon: "🌐" },
       ].map((s) => (
@@ -535,7 +535,7 @@ function PortfolioCard() {
         </div>
         <div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Est. Value</div>
-          <div className="font-display text-xl font-black text-primary">{formatGrv(estValue)} GRV</div>
+          <div className="font-display text-xl font-black text-primary">{formatGrv(estValue)} GRVM</div>
         </div>
         <div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Mais rara</div>
@@ -582,8 +582,14 @@ const NFTs = () => {
           <h1 className="font-display text-3xl md:text-4xl font-black gradient-neon-text flex items-center gap-2">
             <ImageIcon className="w-7 h-7 text-primary" /> NFT Marketplace
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Colete drops oficiais, raros e Genesis do ecossistema Groovium.
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-secondary/40 bg-secondary/10 text-[10px] font-display uppercase tracking-wider text-secondary">
+              <svg viewBox="0 0 32 32" className="w-3 h-3"><defs><linearGradient id="sol-nft-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#14F195" /><stop offset="100%" stopColor="#9945FF" /></linearGradient></defs><g fill="url(#sol-nft-g)"><path d="M6.5 21.5 9 19h17l-2.5 2.5H6.5zM6.5 13 9 10.5h17L23.5 13H6.5zM23.5 17.25 26 14.75H9l2.5 2.5h12z" /></g></svg>
+              Future Solana NFTs
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Colete drops oficiais, raros e Genesis do ecossistema Groovium. As futuras NFTs serão migradas para a infraestrutura Solana.
           </p>
         </div>
         <MarketStats />
@@ -699,7 +705,7 @@ const NFTs = () => {
                   <img src={n.image} alt={n.name} className="w-10 h-10 rounded-lg object-cover" />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-display font-bold truncate">{n.name}</div>
-                    <div className="text-[10px] text-muted-foreground">{formatGrv(n.priceGrv)} GRV</div>
+                    <div className="text-[10px] text-muted-foreground">{formatGrv(n.priceGrv)} GRVM</div>
                   </div>
                   <span className="text-[10px] font-display font-bold text-accent">+{n.trending}%</span>
                 </li>

@@ -46,7 +46,7 @@ export default function Badges() {
     const { data, error } = await supabase.rpc("burn_for_badge", { _badge_id: selected.id });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success(`🔥 ${selected.burn_cost} GRV queimados`, { description: `Você desbloqueou: ${selected.title}` });
+    toast.success(`🔥 ${selected.burn_cost} GRVM queimados`, { description: `Você desbloqueou: ${selected.title}` });
     setSelected(null);
     await Promise.all([load(), refreshProfile?.()]);
   };
@@ -61,12 +61,12 @@ export default function Badges() {
           <h1 className="font-display text-3xl md:text-4xl font-bold gradient-neon-text">Conquistas & Burn</h1>
         </div>
         <p className="text-muted-foreground max-w-2xl">
-          Queime GRV permanentemente para desbloquear badges raras. Pontos queimados saem da economia para sempre — só o prestígio fica.
+          Queime GRVM permanentemente para desbloquear badges raras. Pontos queimados saem da economia para sempre — só o prestígio fica.
         </p>
         <div className="inline-flex items-center gap-2 text-sm glass-card px-3 py-1.5 rounded-full border border-border/40">
           <Sparkles className="w-4 h-4 text-accent" />
           <span className="font-display">Saldo:</span>
-          <span className="gradient-neon-text font-bold">{balance} GRV</span>
+          <span className="gradient-neon-text font-bold">{balance} GRVM</span>
         </div>
       </header>
 
@@ -102,7 +102,7 @@ export default function Badges() {
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
                   <span>{b.claimed_count}/{b.supply} resgatadas</span>
                   <span className="flex items-center gap-1 font-bold text-accent">
-                    <Flame className="w-3 h-3" /> {b.burn_cost} GRV
+                    <Flame className="w-3 h-3" /> {b.burn_cost} GRVM
                   </span>
                 </div>
 
@@ -114,8 +114,8 @@ export default function Badges() {
                 >
                   {b.owned ? (<><CheckCircle2 className="w-4 h-4 mr-1" /> Desbloqueada</>)
                     : soldOut ? (<><Lock className="w-4 h-4 mr-1" /> Esgotada</>)
-                    : cannotAfford ? (<><Lock className="w-4 h-4 mr-1" /> GRV insuficiente</>)
-                    : (<><Flame className="w-4 h-4 mr-1" /> Queimar GRV</>)}
+                    : cannotAfford ? (<><Lock className="w-4 h-4 mr-1" /> GRVM insuficiente</>)
+                    : (<><Flame className="w-4 h-4 mr-1" /> Queimar GRVM</>)}
                 </Button>
               </div>
             );
@@ -127,7 +127,7 @@ export default function Badges() {
         <AlertDialogContent className="glass-card border-border/40">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display flex items-center gap-2">
-              <span className="text-3xl">{selected?.icon}</span> Queimar {selected?.burn_cost} GRV?
+              <span className="text-3xl">{selected?.icon}</span> Queimar {selected?.burn_cost} GRVM?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Esta ação é <strong className="text-accent">permanente</strong>. Os pontos serão destruídos e você

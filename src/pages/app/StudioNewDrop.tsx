@@ -118,7 +118,7 @@ const NewLiveDrop = () => {
 
         <div className="flex items-center justify-between p-4 rounded-xl bg-muted/20 border border-border/40">
           <div>
-            <div className="font-display font-bold text-sm">Pago em GRV</div>
+            <div className="font-display font-bold text-sm">Pago em GRVM</div>
             <div className="text-xs text-muted-foreground">Desligado = drop gratuito (claim)</div>
           </div>
           <Switch checked={paid} onCheckedChange={setPaid} />
@@ -127,7 +127,7 @@ const NewLiveDrop = () => {
         <div className="grid grid-cols-2 gap-4">
           {paid && (
             <div>
-              <Label htmlFor="price">Preço (GRV)</Label>
+              <Label htmlFor="price">Preço (GRVM)</Label>
               <Input id="price" type="number" min={1} value={priceGrv} onChange={(e) => setPriceGrv(Number(e.target.value))} />
             </div>
           )}

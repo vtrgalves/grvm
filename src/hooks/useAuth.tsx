@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Realtime profile updates (saldo GRV em tempo real)
+  // Realtime profile updates (saldo GRVM em tempo real)
   useEffect(() => {
     if (!user) return;
     const channel = supabase

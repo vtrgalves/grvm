@@ -39,6 +39,15 @@ const phases = [
     activeClass: "box-glow-blue border-primary/40",
     dotColor: "bg-primary",
   },
+  {
+    phase: "Fase Web3",
+    title: "On-chain",
+    desc: "Wallet Solana · Token GRVM · NFTs · Oracle Chainlink",
+    detail: "A camada on-chain do Groovium.\n• Wallet Solana integrada\n• Token GRVM real\n• NFTs descentralizadas\n• Reputação Oracle Chainlink\n• Chainlink Automation\n• SocialFi Music Economy",
+    glowClass: "hover:box-glow-magenta border-secondary/20",
+    activeClass: "box-glow-magenta border-secondary/40",
+    dotColor: "bg-secondary",
+  },
 ];
 
 const RoadmapSection = () => {
