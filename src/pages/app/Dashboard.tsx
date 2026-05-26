@@ -14,6 +14,7 @@ import FeaturedItems from "@/components/app/FeaturedItems";
 import AiSuggestion from "@/components/app/AiSuggestion";
 import ActiveBoosts from "@/components/app/ActiveBoosts";
 import RecentCrateRewards from "@/components/app/RecentCrateRewards";
+import ProofOfSupportOracle from "@/components/app/ProofOfSupportOracle";
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
