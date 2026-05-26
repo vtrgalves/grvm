@@ -339,28 +339,44 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           </p>
         </div>
 
-        {/* Onchain Proof */}
+        {/* Onchain Proof — Solana Devnet */}
         <div className="md:col-span-1 rounded-xl border border-primary/40 bg-[#050b12]/80 backdrop-blur p-4 font-mono hover:border-primary/70 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              <Link2 className="w-3 h-3 text-primary" /> Onchain Proof
+              <Link2 className="w-3 h-3 text-primary" /> Solana Oracle Proof
             </div>
             {data?.latest && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/15 border border-primary/40 text-[9px] uppercase tracking-wider text-primary">
-                <ShieldCheck className="w-2.5 h-2.5" /> Verified
+                <ShieldCheck className="w-2.5 h-2.5" /> {data.latest.chain === "solana-devnet" ? "On-chain" : "Pending"}
               </span>
             )}
           </div>
-          <div className="text-[10px] text-muted-foreground/70">$ hash</div>
+          <div className="text-[10px] text-muted-foreground/70">$ txid</div>
           <div className="text-[11px] text-primary break-all leading-tight">
             {shortHash(data?.latest?.tx_hash)}
           </div>
+          {data?.latest?.oracle_hash && (
+            <>
+              <div className="text-[10px] text-muted-foreground/70 mt-2">$ oracle_hash</div>
+              <div className="text-[10px] text-accent break-all leading-tight">
+                {data.latest.oracle_hash.slice(0, 14)}...{data.latest.oracle_hash.slice(-6)}
+              </div>
+            </>
+          )}
           <div className="text-[10px] text-muted-foreground mt-2">
-            Block #{data?.latest?.block_number?.toLocaleString() ?? "—"}
+            Slot #{(data?.latest?.slot ?? data?.latest?.block_number)?.toLocaleString() ?? "—"}
+            <span className="ml-2 text-muted-foreground/60">· {data?.latest?.chain ?? "—"}</span>
           </div>
-          <div className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mt-2">
-            Status: {data?.latest ? "VERIFIED" : "PENDING"}
-          </div>
+          {data?.latest?.explorer_url ? (
+            <a href={data.latest.explorer_url} target="_blank" rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 w-full justify-center px-2 py-1.5 rounded-md border border-primary/40 bg-primary/10 text-primary text-[10px] font-display uppercase tracking-wider hover:bg-primary/20 transition-colors">
+              <ExternalLink className="w-3 h-3" /> View on Solana Explorer
+            </a>
+          ) : (
+            <div className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mt-3">
+              Status: {data?.latest ? "Simulated fallback" : "Pending"}
+            </div>
+          )}
         </div>
 
         {/* External signals */}
