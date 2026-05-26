@@ -65,7 +65,10 @@ export default function Boosts() {
           </div>
           <div className="flex-1">
             <h1 className="font-display text-2xl md:text-3xl font-black gradient-neon-text">Loja de Boosts</h1>
-            <p className="text-sm text-muted-foreground mt-1">Acelere sua evolução, destaque seu perfil e domine o ecossistema.</p>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="text-[10px] font-display uppercase tracking-wider text-primary/80 border border-primary/30 rounded-full px-2 py-0.5">⚡ Chainlink Verified Activity</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1.5">Acelere sua evolução, destaque seu perfil e domine o ecossistema.</p>
           </div>
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
             <Coins className="w-4 h-4 text-primary" />
