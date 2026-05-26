@@ -582,8 +582,14 @@ const NFTs = () => {
           <h1 className="font-display text-3xl md:text-4xl font-black gradient-neon-text flex items-center gap-2">
             <ImageIcon className="w-7 h-7 text-primary" /> NFT Marketplace
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Colete drops oficiais, raros e Genesis do ecossistema Groovium.
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-secondary/40 bg-secondary/10 text-[10px] font-display uppercase tracking-wider text-secondary">
+              <svg viewBox="0 0 32 32" className="w-3 h-3"><defs><linearGradient id="sol-nft-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#14F195" /><stop offset="100%" stopColor="#9945FF" /></linearGradient></defs><g fill="url(#sol-nft-g)"><path d="M6.5 21.5 9 19h17l-2.5 2.5H6.5zM6.5 13 9 10.5h17L23.5 13H6.5zM23.5 17.25 26 14.75H9l2.5 2.5h12z" /></g></svg>
+              Future Solana NFTs
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Colete drops oficiais, raros e Genesis do ecossistema Groovium. As futuras NFTs serão migradas para a infraestrutura Solana.
           </p>
         </div>
         <MarketStats />
