@@ -64,6 +64,27 @@ const Wallet = () => {
         </div>
       </div>
 
+      {/* Future Solana Wallet */}
+      <div className="glass-card rounded-2xl p-6 border border-secondary/30 relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-secondary/15 blur-3xl pointer-events-none" />
+        <div className="relative flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-background/60 border border-secondary/40 flex items-center justify-center shrink-0">
+            <SolanaLogo className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <h3 className="font-display text-lg font-bold">Future Solana Wallet</h3>
+              <span className="px-2 py-0.5 rounded-full bg-secondary/15 border border-secondary/40 text-[10px] font-display uppercase tracking-wider text-secondary">
+                Web3 Expansion · In Development
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              A futura wallet GRVM será integrada à rede Solana para transações, NFTs e economia musical descentralizada.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <Tabs defaultValue="all">
         <TabsList className="w-full grid grid-cols-3">
           <TabsTrigger value="all">Tudo</TabsTrigger>
