@@ -1,0 +1,2 @@
+UPDATE public.artist_items SET title = 'Lollapalooza 2027 VIP Wave Pass' WHERE id = 'aaaaaaaa-0000-0000-0000-000000000003';
+UPDATE public.artist_items SET title = 'Rock In Rio Pass' WHERE id = 'aaaaaaaa-0000-0000-0000-000000000006';
