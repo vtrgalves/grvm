@@ -26,6 +26,7 @@ const Index = () => {
       
       <EcosystemSection />
       <DifferentialsSection />
+      <Web3StackSection />
       <RoadmapSection />
       <CTASection />
       <ArtistsCarousel />
