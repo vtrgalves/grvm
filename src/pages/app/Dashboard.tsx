@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AlertTriangle, ArrowRight, Boxes, Coins, Gem, Mic, Package, RefreshCw, Sparkles, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -91,7 +91,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
   const loadDashboard = useCallback(async () => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     setLoading(true);
     setError(null);
     const { data: res, error: rpcError } = await (supabase.rpc as any)("get_dashboard_data");
@@ -161,7 +161,7 @@ const Dashboard = () => {
   const level = getLevel(grv);
   const progress = getProgress(grv);
   const missionList = dashboardProfile.profile_type === "musician" ? MUSICIAN_MISSIONS : FAN_MISSIONS;
-  const missionsDone = useMemo(() => new Set((data?.missions ?? []).filter(m => m.completed).map(m => m.mission_key)), [data?.missions]);
+  const missionsDone = new Set((data?.missions ?? []).filter(m => m.completed).map(m => m.mission_key));
   const activeMissions = missionList.filter(m => !missionsDone.has(m.key)).slice(0, 4);
 
   return (
