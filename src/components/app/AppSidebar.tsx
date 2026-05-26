@@ -81,7 +81,8 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         {!collapsed && (
-          <div className="px-3 pb-2 flex justify-center">
+          <div className="px-3 pb-2 flex flex-col items-center gap-2">
+            <Web3Badges variant="compact" />
             <BetaBadge />
           </div>
         )}
