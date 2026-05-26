@@ -389,6 +389,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
   );
 }
 
+function StatusBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-destructive/40 bg-destructive/10 text-destructive text-[9px] font-display uppercase tracking-wider">
+      <AlertTriangle className="w-3 h-3" /> ⚠ {label}
+    </span>
+  );
+}
+
 function ExtCell({ label, value, color, truncate }: { label: string; value: string; color?: string; truncate?: boolean }) {
   return (
     <div className="rounded-md border border-border/40 bg-background/60 px-2.5 py-1.5">
