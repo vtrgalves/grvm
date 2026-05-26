@@ -1,4 +1,5 @@
 project_id = "pittkclvmuljplztmjvd"
 
 [functions.ai-groovium]
-verify_jwt = false
+verify_jwt = true
+
