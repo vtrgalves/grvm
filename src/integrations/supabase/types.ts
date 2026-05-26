@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       artist_items: {
         Row: {
           active: boolean
@@ -101,6 +122,45 @@ export type Database = {
           slug?: string
           supply?: number
           title?: string
+        }
+        Relationships: []
+      }
+      boost_definitions: {
+        Row: {
+          active: boolean
+          cost: number
+          created_at: string
+          duration_min: number
+          effect: string
+          icon: string
+          name: string
+          rarity: string
+          required_points: number
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          cost: number
+          created_at?: string
+          duration_min: number
+          effect: string
+          icon?: string
+          name: string
+          rarity?: string
+          required_points?: number
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          cost?: number
+          created_at?: string
+          duration_min?: number
+          effect?: string
+          icon?: string
+          name?: string
+          rarity?: string
+          required_points?: number
+          slug?: string
         }
         Relationships: []
       }
@@ -810,19 +870,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      activate_boost: {
-        Args: {
-          _cost: number
-          _duration_min: number
-          _effect: string
-          _icon: string
-          _name: string
-          _rarity: string
-          _required_points: number
-          _slug: string
-        }
-        Returns: Json
-      }
+      activate_boost: { Args: { _slug: string }; Returns: Json }
       become_artist: { Args: never; Returns: Json }
       burn_for_badge: { Args: { _badge_id: string }; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
