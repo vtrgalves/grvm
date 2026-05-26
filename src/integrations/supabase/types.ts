@@ -888,6 +888,7 @@ export type Database = {
           title: string
         }[]
       }
+      get_my_email: { Args: never; Returns: string }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
       get_user_badges: {
         Args: { _user_id: string }
