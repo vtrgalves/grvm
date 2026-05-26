@@ -14,6 +14,7 @@ import FeaturedItems from "@/components/app/FeaturedItems";
 import AiSuggestion from "@/components/app/AiSuggestion";
 import ActiveBoosts from "@/components/app/ActiveBoosts";
 import RecentCrateRewards from "@/components/app/RecentCrateRewards";
+import ProofOfSupportOracle from "@/components/app/ProofOfSupportOracle";
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -48,6 +49,8 @@ const Dashboard = () => {
       </div>
 
       <DailyCheckinCard />
+
+      <ProofOfSupportOracle />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card rounded-2xl p-6 border border-primary/20 box-glow-blue">
