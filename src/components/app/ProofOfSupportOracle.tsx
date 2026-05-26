@@ -42,8 +42,8 @@ const WORKFLOW_STEPS = [
   { label: "Simulated onchain record", icon: "🔗" },
 ];
 
-export default function ProofOfSupportOracle() {
-  const [data, setData] = useState<OracleData | null>(null);
+export default function ProofOfSupportOracle({ initialData = null }: { initialData?: OracleData | null }) {
+  const [data, setData] = useState<OracleData | null>(initialData);
   const [loading, setLoading] = useState(false);
   const [pulse, setPulse] = useState(0);
   const [runningStep, setRunningStep] = useState<number | null>(null);
@@ -54,7 +54,8 @@ export default function ProofOfSupportOracle() {
     setData(res as unknown as OracleData);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { setData(initialData); }, [initialData]);
+  useEffect(() => { if (!initialData) load(); }, [initialData]);
 
   // Auto pulse for "live oracle" effect
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function ProofOfSupportOracle() {
       toast.success(`Groove Score atualizado: ${(res as any).groove_score}`);
       await load();
     } catch (e: any) {
+      console.error("[Groovium Dashboard]", e);
       toast.error(e?.message ?? "Falha ao sincronizar oracle");
     } finally {
       clearInterval(stepTimer);
