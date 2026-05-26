@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import grooviumOfficialNft from "@/assets/groovium-nft-official.avif";
 
 // ---------- Rarity helpers ----------
 type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis";
@@ -74,7 +75,7 @@ const OPENSEA_URL = "https://opensea.io/collection/groovium";
 const FEATURED_OFFICIAL = {
   name: "Groovium Genesis #001",
   collection: "Official Groovium Collection",
-  image: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=1200&q=80",
+  image: grooviumOfficialNft,
   rarity: "genesis" as Rarity,
   priceEth: 1.0,
   priceUsd: 2126.99,
@@ -87,7 +88,7 @@ const OFFICIAL_NFTS = [
   {
     name: "Groovium Genesis",
     collection: "Official Groovium",
-    image: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=600&q=80",
+    image: grooviumOfficialNft,
     rarity: "genesis" as Rarity,
     priceEth: 0.85,
     priceUsd: 1807.94,
@@ -96,7 +97,7 @@ const OFFICIAL_NFTS = [
   {
     name: "Sound Wave Pass",
     collection: "Official Groovium",
-    image: "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?w=600&q=80",
+    image: grooviumOfficialNft,
     rarity: "legendary" as Rarity,
     priceEth: 0.42,
     priceUsd: 893.34,
@@ -105,7 +106,7 @@ const OFFICIAL_NFTS = [
   {
     name: "Neon Holographic",
     collection: "Official Groovium",
-    image: "https://images.unsplash.com/photo-1635776063043-9bf649fc7c12?w=600&q=80",
+    image: grooviumOfficialNft,
     rarity: "epic" as Rarity,
     priceEth: 0.18,
     priceUsd: 382.86,
@@ -114,7 +115,7 @@ const OFFICIAL_NFTS = [
   {
     name: "Backstage Token",
     collection: "Official Groovium",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80",
+    image: grooviumOfficialNft,
     rarity: "rare" as Rarity,
     priceEth: 0.06,
     priceUsd: 127.62,
