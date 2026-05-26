@@ -388,8 +388,10 @@ export type Database = {
         Row: {
           ai_insight: string | null
           ai_profile: string | null
+          ai_rank: string | null
           block_number: number | null
           created_at: string
+          external_data: Json | null
           groove_score: number
           id: string
           trigger_event: string | null
@@ -400,8 +402,10 @@ export type Database = {
         Insert: {
           ai_insight?: string | null
           ai_profile?: string | null
+          ai_rank?: string | null
           block_number?: number | null
           created_at?: string
+          external_data?: Json | null
           groove_score: number
           id?: string
           trigger_event?: string | null
@@ -412,8 +416,10 @@ export type Database = {
         Update: {
           ai_insight?: string | null
           ai_profile?: string | null
+          ai_rank?: string | null
           block_number?: number | null
           created_at?: string
+          external_data?: Json | null
           groove_score?: number
           id?: string
           trigger_event?: string | null
@@ -984,17 +990,31 @@ export type Database = {
       }
       mark_all_notifications_read: { Args: never; Returns: Json }
       open_crate: { Args: { _slug: string }; Returns: Json }
-      record_oracle_sync: {
-        Args: {
-          _insight: string
-          _metrics: Json
-          _profile: string
-          _score: number
-          _trigger: string
-          _uid: string
-        }
-        Returns: Json
-      }
+      record_oracle_sync:
+        | {
+            Args: {
+              _insight: string
+              _metrics: Json
+              _profile: string
+              _score: number
+              _trigger: string
+              _uid: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              _external?: Json
+              _insight: string
+              _metrics: Json
+              _profile: string
+              _rank?: string
+              _score: number
+              _trigger: string
+              _uid: string
+            }
+            Returns: Json
+          }
       send_tip: {
         Args: { _amount: number; _message: string; _to: string }
         Returns: Json
