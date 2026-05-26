@@ -40,11 +40,7 @@ export default function Boosts() {
     if (profile.grv_points < b.requiredPoints) { toast.error("Nível insuficiente"); return; }
 
     setLoading(b.slug);
-    const { data, error } = await (supabase.rpc as any)("activate_boost", {
-      _slug: b.slug, _name: b.name, _effect: b.effect, _icon: b.icon,
-      _rarity: b.rarity, _cost: b.cost, _duration_min: b.durationMin,
-      _required_points: b.requiredPoints,
-    });
+    const { data, error } = await (supabase.rpc as any)("activate_boost", { _slug: b.slug });
     setLoading(null);
     if (error) { toast.error(error.message); return; }
     if (data?.success) {
