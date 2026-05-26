@@ -45,7 +45,7 @@ const Ranking = () => {
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
-          <Trophy className="w-7 h-7 text-primary" /> Ranking GRVM
+          <Trophy className="w-7 h-7 text-primary" /> Top GRVM Artists
         </h1>
         <p className="text-sm text-muted-foreground mt-1">Os fãs e artistas que mais movimentam a frequência.</p>
       </div>
