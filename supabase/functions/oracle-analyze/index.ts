@@ -33,6 +33,19 @@ type ExternalSignals = {
   warnings: string[];
 };
 
+type CoinGeckoPriceResponse = {
+  ethereum?: { usd?: number; usd_24h_change?: number };
+  chainlink?: { usd?: number };
+};
+
+type CoinGeckoTrendingResponse = {
+  coins?: Array<{ item?: { symbol?: string; name?: string } }>;
+};
+
+type MusicBrainzResponse = {
+  artists?: Array<{ name?: string; score?: number }>;
+};
+
 type AiResult = {
   profile: string;
   insight: string;
@@ -237,9 +250,9 @@ function readEnv() {
 
 async function fetchExternalSignals(): Promise<ExternalSignals> {
   const warnings: string[] = [];
-  let price: any = null;
-  let trend: any = null;
-  let music: any = null;
+  let price: CoinGeckoPriceResponse | null = null;
+  let trend: CoinGeckoTrendingResponse | null = null;
+  let music: MusicBrainzResponse | null = null;
 
   console.log("[2] Fetching CoinGecko");
   try {
@@ -281,7 +294,7 @@ async function fetchExternalSignals(): Promise<ExternalSignals> {
   const change = Number(price?.ethereum?.usd_24h_change ?? 0);
   const linkUsd = Number(price?.chainlink?.usd ?? 0);
   const trending = Array.isArray(trend?.coins)
-    ? trend.coins.slice(0, 3).map((c: any) => String(c?.item?.symbol ?? "")).filter(Boolean)
+    ? trend.coins.slice(0, 3).map((c) => String(c?.item?.symbol ?? "")).filter(Boolean)
     : [];
   const artistSeed = String(music?.artists?.[0]?.name ?? "Unknown");
   const musicScore = Number(music?.artists?.[0]?.score ?? 0);
