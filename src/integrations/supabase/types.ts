@@ -170,6 +170,42 @@ export type Database = {
         }
         Relationships: []
       }
+      engagement_metrics: {
+        Row: {
+          boosts_active: number
+          grv_balance: number
+          id: string
+          interactions_total: number
+          missions_completed: number
+          nft_count: number
+          streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          boosts_active?: number
+          grv_balance?: number
+          id?: string
+          interactions_total?: number
+          missions_completed?: number
+          nft_count?: number
+          streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          boosts_active?: number
+          grv_balance?: number
+          id?: string
+          interactions_total?: number
+          missions_completed?: number
+          nft_count?: number
+          streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -345,6 +381,45 @@ export type Database = {
           read?: boolean
           title?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      oracle_activity: {
+        Row: {
+          ai_insight: string | null
+          ai_profile: string | null
+          block_number: number | null
+          created_at: string
+          groove_score: number
+          id: string
+          trigger_event: string | null
+          tx_hash: string
+          user_id: string
+          workflow_status: string
+        }
+        Insert: {
+          ai_insight?: string | null
+          ai_profile?: string | null
+          block_number?: number | null
+          created_at?: string
+          groove_score: number
+          id?: string
+          trigger_event?: string | null
+          tx_hash: string
+          user_id: string
+          workflow_status?: string
+        }
+        Update: {
+          ai_insight?: string | null
+          ai_profile?: string | null
+          block_number?: number | null
+          created_at?: string
+          groove_score?: number
+          id?: string
+          trigger_event?: string | null
+          tx_hash?: string
+          user_id?: string
+          workflow_status?: string
         }
         Relationships: []
       }
@@ -748,6 +823,7 @@ export type Database = {
       claim_live_drop: { Args: { _drop_id: string }; Returns: Json }
       claim_mission: { Args: { _mission_key: string }; Returns: Json }
       claim_vip_perk: { Args: { _perk_id: string }; Returns: Json }
+      compute_engagement_metrics: { Args: { _uid: string }; Returns: Json }
       compute_level: { Args: { points: number }; Returns: string }
       create_artist_item: {
         Args: {
@@ -889,6 +965,7 @@ export type Database = {
         }[]
       }
       get_my_email: { Args: never; Returns: string }
+      get_oracle_dashboard: { Args: never; Returns: Json }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
       get_user_badges: {
         Args: { _user_id: string }
@@ -905,6 +982,17 @@ export type Database = {
       }
       mark_all_notifications_read: { Args: never; Returns: Json }
       open_crate: { Args: { _slug: string }; Returns: Json }
+      record_oracle_sync: {
+        Args: {
+          _insight: string
+          _metrics: Json
+          _profile: string
+          _score: number
+          _trigger: string
+          _uid: string
+        }
+        Returns: Json
+      }
       send_tip: {
         Args: { _amount: number; _message: string; _to: string }
         Returns: Json
