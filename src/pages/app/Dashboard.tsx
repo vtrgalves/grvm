@@ -30,7 +30,20 @@ const Dashboard = () => {
       .then(({ count }) => setRank((count ?? 0) + 1));
   }, [user, profile?.grv_points]);
 
-  if (!profile) return null;
+  if (!profile) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-10 w-64 bg-muted/30 rounded-lg" />
+        <div className="h-32 bg-muted/20 rounded-2xl" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="h-32 bg-muted/20 rounded-2xl" />
+          <div className="h-32 bg-muted/20 rounded-2xl" />
+          <div className="h-32 bg-muted/20 rounded-2xl" />
+        </div>
+        <div className="h-64 bg-muted/20 rounded-2xl" />
+      </div>
+    );
+  }
 
   const level = getLevel(profile.grv_points);
   const progress = getProgress(profile.grv_points);
