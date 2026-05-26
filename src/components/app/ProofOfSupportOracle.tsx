@@ -421,7 +421,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
                     <span className="text-primary font-bold w-20">Score {Math.round(h.score)}</span>
                     {h.rank && <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded border ${RANK_STYLES[h.rank] ?? RANK_STYLES.Rookie}`}>{h.rank}</span>}
                     <span className="text-accent">+{reward} GRVM</span>
-                    <span className="text-muted-foreground/60 truncate flex-1 text-right">{shortHash(h.tx_hash)}</span>
+                    {h.explorer_url ? (
+                      <a href={h.explorer_url} target="_blank" rel="noopener noreferrer"
+                        className="text-primary hover:text-accent truncate flex-1 text-right inline-flex items-center gap-1 justify-end">
+                        {shortHash(h.tx_hash)} <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground/60 truncate flex-1 text-right">{shortHash(h.tx_hash)}</span>
+                    )}
                   </div>
                 );
               })}
