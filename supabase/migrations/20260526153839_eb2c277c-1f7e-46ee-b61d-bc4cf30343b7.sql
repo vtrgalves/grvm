@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.record_oracle_sync(uuid, numeric, text, text, text, jsonb, text, jsonb) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.record_oracle_sync(uuid, numeric, text, text, text, jsonb, text, jsonb) TO service_role;

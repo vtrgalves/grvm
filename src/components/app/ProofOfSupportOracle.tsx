@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Activity, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
+  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, Globe, HelpCircle, Link2, Loader2,
   RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -18,10 +18,10 @@ interface OracleData {
     tx_hash: string;
     block_number: number;
     workflow_status: string;
-    external_data: Record<string, any> | null;
+    external_data: Record<string, unknown> | null;
     created_at: string;
   } | null;
-  metrics: any;
+  metrics: Record<string, unknown> | null;
   history: Array<{
     id: string;
     score: number;
@@ -33,6 +33,13 @@ interface OracleData {
     created_at: string;
   }>;
 }
+
+type OracleSyncResponse = {
+  success?: boolean;
+  error?: string;
+  grooveScore?: number;
+  rank?: string;
+};
 
 const WORKFLOW_STEPS = [
   { label: "Coletando métricas do fã", icon: Activity },
@@ -119,7 +126,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       });
       clearInterval(stepTimer);
       if (error) throw error;
-      const r = res as any;
+      const r = res as OracleSyncResponse;
       if (!r?.success) throw new Error(r?.error || "Falha ao conectar Oracle. Tente novamente.");
 
       setRunningStep(WORKFLOW_STEPS.length - 1);
@@ -134,9 +141,11 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       });
 
       await load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("[Oracle CRE]", e);
-      toast.error(e?.message ?? "Falha ao conectar Oracle. Tente novamente.");
+      toast.error(e instanceof Error ? e.message : "Falha ao conectar Oracle. Tente novamente.", {
+        description: "O Dashboard continuará exibindo o último score e histórico disponível.",
+      });
       setProgress(0);
     } finally {
       clearInterval(stepTimer);
@@ -154,6 +163,8 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
   const scoreColor = rawScore >= 700 ? "text-primary" : rawScore >= 400 ? "text-accent" : "text-muted-foreground";
   const shortHash = (h?: string) => h ? `${h.slice(0, 10)}...${h.slice(-6)}` : "0x000000";
   const ext = data?.latest?.external_data ?? {};
+  const externalOffline = Boolean(ext.api_offline || ext.coingecko_ok === false || ext.musicbrainz_ok === false);
+  const aiOffline = ext.ai_ok === false || (Array.isArray(ext.warnings) && ext.warnings.some((w) => String(w).toLowerCase().includes("ia")));
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -175,6 +186,8 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <span className="text-[9px] font-display uppercase tracking-widest px-2 py-0.5 rounded-full border border-accent/40 text-accent bg-accent/5">
               Simulated CRE · Beta
             </span>
+            {externalOffline && <StatusBadge label="External API Offline" />}
+            {aiOffline && <StatusBadge label="IA temporariamente indisponível" />}
             <Tooltip>
               <TooltipTrigger asChild>
                 <button className="text-muted-foreground hover:text-primary transition-colors">
@@ -337,9 +350,15 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <ExtCell label="ETH/USD" value={ext.eth_usd ? `$${Number(ext.eth_usd).toLocaleString()}` : "—"} />
             <ExtCell label="ETH 24h" value={ext.eth_change_24h != null ? `${Number(ext.eth_change_24h).toFixed(2)}%` : "—"}
               color={Number(ext.eth_change_24h ?? 0) >= 0 ? "text-primary" : "text-destructive"} />
-            <ExtCell label="Trending" value={ext.trending_coin ?? "—"} />
-            <ExtCell label="Music seed" value={ext.music_seed ?? "—"} truncate />
+            <ExtCell label="Trending" value={Array.isArray(ext.trending) && ext.trending.length ? ext.trending.map(String).join(" · ") : String(ext.trending_coin ?? "—")} />
+            <ExtCell label="Music seed" value={String(ext.artistSeed ?? ext.music_seed ?? "—")} truncate />
           </div>
+          {(externalOffline || aiOffline) && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {externalOffline && <StatusBadge label="External API Offline" />}
+              {aiOffline && <StatusBadge label="IA temporariamente indisponível" />}
+            </div>
+          )}
         </div>
 
         {/* History */}
@@ -374,6 +393,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       </div>
     </div>
     </TooltipProvider>
+  );
+}
+
+function StatusBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-destructive/40 bg-destructive/10 text-destructive text-[9px] font-display uppercase tracking-wider">
+      <AlertTriangle className="w-3 h-3" /> ⚠ {label}
+    </span>
   );
 }
 
