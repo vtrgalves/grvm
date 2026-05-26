@@ -513,6 +513,7 @@ function successResponse(body: {
   durationMs?: number;
   workflow?: WorkflowStep[];
 }) {
+  console.log("[7] Returning success");
   return new Response(JSON.stringify({ success: true, ...body }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
