@@ -40,7 +40,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await (supabase.rpc as any)("create_or_sync_profile");
       if (error) throw error;
-      const synced = data as Profile | null;
+      let synced = data as Profile | null;
+
+      // Apply pending profile_type from OAuth signup choice
+      const pendingType = typeof window !== "undefined" ? localStorage.getItem("selected_profile_type") : null;
+      if (synced && pendingType && (pendingType === "fan" || pendingType === "musician") && synced.profile_type !== pendingType) {
+        const { data: upd } = await supabase
+          .from("profiles")
+          .update({ profile_type: pendingType as "fan" | "musician" })
+          .eq("user_id", uid)
+          .select()
+          .maybeSingle();
+        if (upd) synced = upd as unknown as Profile;
+      }
+      if (typeof window !== "undefined") localStorage.removeItem("selected_profile_type");
+
       setProfile(synced ? {
         ...synced,
         id: synced.user_id ?? uid,
