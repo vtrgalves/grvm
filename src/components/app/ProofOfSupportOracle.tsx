@@ -350,8 +350,8 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <ExtCell label="ETH/USD" value={ext.eth_usd ? `$${Number(ext.eth_usd).toLocaleString()}` : "—"} />
             <ExtCell label="ETH 24h" value={ext.eth_change_24h != null ? `${Number(ext.eth_change_24h).toFixed(2)}%` : "—"}
               color={Number(ext.eth_change_24h ?? 0) >= 0 ? "text-primary" : "text-destructive"} />
-            <ExtCell label="Trending" value={Array.isArray(ext.trending) && ext.trending.length ? ext.trending.join(" · ") : ext.trending_coin ?? "—"} />
-            <ExtCell label="Music seed" value={ext.artistSeed ?? ext.music_seed ?? "—"} truncate />
+            <ExtCell label="Trending" value={Array.isArray(ext.trending) && ext.trending.length ? ext.trending.map(String).join(" · ") : String(ext.trending_coin ?? "—")} />
+            <ExtCell label="Music seed" value={String(ext.artistSeed ?? ext.music_seed ?? "—")} truncate />
           </div>
           {(externalOffline || aiOffline) && (
             <div className="mt-3 flex flex-wrap gap-2">
