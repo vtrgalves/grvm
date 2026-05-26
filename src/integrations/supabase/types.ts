@@ -853,6 +853,7 @@ export type Database = {
         }
         Returns: Json
       }
+      create_or_sync_profile: { Args: never; Returns: Json }
       create_post: { Args: { _content: string }; Returns: Json }
       daily_checkin: { Args: never; Returns: Json }
       get_active_boosts: {
@@ -913,6 +914,7 @@ export type Database = {
         }[]
       }
       get_daily_status: { Args: never; Returns: Json }
+      get_dashboard_data: { Args: never; Returns: Json }
       get_explorer_feed: {
         Args: { _filter?: string; _limit?: number }
         Returns: {

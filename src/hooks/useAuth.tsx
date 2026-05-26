@@ -7,6 +7,10 @@ interface Profile {
   user_id: string;
   name: string;
   email: string | null;
+  username?: string;
+  avatar_url?: string | null;
+  grv_balance?: number;
+  xp?: number;
   profile_type: "fan" | "musician";
   city: string | null;
   photo_url: string | null;
@@ -33,38 +37,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (uid: string) => {
-    let { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", uid)
-      .maybeSingle();
-
-    if (!data) {
-      // Auto-create profile (handles OAuth users where the DB trigger didn't fire)
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      const meta = (authUser?.user_metadata ?? {}) as Record<string, unknown>;
-      const name =
-        (meta.full_name as string) ||
-        (meta.name as string) ||
-        (authUser?.email?.split("@")[0] ?? "Groover");
-      const photo_url = (meta.avatar_url as string) || (meta.picture as string) || null;
-      const { data: created } = await supabase
-        .from("profiles")
-        .insert({
-          user_id: uid,
-          name,
-          email: authUser?.email ?? null,
-          photo_url,
-          profile_type: "fan",
-          grv_points: 100,
-          level: "Listener",
-        })
-        .select("*")
-        .maybeSingle();
-      data = created;
+    try {
+      const { data, error } = await (supabase.rpc as any)("create_or_sync_profile");
+      if (error) throw error;
+      const synced = data as Profile | null;
+      setProfile(synced ? {
+        ...synced,
+        id: synced.user_id ?? uid,
+        user_id: synced.user_id ?? synced.id ?? uid,
+        name: synced.name ?? synced.username ?? "Groover",
+        email: null,
+        photo_url: synced.photo_url ?? synced.avatar_url ?? null,
+        grv_points: synced.grv_points ?? synced.grv_balance ?? 2000,
+        level: synced.level ?? "Listener",
+        city: synced.city ?? null,
+        selected_genres: synced.selected_genres ?? null,
+        profile_type: synced.profile_type ?? "fan",
+      } : null);
+    } catch (error) {
+      console.error("[Groovium Dashboard]", error);
+      setProfile(null);
     }
-
-    setProfile((data as Profile) ?? null);
   };
 
   useEffect(() => {
@@ -72,9 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(sess);
       setUser(sess?.user ?? null);
       if (sess?.user) {
-        setTimeout(() => fetchProfile(sess.user.id), 0);
+        setTimeout(() => fetchProfile(sess.user.id).finally(() => setLoading(false)), 0);
       } else {
         setProfile(null);
+        setLoading(false);
       }
     });
 
