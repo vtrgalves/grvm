@@ -205,7 +205,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
                 </button>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
-                <p className="text-xs">Workflow real: APIs (CoinGecko · MusicBrainz) + IA (Gemini) + persistência Supabase + prova onchain simulada.</p>
+                <p className="text-xs">O Groove Score do Groovium é validado por um workflow Chainlink CRE (APIs + IA + persistência) e registrado on-chain na Solana Devnet como prova descentralizada de reputação musical.</p>
               </TooltipContent>
             </Tooltip>
           </div>
