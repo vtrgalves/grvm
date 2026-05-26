@@ -17,6 +17,10 @@ interface OracleData {
     ai_rank: string | null;
     tx_hash: string;
     block_number: number;
+    slot: number | null;
+    chain: string | null;
+    explorer_url: string | null;
+    oracle_hash: string | null;
     workflow_status: string;
     external_data: Record<string, unknown> | null;
     created_at: string;
@@ -29,6 +33,10 @@ interface OracleData {
     rank: string | null;
     tx_hash: string;
     block_number: number;
+    slot: number | null;
+    chain: string | null;
+    explorer_url: string | null;
+    oracle_hash: string | null;
     trigger_event: string;
     created_at: string;
   }>;
@@ -39,6 +47,8 @@ type OracleSyncResponse = {
   error?: string;
   grooveScore?: number;
   rank?: string;
+  chain?: string;
+  explorerUrl?: string | null;
 };
 
 const WORKFLOW_STEPS = [
@@ -46,7 +56,7 @@ const WORKFLOW_STEPS = [
   { label: "APIs externas (CoinGecko · MusicBrainz)", icon: Globe },
   { label: "Calculando Groove Score (0–1000)", icon: Zap },
   { label: "IA analisando perfil (Gemini)", icon: Brain },
-  { label: "Registrando prova onchain", icon: ShieldCheck },
+  { label: "Registrando proof na Solana Devnet", icon: ShieldCheck },
 ];
 
 const RANK_STYLES: Record<string, string> = {
