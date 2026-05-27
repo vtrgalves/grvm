@@ -1,66 +1,80 @@
-## Objetivo
+# Evolução do Proof of Support Oracle — GRVM Reputation Engine
 
-Posicionar o Groovium como projeto **Powered by Chainlink CRE** e **Future on Solana**, padronizando a sigla oficial **GRVM** em toda a Landing Page e App — mantendo identidade cyberpunk, sem poluir o visual.
+Transformar o Oracle no coração do Groovium: motor de reputação Web3 gamificado com Smart Actions, score dinâmico 0–1000, 7 ranks, prova real na Solana Devnet e UX acessível para leigos. Sem quebrar wallet, crates, boosts, NFTs, auth, feed ou gamificação.
 
----
+## O que muda
 
-## Escopo por área
+### 1. Backend / Edge Function (`oracle-analyze`)
+- **Score 2.0 (0–1000)**: recalibrar fórmula com peso por categoria (engagement, social, support, collector, frequency) + penalidade de inatividade.
+- **7 ranks novos**: Rookie · Supporter · Insider · Groove Hunter · Viral Supporter · Legendary · Genesis Icon (substitui Rookie/Rising/Viral/Legendary).
+- **Smart Actions agregadas**: derivar últimas N ações relevantes do `point_transactions` + interações sociais, classificar cada uma com label/icon/impacto reputacional, devolver no payload.
+- **AI insight mais humano**: prompt revisado para frases de comportamento ("você apoia antes da tendência", "perfil de colecionador") sem inventar números.
+- **Memo Solana enriquecido**: inclui `activity_hash` (hash agregado das smart actions) + score + rank.
+- **Fallback graceful** mantido (já existe).
 
-### 1. Componentes novos compartilhados
-- `src/components/Web3Badges.tsx` — par de badges `[Powered by Chainlink CRE] [Future on Solana]` com tooltip, glow discreto, usado no Header da Landing e no rodapé da Sidebar do App.
-- `src/components/Web3FutureModal.tsx` — modal educativo "O Futuro Web3 do GRVM" (hoje vs. futuro, com logos).
-- `src/assets/chainlink-logo.svg` e `src/assets/solana-logo.svg` — SVGs inline minimalistas (sem download externo, ~30 linhas cada).
+### 2. RPCs Supabase
+- `compute_engagement_metrics` ganha campos extras: `grv_spent`, `grv_earned`, `recent_activity_count`, `days_since_last_action`.
+- Nova RPC `get_smart_actions(_uid, _limit)` — retorna últimas ações tipadas com impacto reputacional para o card timeline.
+- `record_oracle_sync` aceita `_smart_actions` jsonb e `_rank` novo (compatível com ranks antigos).
 
-### 2. Landing Page
-- **Header** (`Header.tsx`): adicionar `<Web3Badges />` à direita, antes dos botões.
-- **HeroSection**: faixa fina abaixo do CTA — "⚡ Powered by Chainlink CRE · ◎ Future Solana Ecosystem" + frase curta.
-- **Nova seção `Web3StackSection.tsx`**: 3 cards glassmorphism (Chainlink CRE, Solana, IA Groovium) inserida entre `DifferentialsSection` e `RoadmapSection` em `pages/Index.tsx`.
-- **RoadmapSection**: adicionar 5ª fase "Fase Web3" (Wallet Solana, Token GRVM, NFTs on-chain, Oracle Reputation, Chainlink Automation, SocialFi).
+### 3. Frontend — `ProofOfSupportOracle.tsx`
+- **Sync stepper visual** (5 etapas animadas):
+  1. "Lendo sua atividade no ecossistema GRVM" (counters: likes/follows/NFTs/boosts/crates/missões)
+  2. "Chainlink CRE analisando comportamento"
+  3. "Gerando reputação musical" (score animado subindo do anterior → novo)
+  4. "Registrando Oracle Proof na Solana" (txid/slot/explorer)
+  5. "Reputação sincronizada" (delta de reputação + GRVM)
+- **Score 0–1000** com barra de progresso por rank + cor por rank.
+- **Smart Actions Timeline card** — "Sua atividade virou reputação Web3" com ícone + label + delta de reputação.
+- **Modal "Como funciona?"** — explicação para leigos (Web2 Activity → CRE → Solana → GRVM Reputation).
+- Manter cards existentes (workflow, external signals, Solana proof) sem quebrar.
 
-### 3. App autenticado
-- **AppSidebar** (footer): badges compactos Chainlink/Solana abrindo `Web3FutureModal`.
-- **AppLayout / Header**: trocar pill "GRV" por "GRVM" (label visual apenas).
-- **Wallet** (`pages/app/Wallet.tsx`): label "Saldo atual" mantém — trocar "GRV" → "GRVM"; adicionar bloco "Future Solana Wallet" com selo "Web3 Expansion · In Development".
-- **ProofOfSupportOracle**: adicionar header badge "Powered by Chainlink CRE" + descrição curta + link oficial.
-- **NFTs** (`pages/app/NFTs.tsx`): selo "Future Solana NFTs" no topo.
-- **Boosts / Crates / Missions**: adicionar pequenos chips ("Chainlink Verified Activity", "Future Solana Reward", "Oracle Synced") onde fizer sentido — uma referência sutil por página, sem exagero.
-- **Ranking**: título "Top GRVM Artists".
+### 4. Landing Page
+- Nova seção `OracleReputationSection.tsx` entre `Web3StackSection` e `RoadmapSection`:
+  - Headline: "Sua reputação musical agora é verificável."
+  - Fluxo visual: Web2 Activity → Chainlink CRE → Solana Oracle Proof → GRVM Reputation
+  - 4 cards/steps com ícones cyberpunk.
 
-### 4. Padronização GRVM (busca global)
-Substituir em strings de UI:
-- `GRV ` (com espaço, em labels de saldo/pontos) → `GRVM`
-- `Grovium` (typo) → `Groovium`
-- `GRVM Coin` → `Groovium (GRVM)` quando usado como nome do projeto
-- Manter referências internas a `grv_points` no schema (não mexer no DB).
-
-Arquivos com referências confirmadas a revisar: `Wallet.tsx`, `AppLayout.tsx`, `Dashboard.tsx`, `HeroSection.tsx`, `Boosts.tsx`, `Crates.tsx`, `MissionsApp.tsx`, `Ranking.tsx`, `Levels.tsx`, `ProfileEdit.tsx`, `WelcomeOverlay.tsx`, etc.
-
-### 5. Estilo
-- Reusar tokens existentes (`--primary`, `--accent`, `--secondary`).
-- Adicionar 2 utilitários em `index.css`: `.chainlink-glow` (azul) e `.solana-glow` (gradiente verde→roxo).
-- Logos SVG inline com `currentColor` para herdar tema.
-
----
+### 5. Não muda
+- Schema de tabelas (apenas RPC nova + colunas já existentes em `oracle_activity`).
+- Auth, OAuth Google, wallet, crates, boosts, NFTs, ranking, feed, missões.
+- Economia GRVM (Web2 simulado).
+- Fluxo de checkout, tip, follow, like.
 
 ## Detalhes técnicos
 
-- Nenhuma mudança de schema/migration — alteração puramente visual e de copy.
-- Nenhuma alteração nas RPCs ou edge functions.
-- Badges usam `Tooltip` do shadcn (já instalado).
-- Modal usa `Dialog` do shadcn.
-- Links abrem em nova aba (`target="_blank" rel="noopener"`).
+```text
+score = clamp(0, 1000,
+  log10(1+grv_earned)*40           // base
+  + missions*12 + nft*18 + badges*30 + boosts*22
+  + min(streak,30)*6 + tips_sent*14
+  + (follows*4 + likes*1.5 + comments*2.5)   // social
+  + crates*8
+  + market_bonus(eth_24h) + music_bonus
+  - inactivity_penalty(days_since_last_action)
+)
+```
 
----
+Ranks por faixa (matriz no edge function + frontend helper compartilhado em `src/lib/oracle.ts`).
 
-## Fora de escopo
+Smart Actions derivadas mapeando `point_transactions.action` → `{label, icon, reputation_delta}`:
+- `mission_complete` → ⚡ +15
+- `item_purchase` / `live_drop_purchase` → 🎵 +32
+- `crate_open` → 🔥 +18
+- `post_comment` → 💬 +8
+- `follow_artist` → 🎧 +10
+- `tip_sent` → 💸 +25
+- `badge_earned` → 🏆 +40
 
-- Integração real com Solana (wallet adapter, RPC).
-- Migração do token GRV→GRVM no banco (campos `grv_points`, tabelas mantêm nome interno).
-- Substituição em comentários de código ou nomes de variáveis.
-- Correções de segurança pendentes (boost RPC, ai-groovium auth) — já endereçadas em turnos anteriores ou exigem turno dedicado.
+## Riscos & mitigação
+- **Migração de RPC**: mantenho compatibilidade — `record_oracle_sync` ganha parâmetro opcional, ranks antigos continuam aceitos.
+- **Performance**: Smart Actions limitadas a 20 últimas, derivadas em SQL (sem N+1).
+- **Solana custo**: 1 memo por sync (já é assim), não por smart action.
+- **Fallback**: se RPC `get_smart_actions` falhar, frontend mostra estado vazio com mensagem amigável.
 
----
-
-## Resultado esperado
-
-Landing com autoridade Web3, App com narrativa Chainlink/Solana presente mas elegante, sigla **GRVM** consistente. Visual cyberpunk preservado, sem poluição de logos.
+## Ordem de execução
+1. Migration: nova RPC `get_smart_actions` + ampliar `compute_engagement_metrics`.
+2. Helper compartilhado `src/lib/oracle.ts` (ranks + smart action mapping).
+3. Edge function `oracle-analyze` — score 2.0 + smart actions no payload + prompt IA novo.
+4. `ProofOfSupportOracle.tsx` — stepper, score 0–1000, timeline, modal "Como funciona?".
+5. Landing — `OracleReputationSection.tsx` + plug no `Index.tsx`.
