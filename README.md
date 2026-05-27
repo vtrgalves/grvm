@@ -135,3 +135,41 @@ Projeto proprietário © 2026 Groovium. Todos os direitos reservados.
 ---
 
 **Construído com 💙 e 💗 no [Lovable](https://lovable.dev).**
+
+---
+
+## 🔐 Security Architecture
+
+O Groovium foi endurecido para ficar **público no GitHub com segurança**:
+
+### Secrets & chaves
+- Apenas a **anon/publishable key** do Supabase está no frontend (`VITE_SUPABASE_PUBLISHABLE_KEY`). É segura por design.
+- `service_role`, `SOLANA_PRIVATE_KEY`, `LOVABLE_API_KEY` e demais segredos vivem **somente em Lovable Cloud Secrets** (env vars das Edge Functions). Nunca tocam o bundle do cliente.
+- `.gitignore` bloqueia `.env`, `*.key`, `*.pem`, `wallet*.json`, `solana-keypair*.json`.
+
+### Autenticação
+- **Supabase Auth** com Email/Password + **Google OAuth** (Lovable Cloud Managed Social Login).
+- Sessões em `localStorage` com auto refresh; tokens validados server-side em todas as edge functions via `supabase.auth.getClaims(jwt)`.
+- Nenhuma checagem de privilégio acontece no cliente.
+
+### Banco de dados
+- **RLS habilitado em todas as tabelas** do schema `public`.
+- Policies são `authenticated`-only e escopadas por `auth.uid()` (owner-only onde apropriado: `point_transactions`, `crate_openings`, `notifications`, `oracle_activity`, `daily_checkins`, `engagement_metrics`, `user_boosts`, etc.).
+- Tabela `service_config` (que guarda a keypair Solana do backend) tem **DENY ALL** para anon e authenticated; só `service_role` lê.
+- Funções `SECURITY DEFINER` tiveram `EXECUTE` revogado de `PUBLIC`/`anon`; apenas usuários logados podem chamar os RPCs do app.
+
+### Edge Functions
+- `oracle-analyze` e `ai-groovium` validam JWT manualmente e usam `service_role` somente no servidor.
+- Rate limiting básico (cooldowns/timestamps) no IA gateway.
+- Logs não imprimem JWTs, emails ou payloads sensíveis — apenas status de workflow e chaves públicas Solana.
+
+### Solana / Chainlink
+- A wallet de serviço fica em `service_config` (RLS deny-all) ou em `SOLANA_PRIVATE_KEY`.
+- Memos on-chain contêm apenas: `groove_score`, `oracle_hash`, `rank`, `timestamp`. **Nunca** email, nome ou dados pessoais.
+- `tx_hash` e `explorer_url` são públicos por natureza.
+
+### Privacidade
+- Email do usuário acessível **somente** ao próprio dono via `get_my_email()`.
+- Perfis públicos expõem apenas `name`, `handle`, `photo_url`, `bio`, `level`, `grv_points`.
+
+> 🎧 *Secure the frequency.*
