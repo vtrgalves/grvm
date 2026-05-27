@@ -13,6 +13,7 @@ import RoadmapSection from "@/components/RoadmapSection";
 import CTASection from "@/components/CTASection";
 import ArtistsCarousel from "@/components/ArtistsCarousel";
 import FooterSection from "@/components/FooterSection";
+import OracleReputationSection from "@/components/OracleReputationSection";
 
 const Index = () => {
   return (
@@ -27,6 +28,7 @@ const Index = () => {
       <EcosystemSection />
       <DifferentialsSection />
       <Web3StackSection />
+      <OracleReputationSection />
       <RoadmapSection />
       <CTASection />
       <ArtistsCarousel />

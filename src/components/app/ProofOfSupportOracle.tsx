@@ -3,11 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import {
   Activity, AlertTriangle, Brain, CheckCircle2, Cpu, ExternalLink, Globe, HelpCircle, Link2, Loader2,
-  RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap,
+  RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap, Radio,
 } from "lucide-react";
 import { toast } from "sonner";
+import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank, type SmartAction } from "@/lib/oracle";
 
 interface OracleData {
   latest: {
@@ -22,10 +24,10 @@ interface OracleData {
     explorer_url: string | null;
     oracle_hash: string | null;
     workflow_status: string;
-    external_data: Record<string, unknown> | null;
+    external_data: Record<string, any> | null;
     created_at: string;
   } | null;
-  metrics: Record<string, unknown> | null;
+  metrics: Record<string, any> | null;
   history: Array<{
     id: string;
     score: number;
@@ -46,25 +48,19 @@ type OracleSyncResponse = {
   success?: boolean;
   error?: string;
   grooveScore?: number;
-  rank?: string;
+  rank?: OracleRank;
   chain?: string;
   explorerUrl?: string | null;
+  smartActions?: SmartAction[];
 };
 
 const WORKFLOW_STEPS = [
-  { label: "Coletando métricas do fã", icon: Activity },
-  { label: "APIs externas (CoinGecko · MusicBrainz)", icon: Globe },
-  { label: "Calculando Groove Score (0–1000)", icon: Zap },
-  { label: "IA analisando perfil (Gemini)", icon: Brain },
-  { label: "Registrando proof na Solana Devnet", icon: ShieldCheck },
+  { label: "Lendo sua atividade no ecossistema GRVM", icon: Activity },
+  { label: "Chainlink CRE analisando comportamento", icon: Cpu },
+  { label: "Gerando reputação musical", icon: Zap },
+  { label: "Registrando Oracle Proof na Solana Devnet", icon: ShieldCheck },
+  { label: "Reputação sincronizada com sucesso", icon: Sparkles },
 ];
-
-const RANK_STYLES: Record<string, string> = {
-  Rookie: "border-muted-foreground/40 text-muted-foreground bg-muted/10",
-  Rising: "border-accent/50 text-accent bg-accent/10",
-  Viral: "border-primary/60 text-primary bg-primary/10",
-  Legendary: "border-secondary/60 text-secondary bg-secondary/10",
-};
 
 function useCountUp(target: number, duration = 900) {
   const [value, setValue] = useState(target);
@@ -106,15 +102,19 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
   const [progress, setProgress] = useState(0);
   const [prevScore, setPrevScore] = useState<number | null>(null);
   const [lastReward, setLastReward] = useState<number | null>(null);
+  const [smartActions, setSmartActions] = useState<SmartAction[]>([]);
 
   const load = async () => {
-    const { data: res, error } = await supabase.rpc("get_oracle_dashboard");
-    if (error) return;
-    setData(res as unknown as OracleData);
+    const [{ data: res }, { data: sa }] = await Promise.all([
+      supabase.rpc("get_oracle_dashboard"),
+      supabase.rpc("get_smart_actions", { _limit: 12 }),
+    ]);
+    if (res) setData(res as unknown as OracleData);
+    if (Array.isArray(sa)) setSmartActions(sa as SmartAction[]);
   };
 
   useEffect(() => { setData(initialData); }, [initialData]);
-  useEffect(() => { if (!initialData) load(); }, [initialData]);
+  useEffect(() => { load(); /* always refresh smart actions */ /* eslint-disable-next-line */ }, []);
 
   const sync = async () => {
     setLoading(true);
@@ -141,6 +141,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
 
       setRunningStep(WORKFLOW_STEPS.length - 1);
       setProgress(100);
+      if (Array.isArray(r.smartActions)) setSmartActions(r.smartActions);
 
       const reward = Math.max(40, Math.round((r.grooveScore ?? 0) * 0.15));
       setLastReward(reward);
@@ -159,7 +160,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       setProgress(0);
     } finally {
       clearInterval(stepTimer);
-      setTimeout(() => { setRunningStep(-1); setLoading(false); setProgress(0); }, 900);
+      setTimeout(() => { setRunningStep(-1); setLoading(false); setProgress(0); }, 1200);
     }
   };
 
@@ -169,12 +170,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
     () => (prevScore !== null ? Math.round(rawScore - prevScore) : 0),
     [rawScore, prevScore],
   );
-  const rank = data?.latest?.ai_rank ?? (rawScore >= 800 ? "Legendary" : rawScore >= 550 ? "Viral" : rawScore >= 300 ? "Rising" : "Rookie");
+  const rank: OracleRank = normalizeRank(data?.latest?.ai_rank, rawScore);
   const scoreColor = rawScore >= 700 ? "text-primary" : rawScore >= 400 ? "text-accent" : "text-muted-foreground";
   const shortHash = (h?: string) => h ? `${h.slice(0, 10)}...${h.slice(-6)}` : "0x000000";
   const ext = data?.latest?.external_data ?? {};
   const externalOffline = Boolean(ext.api_offline || ext.coingecko_ok === false || ext.musicbrainz_ok === false);
-  const aiOffline = ext.ai_ok === false || (Array.isArray(ext.warnings) && ext.warnings.some((w) => String(w).toLowerCase().includes("ia")));
+  const aiOffline = ext.ai_ok === false || (Array.isArray(ext.warnings) && ext.warnings.some((w: any) => String(w).toLowerCase().includes("ia")));
+
+  const totalReputationGain = smartActions.reduce((acc, a) => acc + (a.reputation_delta || 0), 0);
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -198,34 +201,59 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             </span>
             {externalOffline && <StatusBadge label="External API Offline" />}
             {aiOffline && <StatusBadge label="IA temporariamente indisponível" />}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="text-muted-foreground hover:text-primary transition-colors">
-                  <HelpCircle className="w-3.5 h-3.5" />
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors">
+                  <HelpCircle className="w-3 h-3" /> Como funciona?
                 </button>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p className="text-xs">O Groove Score do Groovium é validado por um workflow Chainlink CRE (APIs + IA + persistência) e registrado on-chain na Solana Devnet como prova descentralizada de reputação musical.</p>
-              </TooltipContent>
-            </Tooltip>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg bg-background/95 border-primary/30">
+                <DialogHeader>
+                  <DialogTitle className="font-display text-xl gradient-neon-text">🎧 Reputação musical verificável</DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground">
+                    Como o Groovium transforma sua atividade em reputação Web3.
+                  </DialogDescription>
+                </DialogHeader>
+                <ol className="space-y-3 text-sm">
+                  <li className="flex gap-3">
+                    <span className="text-primary font-display">1.</span>
+                    <span>Cada interação no Groovium (missão, follow, NFT, comentário, tip) vira uma <strong>Smart Action</strong> com impacto reputacional.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-primary font-display">2.</span>
+                    <span>O <strong>Chainlink CRE</strong> orquestra um workflow: lê suas métricas, consulta APIs externas e processa com IA.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-primary font-display">3.</span>
+                    <span>Geramos um <strong>GRVM Reputation Score</strong> (0–1000) com 7 ranks: Rookie → Genesis Icon.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-primary font-display">4.</span>
+                    <span>Uma prova SHA-256 é registrada como memo na <strong>Solana Devnet</strong> — histórico imutável e verificável no Explorer.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-primary font-display">5.</span>
+                    <span>Você recebe GRVM e sua reputação cresce. Tudo sem precisar conhecer blockchain.</span>
+                  </li>
+                </ol>
+                <div className="mt-2 p-3 rounded-lg bg-primary/5 border border-primary/30 text-xs text-muted-foreground">
+                  💡 A economia GRVM é simulada (Web2). A Web3 aqui é usada para <strong className="text-primary">reputação e prova de atividade</strong>, não transferência de valor.
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <h2 className="font-display text-xl md:text-2xl font-black gradient-neon-text flex items-center gap-2">
             🎧 Proof of Support Oracle
           </h2>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            <a
-              href="https://chain.link/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-primary/40 bg-primary/5 text-[10px] font-display uppercase tracking-wider text-primary hover:border-primary/70 transition-colors"
-            >
-              <svg viewBox="0 0 32 32" className="w-3 h-3" fill="currentColor"><path d="M16 2 3 9.5v13L16 30l13-7.5v-13L16 2zm0 4.4 9.2 5.3v8.6L16 25.6l-9.2-5.3v-8.6L16 6.4z" /></svg>
-              Powered by Chainlink CRE
-            </a>
-            <span className="text-[10px] text-muted-foreground">· GRVM Reputation Score</span>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-primary/40 bg-primary/5 text-[10px] font-display uppercase tracking-wider text-primary">
+              <Radio className="w-3 h-3" /> GRVM Reputation Engine
+            </span>
+            <span className="text-[10px] text-muted-foreground">· última sync {timeAgo(data?.latest?.created_at)}</span>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Workflow Oracle utilizando IA + APIs externas + reputação musical gamificada · última sync {timeAgo(data?.latest?.created_at)}.
+          <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+            Sua atividade musical no Groovium vira reputação Web3 verificável. Cada Smart Action alimenta o Oracle, que registra uma prova on-chain na Solana.
           </p>
         </div>
         <Button onClick={sync} disabled={loading} size="sm"
@@ -252,7 +280,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
         <div className="md:col-span-1 rounded-xl border border-primary/30 bg-background/40 backdrop-blur p-4 relative overflow-hidden hover:border-primary/60 transition-colors">
           <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/20 blur-3xl" />
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
-            <Zap className="w-3 h-3 text-primary" /> Groove Score
+            <Zap className="w-3 h-3 text-primary" /> GRVM Reputation Score
           </div>
           <div className="flex items-end gap-2">
             <div className={`font-display text-5xl md:text-6xl font-black ${scoreColor} drop-shadow-[0_0_18px_hsl(var(--primary)/0.5)] inline-block tabular-nums`}>
@@ -267,7 +295,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             />
           </div>
           <div className="flex items-center justify-between mt-3 gap-2 flex-wrap">
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-display uppercase tracking-wider ${RANK_STYLES[rank] ?? RANK_STYLES.Rookie}`}>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-display uppercase tracking-wider ${RANK_STYLES[rank]}`}>
               <TrendingUp className="w-3 h-3" /> {rank}
             </span>
             {delta !== 0 && (
@@ -276,6 +304,9 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
               </span>
             )}
           </div>
+          <div className="mt-2 text-[9px] uppercase tracking-widest text-muted-foreground/60">
+            Próximo rank: {nextRankLabel(rawScore)}
+          </div>
           {lastReward !== null && !loading && (
             <div className="mt-3 px-3 py-2 rounded-lg bg-accent/10 border border-accent/30 text-xs font-display text-accent flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5" /> +{lastReward} GRVM recebidos
@@ -283,7 +314,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           )}
         </div>
 
-        {/* Workflow checklist */}
+        {/* Workflow checklist (5 steps) */}
         <div className="md:col-span-2 rounded-xl border border-secondary/30 bg-background/40 backdrop-blur p-4 hover:border-secondary/60 transition-colors">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -323,6 +354,47 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
           </div>
         </div>
 
+        {/* Smart Actions Timeline */}
+        <div className="md:col-span-3 rounded-xl border border-accent/30 bg-background/40 backdrop-blur p-4 hover:border-accent/60 transition-colors">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                <Sparkles className="w-3 h-3 text-accent" /> Sua atividade virou reputação Web3
+              </div>
+              <p className="text-[11px] text-muted-foreground/80 mt-0.5">
+                Cada Smart Action aumenta sua reputação musical e alimenta o Oracle.
+              </p>
+            </div>
+            {smartActions.length > 0 && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary">
+                <TrendingUp className="w-3 h-3" /> +{totalReputationGain} reputation
+              </span>
+            )}
+          </div>
+          {smartActions.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-4">
+              Interaja com artistas, missões ou drops para gerar suas primeiras Smart Actions.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-72 overflow-y-auto pr-1">
+              {smartActions.slice(0, 9).map((a) => (
+                <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-lg border border-border/40 bg-background/50 hover:border-accent/40 transition-colors">
+                  <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-lg">
+                    {a.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-display text-foreground truncate">{a.label}</div>
+                    <div className="text-[10px] text-muted-foreground truncate">
+                      {a.description || a.action} · {timeAgo(a.created_at)}
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono text-primary whitespace-nowrap">+{a.reputation_delta} rep</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* AI Insight */}
         <div className="md:col-span-2 rounded-xl border border-accent/30 bg-background/40 backdrop-blur p-4 relative overflow-hidden hover:border-accent/60 transition-colors">
           <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-accent/20 blur-3xl" />
@@ -335,11 +407,11 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             </div>
           )}
           <p className="font-display text-sm md:text-base leading-relaxed text-foreground/90">
-            {data?.latest?.ai_insight ?? "Clique em Sync Oracle para rodar o workflow CRE e gerar sua análise."}
+            {data?.latest?.ai_insight ?? "Clique em Sync Oracle para gerar sua análise comportamental."}
           </p>
         </div>
 
-        {/* Onchain Proof — Solana Devnet */}
+        {/* Solana Proof */}
         <div className="md:col-span-1 rounded-xl border border-primary/40 bg-[#050b12]/80 backdrop-blur p-4 font-mono hover:border-primary/70 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -413,13 +485,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
               {data.history.map((h) => {
                 const reward = Math.max(40, Math.round(h.score * 0.15));
+                const hRank = normalizeRank(h.rank, h.score);
                 return (
                   <div key={h.id} className="flex items-center gap-3 text-[11px] font-mono p-2 rounded-md hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all">
                     <span className="text-muted-foreground/70 w-12">
                       {new Date(h.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                     </span>
                     <span className="text-primary font-bold w-20">Score {Math.round(h.score)}</span>
-                    {h.rank && <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded border ${RANK_STYLES[h.rank] ?? RANK_STYLES.Rookie}`}>{h.rank}</span>}
+                    <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded border ${RANK_STYLES[hRank]}`}>{hRank}</span>
                     <span className="text-accent">+{reward} GRVM</span>
                     {h.explorer_url ? (
                       <a href={h.explorer_url} target="_blank" rel="noopener noreferrer"
@@ -439,6 +512,13 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
     </div>
     </TooltipProvider>
   );
+}
+
+function nextRankLabel(score: number): string {
+  const tiers = [101, 251, 401, 601, 801, 951, 1001];
+  const next = tiers.find((t) => t > score);
+  if (!next || next > 1000) return "Genesis Icon (máx)";
+  return `${rankForScore(next)} em +${next - score} pts`;
 }
 
 function StatusBadge({ label }: { label: string }) {
