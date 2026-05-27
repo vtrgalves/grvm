@@ -1056,6 +1056,7 @@ export type Database = {
       get_my_email: { Args: never; Returns: string }
       get_oracle_dashboard: { Args: never; Returns: Json }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
+      get_smart_actions: { Args: { _limit?: number }; Returns: Json }
       get_user_badges: {
         Args: { _user_id: string }
         Returns: {

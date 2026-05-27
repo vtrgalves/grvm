@@ -1,4 +1,5 @@
 // Proof of Support Oracle — Chainlink CRE workflow + REAL Solana Devnet proof
+// GRVM Reputation Engine v2 — score 0–1000, 7 ranks, smart actions, humanized AI insight.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
   Connection,
@@ -33,11 +34,29 @@ type ExternalSignals = {
   warnings: string[];
 };
 
-type AiResult = { profile: string; insight: string; rank: string; ai_ok: boolean; warning?: string };
+type Rank =
+  | "Rookie" | "Supporter" | "Insider" | "Groove Hunter"
+  | "Viral Supporter" | "Legendary" | "Genesis Icon";
 
-const FALLBACK_INSIGHT = "Seu perfil ainda possui poucos dados para análise avançada.";
+type AiResult = { profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string };
+
+type SmartAction = {
+  id: string; action: string; label: string; icon: string;
+  reputation_delta: number; category: string; created_at: string;
+};
+
+const FALLBACK_INSIGHT = "Seu perfil ainda possui poucos dados — interaja com artistas para acelerar a reputação.";
 const FALLBACK_PROFILE = "Groover Rookie";
-const FALLBACK_RANK = "Rookie";
+
+function rankForScore(score: number): Rank {
+  if (score >= 951) return "Genesis Icon";
+  if (score >= 801) return "Legendary";
+  if (score >= 601) return "Viral Supporter";
+  if (score >= 401) return "Groove Hunter";
+  if (score >= 251) return "Insider";
+  if (score >= 101) return "Supporter";
+  return "Rookie";
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -46,7 +65,6 @@ Deno.serve(async (req) => {
   const workflow: WorkflowStep[] = [];
 
   try {
-    console.log("[1] Starting Oracle CRE workflow");
     if (req.method !== "POST") {
       return fallbackResponse(workflow, startedAt, ["Método HTTP inválido"]);
     }
@@ -72,59 +90,76 @@ Deno.serve(async (req) => {
 
     const admin = createClient(env.SUPABASE_URL, env.SERVICE_KEY);
 
-    // [2] Engagement metrics
+    // [1] Engagement metrics
     let metrics: Record<string, number> = fallbackMetrics();
     try {
       const { data, error } = await admin.rpc("compute_engagement_metrics", { _uid: uid });
       if (error) throw error;
       metrics = normalizeMetrics(data);
-      workflow.push({ name: "Engagement metrics", status: "ok" });
+      workflow.push({ name: "Lendo atividade do fã (GRVM)", status: "ok" });
     } catch (error) {
       console.error("[metrics] failed", error);
-      workflow.push({ name: "Engagement metrics", status: "fallback", message: stringifyError(error) });
+      workflow.push({ name: "Lendo atividade do fã (GRVM)", status: "fallback", message: stringifyError(error) });
     }
 
-    // [3] External APIs
+    // [1.5] Smart actions (recent typed events)
+    let smartActions: SmartAction[] = [];
+    try {
+      const { data, error } = await userClient.rpc("get_smart_actions", { _limit: 16 });
+      if (error) throw error;
+      smartActions = (data as SmartAction[]) ?? [];
+      workflow.push({ name: "Mapeando Smart Actions", status: "ok" });
+    } catch (error) {
+      console.warn("[smart_actions] failed", error);
+      workflow.push({ name: "Mapeando Smart Actions", status: "fallback", message: stringifyError(error) });
+    }
+
+    // [2] External APIs
     const externalData = await fetchExternalSignals();
     workflow.push({
-      name: "External APIs (CoinGecko · MusicBrainz)",
+      name: "APIs externas (CoinGecko · MusicBrainz)",
       status: externalData.api_offline ? "fallback" : "ok",
       message: externalData.warnings.join(" · ") || undefined,
     });
 
-    // [4] Groove Score
-    const grooveScore = computeGrooveScore(metrics, externalData);
-    workflow.push({ name: "Groove Score (0-1000)", status: "ok" });
+    // [3] Reputation Score 0–1000
+    const grooveScore = computeReputationScore(metrics, externalData, smartActions);
+    const rank = rankForScore(grooveScore);
+    workflow.push({ name: "Calculando GRVM Reputation Score", status: "ok" });
 
-    // [5] AI
-    const ai = await runAi(metrics, externalData, grooveScore, env.LOVABLE_API_KEY);
+    // [4] AI insight (human, behavioral)
+    const ai = await runAi(metrics, externalData, grooveScore, rank, smartActions, env.LOVABLE_API_KEY);
     externalData.ai_ok = ai.ai_ok;
     if (ai.warning) externalData.warnings.push(ai.warning);
-    workflow.push({ name: "AI · Gemini", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
+    workflow.push({ name: "IA Gemini · análise comportamental", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
 
-    // [6] Oracle hash
+    // [5] Oracle hash (aggregates score + rank + activity fingerprint)
     const syncedAt = new Date().toISOString();
+    const activityFingerprint = await sha256Hex(
+      smartActions.map((a) => `${a.action}:${a.id}`).join("|") || uid,
+    );
     const payload = {
       user_id: uid,
       groove_score: grooveScore,
-      rank: ai.rank,
+      rank,
       profile: ai.profile,
+      activity_hash: activityFingerprint.slice(0, 16),
       timestamp: syncedAt,
       trigger,
     };
     const oracleHash = await sha256Hex(JSON.stringify(payload));
     workflow.push({ name: "Oracle hash (SHA-256)", status: "ok" });
 
-    // [7] Solana Devnet memo proof
+    // [6] Solana memo proof
     const proof = await sendSolanaProof(admin, oracleHash, payload);
     workflow.push({
-      name: "Solana Devnet · Memo Proof",
+      name: "Registrando prova na Solana Devnet",
       status: proof.chain === "solana-devnet" ? "ok" : "fallback",
       message: proof.warning,
     });
     if (proof.warning) externalData.warnings.push(proof.warning);
 
-    // [8] Persist
+    // [7] Persist
     let dbProof: { tx_hash: string; block_number: number; id?: string } = {
       tx_hash: proof.tx_hash, block_number: proof.slot ?? 0,
     };
@@ -136,7 +171,7 @@ Deno.serve(async (req) => {
         _profile: ai.profile,
         _trigger: trigger,
         _metrics: metrics,
-        _rank: ai.rank,
+        _rank: rank,
         _external: externalData,
         _tx_hash: proof.tx_hash,
         _slot: proof.slot,
@@ -146,14 +181,19 @@ Deno.serve(async (req) => {
       });
       if (error) throw error;
       dbProof = data as typeof dbProof;
-      workflow.push({ name: "Persist oracle_activity", status: "ok" });
+      workflow.push({ name: "Persistindo histórico", status: "ok" });
     } catch (error) {
       console.error("[persist] failed", error);
-      workflow.push({ name: "Persist oracle_activity", status: "fallback", message: stringifyError(error) });
+      workflow.push({ name: "Persistindo histórico", status: "fallback", message: stringifyError(error) });
     }
 
     return successResponse({
-      grooveScore, insight: ai.insight, profile: ai.profile, rank: ai.rank,
+      grooveScore,
+      insight: ai.insight,
+      profile: ai.profile,
+      rank,
+      smartActions,
+      activityHash: activityFingerprint,
       externalData,
       txHash: proof.tx_hash,
       blockNumber: proof.slot ?? 0,
@@ -174,33 +214,22 @@ Deno.serve(async (req) => {
 // ---------------- Solana ----------------
 
 async function getOrCreateServiceKeypair(admin: ReturnType<typeof createClient>): Promise<Keypair> {
-  // 1. Prefer env var if provided
   const envKey = Deno.env.get("SOLANA_PRIVATE_KEY");
   if (envKey) {
-    try {
-      return Keypair.fromSecretKey(bs58.decode(envKey.trim()));
-    } catch (e) {
-      console.error("[solana] invalid SOLANA_PRIVATE_KEY env, falling back to DB keypair", e);
-    }
+    try { return Keypair.fromSecretKey(bs58.decode(envKey.trim())); }
+    catch (e) { console.error("[solana] invalid env key", e); }
   }
-  // 2. Read from service_config
   const { data: row } = await admin.from("service_config").select("value").eq("key", "solana_service_wallet").maybeSingle();
   if (row?.value?.secret_key) {
-    try {
-      return Keypair.fromSecretKey(bs58.decode(String(row.value.secret_key)));
-    } catch (e) {
-      console.error("[solana] corrupt stored keypair, regenerating", e);
-    }
+    try { return Keypair.fromSecretKey(bs58.decode(String(row.value.secret_key))); }
+    catch (e) { console.error("[solana] corrupt stored keypair", e); }
   }
-  // 3. Generate + persist
   const kp = Keypair.generate();
-  const secret = bs58.encode(kp.secretKey);
   await admin.from("service_config").upsert({
     key: "solana_service_wallet",
-    value: { public_key: kp.publicKey.toBase58(), secret_key: secret, created_at: new Date().toISOString() },
+    value: { public_key: kp.publicKey.toBase58(), secret_key: bs58.encode(kp.secretKey), created_at: new Date().toISOString() },
     updated_at: new Date().toISOString(),
   });
-  console.log("[solana] generated new service wallet", kp.publicKey.toBase58());
   return kp;
 }
 
@@ -213,44 +242,37 @@ async function sendSolanaProof(
     const connection = new Connection(SOLANA_RPC, "confirmed");
     const wallet = await getOrCreateServiceKeypair(admin);
 
-    // Ensure balance — try airdrop on devnet if empty
     let balance = await connection.getBalance(wallet.publicKey);
     if (balance < 5000) {
       try {
-        console.log("[solana] requesting airdrop for", wallet.publicKey.toBase58());
         const sig = await connection.requestAirdrop(wallet.publicKey, LAMPORTS_PER_SOL);
         await connection.confirmTransaction(sig, "confirmed");
         balance = await connection.getBalance(wallet.publicKey);
-      } catch (e) {
-        console.error("[solana] airdrop failed", e);
-      }
+      } catch (e) { console.error("[solana] airdrop failed", e); }
     }
     if (balance < 5000) {
       return {
         tx_hash: fakeTxHash(), slot: null, explorer_url: null, chain: "simulated",
-        warning: `Solana service wallet sem fundos (${wallet.publicKey.toBase58()}). Faça airdrop devnet.`,
+        warning: `Solana service wallet sem fundos (${wallet.publicKey.toBase58()}).`,
       };
     }
 
     const memo = JSON.stringify({
-      g: "groovium-cre",
+      g: "grvm-cre",
       h: oracleHash.slice(0, 32),
+      a: (payload.activity_hash as string | undefined)?.slice(0, 16) ?? null,
       s: payload.groove_score,
       r: payload.rank,
       t: payload.timestamp,
     });
     const ix = new TransactionInstruction({
-      keys: [],
-      programId: MEMO_PROGRAM_ID,
-      data: new TextEncoder().encode(memo),
+      keys: [], programId: MEMO_PROGRAM_ID, data: new TextEncoder().encode(memo),
     });
     const tx = new Transaction().add(ix);
     const sig = await sendAndConfirmTransaction(connection, tx, [wallet], { commitment: "confirmed" });
     const status = await connection.getSignatureStatus(sig, { searchTransactionHistory: false });
-    const slot = status?.value?.slot ?? null;
     return {
-      tx_hash: sig,
-      slot,
+      tx_hash: sig, slot: status?.value?.slot ?? null,
       explorer_url: `https://explorer.solana.com/tx/${sig}?cluster=${SOLANA_CLUSTER}`,
       chain: "solana-devnet",
     };
@@ -323,35 +345,66 @@ async function fetchExternalSignals(): Promise<ExternalSignals> {
   };
 }
 
-function computeGrooveScore(m: Record<string, number>, ext: ExternalSignals) {
+function computeReputationScore(
+  m: Record<string, number>,
+  ext: ExternalSignals,
+  smart: SmartAction[],
+): number {
+  // base — accumulated GRVM activity
+  const base = Math.log10(1 + (m.grv_balance || 0)) * 40;
+  // engagement
   const engagement =
-    Math.log10(1 + (m.grv_balance || 0)) * 60 +
     (m.missions_completed || 0) * 12 +
     (m.nft_count || 0) * 18 +
-    Math.min(m.streak || 0, 30) * 6 +
+    (m.badges || 0) * 30 +
     (m.boosts_active || 0) * 22 +
-    (m.crates_opened || 0) * 8 +
+    Math.min(m.streak || 0, 30) * 6 +
+    (m.crates_opened || 0) * 8;
+  // social
+  const social =
     (m.follows || 0) * 4 +
     (m.likes || 0) * 1.5 +
     (m.comments || 0) * 2.5 +
-    (m.badges || 0) * 30 +
     (m.tips_sent || 0) * 14;
-  const inactivity = (m.streak || 0) < 1 ? -25 : 0;
+  // recency bonus — smart-actions in the last batch
+  const recency = Math.min(60, smart.length * 4);
+  // market / music context
   const marketBonus = Math.max(-15, Math.min(40, Number(ext.eth_change_24h ?? 0) * 4));
   const musicBonus = Math.min(30, Number(ext.music_score ?? 0) * 0.3);
-  return Math.max(0, Math.min(1000, Math.round(engagement + inactivity + marketBonus + musicBonus)));
+  // inactivity penalty
+  const inactivity = (m.streak || 0) < 1 && smart.length === 0 ? -40 : 0;
+
+  const raw = base + engagement + social + recency + marketBonus + musicBonus + inactivity;
+  return Math.max(0, Math.min(1000, Math.round(raw)));
 }
 
-async function runAi(m: Record<string, number>, ext: ExternalSignals, score: number, apiKey: string): Promise<AiResult> {
-  const fallbackRank = score >= 800 ? "Legendary" : score >= 550 ? "Viral" : score >= 300 ? "Rising" : FALLBACK_RANK;
-  const fallback = { profile: FALLBACK_PROFILE, insight: FALLBACK_INSIGHT, rank: fallbackRank, ai_ok: false };
+async function runAi(
+  m: Record<string, number>,
+  ext: ExternalSignals,
+  score: number,
+  rank: Rank,
+  smart: SmartAction[],
+  apiKey: string,
+): Promise<AiResult> {
+  const fallback: AiResult = {
+    profile: FALLBACK_PROFILE,
+    insight: FALLBACK_INSIGHT,
+    rank, ai_ok: false,
+  };
   if (!apiKey) return { ...fallback, warning: "IA temporariamente indisponível" };
+
+  const topCats: Record<string, number> = {};
+  for (const a of smart) topCats[a.category] = (topCats[a.category] ?? 0) + 1;
+  const topCat = Object.entries(topCats).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "engagement";
+
   try {
-    const prompt = `Analise reputação musical Groovium.
-Métricas: GRV ${m.grv_balance ?? 0}, missões ${m.missions_completed ?? 0}, NFTs ${m.nft_count ?? 0}, streak ${m.streak ?? 0}, boosts ${m.boosts_active ?? 0}.
-Sinais: ETH ${ext.eth_usd}, trending ${ext.trending_name}.
-Score: ${score}/1000.
-Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase até 140 chars","rank":"Rookie|Rising|Viral|Legendary"}`;
+    const prompt = `Você é o Oracle do Groovium. Analise o comportamento do fã e devolva uma frase HUMANA, inspiradora, em PT-BR (até 140 chars).
+Métricas: GRV ${m.grv_balance ?? 0}, missões ${m.missions_completed ?? 0}, NFTs ${m.nft_count ?? 0}, streak ${m.streak ?? 0}, boosts ${m.boosts_active ?? 0}, tips ${m.tips_sent ?? 0}, follows ${m.follows ?? 0}, likes ${m.likes ?? 0}, badges ${m.badges ?? 0}.
+Categoria dominante recente: ${topCat}. Score: ${score}/1000. Rank: ${rank}.
+Sinais externos: ETH ${ext.eth_usd}, trending ${ext.trending_name}.
+Escreva como se descrevesse o comportamento do fã (ex: "Você apoia artistas antes da tendência", "Perfil de colecionador raro", "Engajamento social acima da média").
+NÃO invente números. NÃO use jargão cripto/finance.
+Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase humana até 140 chars"}`;
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "edge-function-fetch" },
@@ -364,7 +417,6 @@ Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase até 
     const s = cleaned.indexOf("{"), e = cleaned.lastIndexOf("}");
     if (s === -1 || e === -1) throw new Error("Non-JSON AI response");
     const parsed = JSON.parse(cleaned.slice(s, e + 1));
-    const rank = ["Rookie", "Rising", "Viral", "Legendary"].includes(parsed.rank) ? parsed.rank : fallbackRank;
     return {
       profile: String(parsed.profile ?? FALLBACK_PROFILE).slice(0, 40),
       insight: String(parsed.insight ?? FALLBACK_INSIGHT).slice(0, 200),
@@ -410,7 +462,8 @@ function successResponse(payload: Record<string, unknown>) {
 function fallbackResponse(workflow: WorkflowStep[], startedAt: number, warnings: string[]) {
   const ext = fallbackExternalSignals(warnings);
   return successResponse({
-    grooveScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: FALLBACK_RANK,
+    grooveScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: "Rookie" as Rank,
+    smartActions: [], activityHash: null,
     externalData: ext, txHash: fakeTxHash(), blockNumber: 0, slot: null,
     chain: "simulated", explorerUrl: null, oracleHash: null,
     syncedAt: new Date().toISOString(), durationMs: Date.now() - startedAt,
