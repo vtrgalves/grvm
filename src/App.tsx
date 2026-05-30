@@ -33,6 +33,7 @@ import AiGroovium from "./pages/app/AiGroovium.tsx";
 import Boosts from "./pages/app/Boosts.tsx";
 import Crates from "./pages/app/Crates.tsx";
 import OracleHistory from "./pages/app/OracleHistory.tsx";
+import GrooviumHeart from "./pages/app/GrooviumHeart.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
