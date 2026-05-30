@@ -797,6 +797,34 @@ const NFTs = () => {
         </div>
       </section>
 
+      {/* Artist NFTs */}
+      <section className="space-y-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="font-display text-xl md:text-2xl font-black flex items-center gap-2">
+              🎤 NFTs dos Artistas
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Linguagens visuais únicas — cada artista do Groovium expressa sua identidade no universo cyberpunk.
+            </p>
+          </div>
+          <span className="text-[10px] font-display uppercase tracking-widest text-primary inline-flex items-center gap-1">
+            <Sparkles className="w-3 h-3" /> Artist Drops
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {ARTIST_NFTS.map((n) => (
+            <div key={n.id} className="relative">
+              <CommunityCard nft={n} />
+              <span className="absolute -top-2 left-3 z-10 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur border border-primary/40 text-[9px] font-display uppercase tracking-widest text-primary">
+                {n.genre}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
       {/* User-created items from DB */}
       <section className="pt-2 border-t border-border/40">
         <ItemsGrid kind="nft" />
