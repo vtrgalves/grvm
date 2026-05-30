@@ -32,6 +32,7 @@ import Badges from "./pages/app/Badges.tsx";
 import AiGroovium from "./pages/app/AiGroovium.tsx";
 import Boosts from "./pages/app/Boosts.tsx";
 import Crates from "./pages/app/Crates.tsx";
+import OracleHistory from "./pages/app/OracleHistory.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -70,6 +71,7 @@ const App = () => (
               <Route path="ai" element={<AiGroovium />} />
               <Route path="boosts" element={<Boosts />} />
               <Route path="crates" element={<Crates />} />
+              <Route path="oracle" element={<OracleHistory />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />
