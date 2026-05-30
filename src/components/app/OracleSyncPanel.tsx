@@ -171,26 +171,29 @@ export function CreStepper({
           const status = stepStatus[s.key];
           const Icon = s.icon;
           const color =
-            status === "success" ? "border-primary/50 bg-primary/10 text-primary" :
-            status === "running" ? "border-accent/50 bg-accent/10 text-accent animate-pulse" :
-            status === "failed"  ? "border-destructive/50 bg-destructive/10 text-destructive" :
-                                   "border-border/40 text-muted-foreground/40";
+            status === "success"   ? "border-primary/50 bg-primary/10 text-primary" :
+            status === "simulated" ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-300" :
+            status === "running"   ? "border-accent/50 bg-accent/10 text-accent animate-pulse" :
+            status === "failed"    ? "border-destructive/50 bg-destructive/10 text-destructive" :
+                                     "border-border/40 text-muted-foreground/40";
           const textColor =
-            status === "success" ? "text-foreground" :
-            status === "running" ? "text-foreground" :
+            status === "success" || status === "simulated" || status === "running" ? "text-foreground" :
             status === "failed"  ? "text-destructive" : "text-muted-foreground/50";
+          const isSolanaStep = s.key === "solana";
           const tag =
-            status === "running" ? "running" :
-            status === "success" ? "✓ ok" :
-            status === "failed"  ? "✗ failed" : "idle";
+            status === "running"   ? "running" :
+            status === "success"   ? "✓ ok" :
+            status === "simulated" ? (isSolanaStep ? "✓ simulado em devnet" : "✓ demo") :
+            status === "failed"    ? "✗ failed" : "idle";
           const tagColor =
-            status === "success" ? "text-primary" :
-            status === "running" ? "text-accent" :
-            status === "failed"  ? "text-destructive" : "text-muted-foreground/40";
+            status === "success"   ? "text-primary" :
+            status === "simulated" ? "text-yellow-300" :
+            status === "running"   ? "text-accent" :
+            status === "failed"    ? "text-destructive" : "text-muted-foreground/40";
           return (
             <div key={s.key} className={`flex items-center gap-3 text-xs transition-colors ${textColor}`}>
               <div className={`w-6 h-6 rounded-md flex items-center justify-center border ${color}`}>
-                {status === "success" ? <CheckCircle2 className="w-3.5 h-3.5" /> :
+                {status === "success" || status === "simulated" ? <CheckCircle2 className="w-3.5 h-3.5" /> :
                  status === "running" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
                  status === "failed"  ? <XCircle className="w-3.5 h-3.5" /> :
                                         <Icon className="w-3.5 h-3.5" />}
