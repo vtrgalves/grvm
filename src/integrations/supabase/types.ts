@@ -976,6 +976,15 @@ export type Database = {
         Returns: undefined
       }
       activate_boost: { Args: { _slug: string }; Returns: Json }
+      award_oracle_bonus: {
+        Args: {
+          _bonus: number
+          _reason?: string
+          _sync_id?: string
+          _uid: string
+        }
+        Returns: Json
+      }
       become_artist: { Args: never; Returns: Json }
       burn_for_badge: { Args: { _badge_id: string }; Returns: Json }
       claim_artist_item: { Args: { _item_id: string }; Returns: Json }
