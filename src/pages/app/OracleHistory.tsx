@@ -178,9 +178,12 @@ export default function OracleHistory() {
 
       <div className="glass-card rounded-2xl border border-primary/30 p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
         <div className="flex-1">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reputation Score atual</div>
-          <div className="font-display text-4xl md:text-5xl font-bold gradient-neon-text mt-1">
+          <div className="text-[10px] uppercase tracking-wider text-primary font-display">Proof of Support Score</div>
+          <div className="font-display text-4xl md:text-5xl font-bold gradient-neon-text mt-1 tabular-nums">
             {reputation}<span className="text-base text-muted-foreground">/1000</span>
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            Pontuação pública baseada em apoio real à música.
           </div>
         </div>
         <div className="text-right">
