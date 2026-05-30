@@ -11,7 +11,7 @@ import {
 import { toast } from "sonner";
 import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank } from "@/lib/oracle";
 
-export type StepStatus = "idle" | "running" | "success" | "failed";
+export type StepStatus = "idle" | "running" | "success" | "failed" | "simulated";
 
 export type OracleSyncResult = {
   success: boolean;
