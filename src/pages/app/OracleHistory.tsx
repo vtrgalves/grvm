@@ -56,6 +56,13 @@ export default function OracleHistory() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [reputation, setReputation] = useState<number>(0);
+  const [proofs, setProofs] = useState<PremiumProof[]>([]);
+  const [syncing, setSyncing] = useState(false);
+
+  const loadProofs = async () => {
+    const { data } = await (supabase.rpc as any)("get_user_premium_proofs", { _limit: 50 });
+    setProofs((data as PremiumProof[]) ?? []);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -70,10 +77,27 @@ export default function OracleHistory() {
       setRows(((hist.data as Row[]) ?? []));
       setReputation(Number(rep.data ?? 0));
       setLoading(false);
+      await loadProofs();
     })();
     return () => { cancelled = true; };
   }, [range]);
 
+  const handleSyncPremium = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("premium-proof-sync", { body: {} });
+      if (error) throw error;
+      const n = (data as any)?.processed ?? 0;
+      toast.success(n > 0 ? `${n} prova(s) registrada(s) na Devnet` : "Nenhuma prova pendente");
+      await loadProofs();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha ao sincronizar provas");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const pending = proofs.filter((p) => !p.oracle_synced).length;
   const currentRank = rankForScore(reputation);
 
   return (
