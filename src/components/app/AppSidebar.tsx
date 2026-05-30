@@ -65,6 +65,28 @@ export function AppSidebar() {
           )}
         </div>
         <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/app" || pathname.startsWith("/app/heart") || pathname.startsWith("/app/oracle")}
+                  className="bg-gradient-to-r from-primary/15 via-accent/10 to-secondary/15 border border-primary/30 box-glow-blue hover:from-primary/25 hover:via-accent/20 hover:to-secondary/25"
+                >
+                  <NavLink to="/app" end className="flex items-center gap-2">
+                    <GrooviumHeartIcon className="h-5 w-5" animated />
+                    {!collapsed && (
+                      <span className="font-display font-bold gradient-neon-text uppercase tracking-wider text-[13px]">
+                        Groovium Heart
+                      </span>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupLabel>Fã</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{fanItems.map(renderItem)}</SidebarMenu>
