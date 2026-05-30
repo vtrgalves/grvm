@@ -5,6 +5,7 @@ import { normalizeRank, rankForScore, RANK_STYLES } from "@/lib/oracle";
 import { explorerTxUrl, isSolanaSignature } from "@/lib/solana";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { OracleSyncCard } from "@/components/app/OracleSyncPanel";
 
 type PremiumProof = {
   id: string; action: string; label: string; icon: string; points: number;
