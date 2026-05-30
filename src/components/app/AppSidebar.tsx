@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { LayoutDashboard, Wallet, Trophy, Sparkles, Image, Ticket, LogOut, Rss, Crown, Mic, Boxes, Gem, Radio, User, BarChart3, Flame, Wand2, Zap, Package, Activity } from "lucide-react";
+import GrooviumHeartIcon from "@/components/web3/GrooviumHeartIcon";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -10,7 +11,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const fanItems = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
   { title: "Meu Perfil", url: "/app/profile", icon: User },
   { title: "Feed", url: "/app/feed", icon: Rss },
   { title: "Ranking", url: "/app/ranking", icon: Crown },
@@ -25,7 +25,6 @@ const fanItems = [
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
   { title: "IA Groovium", url: "/app/ai", icon: Wand2 },
-  { title: "Oracle History", url: "/app/oracle", icon: Activity },
   { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
@@ -65,6 +64,28 @@ export function AppSidebar() {
             <span className="font-display text-xl font-bold text-primary">G</span>
           )}
         </div>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/app" || pathname.startsWith("/app/heart") || pathname.startsWith("/app/oracle")}
+                  className="bg-gradient-to-r from-primary/15 via-accent/10 to-secondary/15 border border-primary/30 box-glow-blue hover:from-primary/25 hover:via-accent/20 hover:to-secondary/25"
+                >
+                  <NavLink to="/app" end className="flex items-center gap-2">
+                    <GrooviumHeartIcon className="h-5 w-5" animated />
+                    {!collapsed && (
+                      <span className="font-display font-bold gradient-neon-text uppercase tracking-wider text-[13px]">
+                        Groovium Heart
+                      </span>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel>Fã</SidebarGroupLabel>
           <SidebarGroupContent>

@@ -33,6 +33,7 @@ import AiGroovium from "./pages/app/AiGroovium.tsx";
 import Boosts from "./pages/app/Boosts.tsx";
 import Crates from "./pages/app/Crates.tsx";
 import OracleHistory from "./pages/app/OracleHistory.tsx";
+import GrooviumHeart from "./pages/app/GrooviumHeart.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -51,7 +52,9 @@ const App = () => (
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/missions" element={<Missions />} />
             <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<GrooviumHeart />} />
+              <Route path="heart" element={<GrooviumHeart />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="wallet" element={<Wallet />} />
               <Route path="missions" element={<MissionsApp />} />
               <Route path="levels" element={<Levels />} />
@@ -71,7 +74,8 @@ const App = () => (
               <Route path="ai" element={<AiGroovium />} />
               <Route path="boosts" element={<Boosts />} />
               <Route path="crates" element={<Crates />} />
-              <Route path="oracle" element={<OracleHistory />} />
+              <Route path="oracle" element={<GrooviumHeart />} />
+              <Route path="oracle-history" element={<OracleHistory />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />
