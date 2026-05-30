@@ -410,6 +410,72 @@ function computeReputationScore(
   return Math.max(0, Math.min(1000, Math.round(raw)));
 }
 
+function classifyArchetype(
+  m: Record<string, number>, smart: SmartAction[], topCat: string,
+): { archetype: Archetype; reason: string; nextAction: string } {
+  const collectorN = smart.filter(s => s.category === "collector").length;
+  const supportN   = smart.filter(s => s.category === "support").length;
+  const socialN    = smart.filter(s => s.category === "social").length;
+  const creatorN   = smart.filter(s => s.category === "creator").length;
+  const engageN    = smart.filter(s => s.category === "engagement").length;
+
+  if ((m.nft_count ?? 0) >= 3 || collectorN >= 4)
+    return {
+      archetype: "Genesis Supporter",
+      reason: "Você coleciona NFTs e abre crates raras antes da maioria.",
+      nextAction: "Abra uma Crate Lendária para subir de rank.",
+    };
+  if ((m.tips_sent ?? 0) >= 2 || supportN >= 3)
+    return {
+      archetype: "Backstage Builder",
+      reason: "Você apoia artistas com tips e resgates VIP.",
+      nextAction: "Resgate um perk VIP para fortalecer sua reputação.",
+    };
+  if (socialN >= 6 || (m.follows ?? 0) >= 5)
+    return {
+      archetype: "Community Builder",
+      reason: "Seu impacto social no Groovium está acima da média.",
+      nextAction: "Comente em um post de um artista que você segue.",
+    };
+  if (creatorN >= 2)
+    return {
+      archetype: "Culture Creator",
+      reason: "Você cria conteúdo e movimenta o ecossistema.",
+      nextAction: "Lance um novo drop ou item para sua audiência.",
+    };
+  if (engageN >= 6 || (m.streak ?? 0) >= 5)
+    return {
+      archetype: "Trend Hunter",
+      reason: "Sua frequência diária mantém o radar afiado.",
+      nextAction: "Complete a próxima missão diária para manter o streak.",
+    };
+  return {
+    archetype: "Strategic Observer",
+    reason: "Você está acompanhando, mas ainda interagindo pouco.",
+    nextAction: "Siga um artista e faça check-in para ativar sua reputação.",
+  };
+}
+
+export function computeOracleBonus(
+  prev: number, next: number, smart: SmartAction[],
+): number {
+  const delta = next - prev;
+  const cats = new Set(smart.map(s => s.category));
+  const diversity = cats.size; // 0..6
+  // repetição → diminishing returns: se 80%+ vem de 1 categoria, penaliza
+  const counts: Record<string, number> = {};
+  for (const a of smart) counts[a.category] = (counts[a.category] ?? 0) + 1;
+  const total = smart.length || 1;
+  const topShare = Math.max(0, ...Object.values(counts)) / total;
+  const repetitionPenalty = topShare > 0.8 ? 0.5 : 1;
+
+  const base = Math.max(0, delta) * 0.6 + diversity * 5;
+  // Score absoluto também gera um mínimo de 10 para não ser frustrante
+  const minimum = next > 0 ? 10 : 0;
+  const raw = Math.max(minimum, base * repetitionPenalty);
+  return Math.max(0, Math.min(80, Math.round(raw)));
+}
+
 async function runAi(
   m: Record<string, number>,
   ext: ExternalSignals,
@@ -418,25 +484,30 @@ async function runAi(
   smart: SmartAction[],
   apiKey: string,
 ): Promise<AiResult> {
-  const fallback: AiResult = {
-    profile: FALLBACK_PROFILE,
-    insight: FALLBACK_INSIGHT,
-    rank, ai_ok: false,
-  };
-  if (!apiKey) return { ...fallback, warning: "IA temporariamente indisponível" };
-
   const topCats: Record<string, number> = {};
   for (const a of smart) topCats[a.category] = (topCats[a.category] ?? 0) + 1;
   const topCat = Object.entries(topCats).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "engagement";
+  const classification = classifyArchetype(m, smart, topCat);
+
+  const fallback: AiResult = {
+    profile: classification.archetype,
+    insight: classification.reason,
+    rank, ai_ok: false,
+    archetype: classification.archetype,
+    nextAction: classification.nextAction,
+    reason: classification.reason,
+  };
+  if (!apiKey) return { ...fallback, warning: "IA temporariamente indisponível" };
 
   try {
-    const prompt = `Você é o Oracle do Groovium. Analise o comportamento do fã e devolva uma frase HUMANA, inspiradora, em PT-BR (até 140 chars).
+    const prompt = `Você é o Oracle do Groovium, um motor de reputação musical Web3. Analise o comportamento do fã abaixo.
 Métricas: GRV ${m.grv_balance ?? 0}, missões ${m.missions_completed ?? 0}, NFTs ${m.nft_count ?? 0}, streak ${m.streak ?? 0}, boosts ${m.boosts_active ?? 0}, tips ${m.tips_sent ?? 0}, follows ${m.follows ?? 0}, likes ${m.likes ?? 0}, badges ${m.badges ?? 0}.
-Categoria dominante recente: ${topCat}. Score: ${score}/1000. Rank: ${rank}.
-Sinais externos: ETH ${ext.eth_usd}, trending ${ext.trending_name}.
-Escreva como se descrevesse o comportamento do fã (ex: "Você apoia artistas antes da tendência", "Perfil de colecionador raro", "Engajamento social acima da média").
-NÃO invente números. NÃO use jargão cripto/finance.
-Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase humana até 140 chars"}`;
+Categoria dominante: ${topCat}. Score: ${score}/1000. Rank: ${rank}. Smart Actions recentes: ${smart.length}.
+Arquétipo sugerido (regras): ${classification.archetype}.
+Classifique o fã em UM destes arquétipos: Trend Hunter, Community Builder, Genesis Supporter, Culture Creator, Strategic Observer, Backstage Builder.
+NÃO invente números. NÃO use jargão cripto/finance. Tudo em PT-BR.
+Responda APENAS JSON válido:
+{"archetype":"<um dos 6>","profile":"2-4 palavras cyberpunk","insight":"frase humana inspiradora até 140 chars","reason":"por que o score está nesse nível até 120 chars","nextAction":"recomendação curta de próxima ação até 100 chars"}`;
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "edge-function-fetch" },
@@ -449,9 +520,14 @@ Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase human
     const s = cleaned.indexOf("{"), e = cleaned.lastIndexOf("}");
     if (s === -1 || e === -1) throw new Error("Non-JSON AI response");
     const parsed = JSON.parse(cleaned.slice(s, e + 1));
+    const allowed: Archetype[] = ["Trend Hunter","Community Builder","Genesis Supporter","Culture Creator","Strategic Observer","Backstage Builder"];
+    const arch = allowed.includes(parsed.archetype) ? parsed.archetype : classification.archetype;
     return {
-      profile: String(parsed.profile ?? FALLBACK_PROFILE).slice(0, 40),
-      insight: String(parsed.insight ?? FALLBACK_INSIGHT).slice(0, 200),
+      profile: String(parsed.profile ?? arch).slice(0, 40),
+      insight: String(parsed.insight ?? classification.reason).slice(0, 200),
+      reason: String(parsed.reason ?? classification.reason).slice(0, 160),
+      nextAction: String(parsed.nextAction ?? classification.nextAction).slice(0, 140),
+      archetype: arch as Archetype,
       rank, ai_ok: true,
     };
   } catch (e) {
