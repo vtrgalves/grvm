@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { getLevel } from "@/lib/levels";
+import { marketplace_enabled } from "@/lib/marketplace";
+import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
 
 interface Perk {
   id: string;
@@ -21,6 +23,7 @@ interface Perk {
 
 const VipClub = () => {
   const { profile, user } = useAuth();
+  const { open: openMarketplace } = useMarketplaceModal();
   const [perks, setPerks] = useState<Perk[]>([]);
   const [claimed, setClaimed] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -47,6 +50,10 @@ const VipClub = () => {
   }, [user?.id]);
 
   const handleClaim = async (perk: Perk) => {
+    if (!marketplace_enabled) {
+      openMarketplace();
+      return;
+    }
     setBusy(perk.id);
     const { error } = await supabase.rpc("claim_vip_perk", { _perk_id: perk.id });
     setBusy(null);

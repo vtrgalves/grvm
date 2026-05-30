@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Image as ImageIcon, Ticket, Check, Lock } from "lucide-react";
+import { marketplace_enabled } from "@/lib/marketplace";
+import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
 
 interface Item {
   id: string;
@@ -22,6 +24,7 @@ interface Props { kind: "nft" | "experience"; }
 
 export default function ItemsGrid({ kind }: Props) {
   const { profile, refreshProfile } = useAuth();
+  const { open: openMarketplace } = useMarketplaceModal();
   const [items, setItems] = useState<Item[]>([]);
   const [artists, setArtists] = useState<Record<string, string>>({});
   const [claimed, setClaimed] = useState<Set<string>>(new Set());
@@ -62,6 +65,10 @@ export default function ItemsGrid({ kind }: Props) {
   useEffect(() => { load(); }, [kind, profile?.user_id]);
 
   const claim = async (item: Item) => {
+    if (!marketplace_enabled) {
+      openMarketplace();
+      return;
+    }
     setBusy(item.id);
     const { data, error } = await supabase.rpc("claim_artist_item", { _item_id: item.id });
     setBusy(null);

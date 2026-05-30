@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { Radio, Clock, Calendar, Image as ImageIcon, Ticket, Plus, CheckCircle2 } from "lucide-react";
+import { marketplace_enabled } from "@/lib/marketplace";
+import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
 
 type Drop = {
   id: string;
@@ -126,6 +128,7 @@ const DropCard = ({ drop, onClaim, claiming }: { drop: Drop; onClaim: (id: strin
 
 export default function LiveDrops() {
   const { profile } = useAuth();
+  const { open: openMarketplace } = useMarketplaceModal();
   const [drops, setDrops] = useState<Drop[]>([]);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState<string | null>(null);
@@ -148,6 +151,10 @@ export default function LiveDrops() {
   }, []);
 
   const claim = async (id: string) => {
+    if (!marketplace_enabled) {
+      openMarketplace();
+      return;
+    }
     setClaiming(id);
     const { error } = await supabase.rpc("claim_live_drop", { _drop_id: id });
     setClaiming(null);
