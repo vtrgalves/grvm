@@ -38,7 +38,14 @@ type Rank =
   | "Rookie" | "Listener" | "Supporter" | "Insider"
   | "Groove Hunter" | "Backstage" | "Legend" | "Genesis Icon";
 
-type AiResult = { profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string };
+type Archetype =
+  | "Trend Hunter" | "Community Builder" | "Genesis Supporter"
+  | "Culture Creator" | "Strategic Observer" | "Backstage Builder";
+
+type AiResult = {
+  profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string;
+  archetype: Archetype; nextAction: string; reason: string;
+};
 
 type SmartAction = {
   id: string; action: string; label: string; icon: string;
