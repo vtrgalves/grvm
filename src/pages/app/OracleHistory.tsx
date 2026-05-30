@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, Hash, Sparkles, ExternalLink, Filter, Crown, Loader2 } from "lucide-react";
+import { Activity, Hash, Sparkles, ExternalLink, Filter, Crown, Loader2, Award } from "lucide-react";
 import { normalizeRank, rankForScore, RANK_STYLES } from "@/lib/oracle";
 import { explorerTxUrl, isSolanaSignature } from "@/lib/solana";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { OracleSyncCard } from "@/components/app/OracleSyncPanel";
+import { OracleDemoModal } from "@/components/app/OracleDemoModal";
 
 type PremiumProof = {
   id: string; action: string; label: string; icon: string; points: number;
@@ -103,25 +104,49 @@ export default function OracleHistory() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
-          <Activity className="w-6 h-6 text-primary" /> Oracle History
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Histórico verificável de cada sincronização do Proof of Support Oracle.
-        </p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="font-display text-2xl md:text-3xl font-bold gradient-neon-text flex items-center gap-2">
+            <Activity className="w-6 h-6 text-primary" /> Oracle History
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1 max-w-2xl">
+            Histórico verificável de cada sincronização do Proof of Support Oracle. Suas ações musicais viram
+            reputação registrada publicamente na Solana Devnet.
+          </p>
+        </div>
+        <OracleDemoModal />
       </div>
 
-      <OracleSyncCard onSynced={async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        const [hist, rep] = await Promise.all([
-          supabase.rpc("get_oracle_history", { _range: range }),
-          user ? supabase.rpc("compute_reputation_score", { _uid: user.id }) : Promise.resolve({ data: 0 }),
-        ]);
-        setRows(((hist.data as Row[]) ?? []));
-        setReputation(Number(rep.data ?? 0));
-        await loadProofs();
-      }} />
+      {/* Resumo para jurados */}
+      <div className="glass-card rounded-2xl border border-accent/40 p-5 md:p-6 bg-gradient-to-br from-accent/5 via-background/40 to-primary/5">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-accent/20 border border-accent/50 flex items-center justify-center shrink-0">
+            <Award className="w-5 h-5 text-accent" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-widest text-accent font-display">Resumo para jurados</div>
+            <p className="text-sm md:text-base text-foreground mt-1 leading-relaxed">
+              O Groovium usa <strong className="text-secondary">Chainlink CRE</strong> para orquestrar dados, IA e blockchain.
+              Cada interação musical gera reputação verificável. A <strong className="text-primary">Solana Devnet</strong> registra
+              provas públicas da jornada do fã, criando uma camada de confiança para a futura economia GRVM.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <OracleSyncCard
+        headerExtra={<OracleDemoModal />}
+        onSynced={async () => {
+          const { data: { user } } = await supabase.auth.getUser();
+          const [hist, rep] = await Promise.all([
+            supabase.rpc("get_oracle_history", { _range: range }),
+            user ? supabase.rpc("compute_reputation_score", { _uid: user.id }) : Promise.resolve({ data: 0 }),
+          ]);
+          setRows(((hist.data as Row[]) ?? []));
+          setReputation(Number(rep.data ?? 0));
+          await loadProofs();
+        }}
+      />
 
 
       <div className="glass-card rounded-2xl border border-primary/30 p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">

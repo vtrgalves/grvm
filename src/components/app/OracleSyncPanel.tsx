@@ -212,97 +212,160 @@ export function CreStepper({
 export function OracleResultPanel({ result }: { result: OracleSyncResult }) {
   const delta = result.grooveScore - result.previousScore;
   const deltaColor = delta > 0 ? "text-primary" : delta < 0 ? "text-destructive" : "text-muted-foreground";
+  const checklist = [
+    { label: "Ações verificáveis capturadas", ok: result.actionsAnalyzed > 0 },
+    { label: "Pontuação de reputação calculada", ok: result.grooveScore > 0 },
+    { label: "IA processou seu perfil musical", ok: !!result.archetype },
+    { label: "Hash SHA-256 gerado", ok: !!result.oracleHash },
+    { label: "Registro público na Solana Devnet", ok: result.chain === "solana-devnet" },
+    { label: "Disponível no Explorer público", ok: !!result.explorerUrl },
+  ];
   return (
-    <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 via-background/40 to-accent/5 p-4 space-y-4">
+    <div className="rounded-xl border border-primary/40 bg-gradient-to-br from-primary/10 via-background/40 to-accent/10 p-4 md:p-5 space-y-4 animate-fade-in">
       <div className="flex items-start gap-3">
-        <div className="w-9 h-9 rounded-lg bg-primary/15 border border-primary/40 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-primary/20 border border-primary/50 flex items-center justify-center shrink-0 animate-pulse">
           <Sparkles className="w-5 h-5 text-primary" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-widest text-primary font-display">O que aconteceu agora?</div>
-          <p className="text-sm text-foreground mt-1 leading-relaxed">
-            Analisamos suas interações no Groovium, calculamos sua reputação musical, geramos uma prova criptográfica
-            e registramos um resumo verificável na Solana Devnet.
+          <div className="text-[10px] uppercase tracking-widest text-primary font-display">Sincronização concluída</div>
+          <h3 className="font-display text-base md:text-lg font-bold gradient-neon-text">
+            Suas ações viraram reputação verificável
+          </h3>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1 leading-relaxed">
+            Lemos suas ações verificáveis, a IA analisou seu perfil de apoiador e geramos uma prova criptográfica
+            registrada como registro público na Solana Devnet.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <Tile label="Smart Actions" value={String(result.actionsAnalyzed)} />
-        <Tile label="Score anterior" value={String(result.previousScore)} hint={`Delta ${delta >= 0 ? "+" : ""}${delta}`} hintClass={deltaColor} />
-        <Tile label="Score novo" value={`${result.grooveScore}/1000`} />
-        <Tile label="GRVM recebido" value={`+${result.bonusGrvm}`} hintClass="text-accent" hint="Bônus Oracle" />
+      {/* Hero: score anterior → novo */}
+      <div className="rounded-xl border border-primary/30 bg-background/60 p-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-end gap-3">
+            <div className="text-center">
+              <div className="text-[9px] uppercase tracking-widest text-muted-foreground">Antes</div>
+              <div className="font-display text-2xl font-bold text-muted-foreground tabular-nums">{result.previousScore}</div>
+            </div>
+            <div className="text-2xl text-primary pb-1">→</div>
+            <div className="text-center">
+              <div className="text-[9px] uppercase tracking-widest text-primary">Agora</div>
+              <div className="font-display text-3xl md:text-4xl font-black gradient-neon-text tabular-nums">{result.grooveScore}</div>
+            </div>
+            <div className="text-[10px] text-muted-foreground pb-2">/ 1000</div>
+            {delta !== 0 && (
+              <div className={`text-xs font-mono font-bold pb-2 ${deltaColor}`}>
+                {delta > 0 ? "+" : ""}{delta} pts
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className={`px-2.5 py-1 rounded-full border text-[11px] font-display uppercase tracking-wider ${RANK_STYLES[result.rank]}`}>
+              {result.rank}
+            </span>
+            <span className="text-[9px] uppercase tracking-widest text-muted-foreground">Rank atual</span>
+          </div>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Arquétipo IA</span>
-        <span className="px-2 py-0.5 rounded-full border border-accent/50 bg-accent/10 text-accent text-[11px] font-display uppercase tracking-wider">
-          {result.archetype}
-        </span>
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground ml-2">Rank</span>
-        <span className={`px-2 py-0.5 rounded-full border text-[11px] font-display uppercase tracking-wider ${RANK_STYLES[result.rank]}`}>
-          {result.rank}
-        </span>
+      {/* Grid de resumo */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <Tile label="Ações verificáveis" value={String(result.actionsAnalyzed)} />
+        <Tile label="Perfil IA" value={result.archetype} valueClass="text-accent text-xs md:text-sm" />
+        <Tile label="GRVM recebido" value={`+${result.bonusGrvm}`} valueClass="text-primary" hint="Bônus Oracle" hintClass="text-primary/70" />
+        <Tile label="Prova on-chain" value={shortHash(result.oracleHash || result.txHash)} valueClass="text-xs md:text-sm font-mono" hint={result.chain} />
       </div>
 
       {result.reason && (
         <div className="rounded-lg border border-border/40 bg-background/50 px-3 py-2 text-xs text-muted-foreground">
-          <span className="text-primary font-display uppercase tracking-wider text-[10px] mr-2">Por que esse score</span>
+          <span className="text-primary font-display uppercase tracking-wider text-[10px] mr-2">Por que essa pontuação</span>
           {result.reason}
         </div>
       )}
       {result.nextAction && (
         <div className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs text-foreground">
-          <span className="text-accent font-display uppercase tracking-wider text-[10px] mr-2">Próxima ação</span>
+          <span className="text-accent font-display uppercase tracking-wider text-[10px] mr-2">Próxima ação sugerida</span>
           {result.nextAction}
         </div>
       )}
 
-      <div className="flex items-center gap-3 flex-wrap text-[11px] font-mono text-muted-foreground pt-1 border-t border-border/30">
-        <span className="flex items-center gap-1"><Hash className="w-3 h-3" /> {shortHash(result.oracleHash || result.txHash)}</span>
-        <span className="uppercase tracking-wider">{result.chain}</span>
-        {result.explorerUrl && (
-          <a href={result.explorerUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline flex items-center gap-1">
-            Ver no Solana Explorer <ExternalLink className="w-3 h-3" />
+      {/* Checklist técnico discreto */}
+      <details className="group rounded-lg border border-border/40 bg-background/40">
+        <summary className="cursor-pointer select-none px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground font-display flex items-center justify-between">
+          <span>Checklist técnico da sincronização</span>
+          <span className="text-primary group-open:rotate-180 transition-transform">▾</span>
+        </summary>
+        <ul className="px-3 pb-3 pt-1 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] font-mono">
+          {checklist.map((c) => (
+            <li key={c.label} className="flex items-center gap-2">
+              {c.ok ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
+              ) : (
+                <XCircle className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
+              )}
+              <span className={c.ok ? "text-foreground" : "text-muted-foreground/60"}>{c.label}</span>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      {/* CTA verificação pública */}
+      <div className="flex items-center gap-3 flex-wrap pt-1 border-t border-border/30">
+        <div className="text-[11px] font-mono text-muted-foreground flex items-center gap-1 min-w-0">
+          <Hash className="w-3 h-3 shrink-0" />
+          <span className="truncate">{shortHash(result.oracleHash || result.txHash)}</span>
+        </div>
+        {result.explorerUrl ? (
+          <a
+            href={result.explorerUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-background text-xs font-display font-bold hover:bg-primary/90 transition-colors"
+          >
+            Ver no Explorer <ExternalLink className="w-3.5 h-3.5" />
           </a>
+        ) : (
+          <span className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">{result.chain}</span>
         )}
       </div>
     </div>
   );
 }
 
-function Tile({ label, value, hint, hintClass }: { label: string; value: string; hint?: string; hintClass?: string }) {
+function Tile({ label, value, hint, hintClass, valueClass }: { label: string; value: string; hint?: string; hintClass?: string; valueClass?: string }) {
   return (
-    <div className="rounded-lg border border-border/40 bg-background/50 px-3 py-2">
-      <div className="text-[9px] uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className="font-display font-bold text-base text-foreground tabular-nums">{value}</div>
-      {hint && <div className={`text-[10px] font-mono ${hintClass ?? "text-muted-foreground"}`}>{hint}</div>}
+    <div className="rounded-lg border border-border/40 bg-background/50 px-3 py-2 min-w-0">
+      <div className="text-[9px] uppercase tracking-widest text-muted-foreground truncate">{label}</div>
+      <div className={`font-display font-bold text-foreground tabular-nums truncate ${valueClass ?? "text-base"}`}>{value}</div>
+      {hint && <div className={`text-[10px] font-mono truncate ${hintClass ?? "text-muted-foreground"}`}>{hint}</div>}
     </div>
   );
 }
 
 /** Standalone card used on /app/oracle */
-export function OracleSyncCard({ onSynced }: { onSynced?: (r: OracleSyncResult) => void }) {
+export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: OracleSyncResult) => void; headerExtra?: React.ReactNode }) {
   const { running, stepStatus, progress, result, sync } = useOracleSync();
   return (
-    <div className="glass-card rounded-2xl border border-primary/30 p-5 space-y-4">
+    <div className="glass-card rounded-2xl border border-primary/30 p-4 md:p-5 space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
           <Radio className="w-4 h-4 text-primary" />
           <h2 className="font-display text-lg font-bold gradient-neon-text">Sync Oracle</h2>
           <span className="text-[10px] font-display uppercase tracking-widest text-muted-foreground">
             Chainlink CRE · IA · Solana Devnet
           </span>
         </div>
-        <Button
-          onClick={() => sync(onSynced)}
-          disabled={running}
-          size="sm"
-          className="bg-gradient-to-r from-primary via-accent to-secondary text-background font-display font-bold"
-        >
-          {running ? (<><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Sincronizando…</>)
-                   : (<><RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Sync Oracle</>)}
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {headerExtra}
+          <Button
+            onClick={() => sync(onSynced)}
+            disabled={running}
+            size="sm"
+            className="bg-gradient-to-r from-primary via-accent to-secondary text-background font-display font-bold"
+          >
+            {running ? (<><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Sincronizando…</>)
+                     : (<><RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Sync Oracle</>)}
+          </Button>
+        </div>
       </div>
       <CreStepper stepStatus={stepStatus} progress={progress} running={running} />
       {result && <OracleResultPanel result={result} />}
