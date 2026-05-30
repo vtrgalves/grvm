@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import grooviumOfficialNft from "@/assets/groovium-nft-official.avif";
+import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
 
 // ---------- Rarity helpers ----------
 type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis";
@@ -385,6 +386,7 @@ function OfficialCard({ nft }: { nft: typeof OFFICIAL_NFTS[number] }) {
 
 function CommunityCard({ nft }: { nft: CommunityNft }) {
   const r = RARITY[nft.rarity];
+  const { open: openMarketplace } = useMarketplaceModal();
   return (
     <div
       className={`group relative rounded-2xl overflow-hidden border ${r.border} ${r.glow} glass-card hover:-translate-y-1 transition-all duration-300`}
@@ -412,6 +414,7 @@ function CommunityCard({ nft }: { nft: CommunityNft }) {
           <div className="font-display font-black text-primary text-sm">{formatGrv(nft.priceGrv)} GRVM</div>
           <Button
             size="sm"
+            onClick={openMarketplace}
             className="h-7 px-2 text-[10px] bg-gradient-to-r from-primary to-accent text-background font-bold"
           >
             Comprar
