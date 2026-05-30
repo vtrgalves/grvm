@@ -81,7 +81,7 @@ export function AppSidebar() {
           />
           {!collapsed && (
             <>
-              <span className="flex-1 font-medium text-[13px] tracking-wide">Groovium Heart</span>
+              <span className="flex-1 font-medium text-[13px] tracking-wide">Groovium</span>
               <span className="text-[9px] font-display font-bold tracking-[0.12em] px-1.5 py-0.5 rounded border bg-[hsl(330_100%_59%/0.12)] border-[hsl(330_100%_59%/0.25)] text-[hsl(330_100%_72%)]">
                 HEART
               </span>
