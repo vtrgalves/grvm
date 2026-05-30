@@ -608,7 +608,7 @@ function PortfolioCard() {
 
 // ---------- Page ----------
 
-const RARITY_FILTERS: (Rarity | "all")[] = ["all", "common", "rare", "epic", "legendary", "genesis"];
+const RARITY_FILTERS: (Rarity | "all")[] = ["all", "common", "rare", "epic", "legendary", "genesis", "grail"];
 type SortKey = "recent" | "high" | "low" | "trending";
 
 const NFTs = () => {
