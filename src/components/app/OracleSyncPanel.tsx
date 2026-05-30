@@ -99,13 +99,15 @@ export function useOracleSync() {
 
       const solanaOk = r.chain === "solana-devnet";
       const aiOk = r.externalData?.ai_ok !== false;
+      const hasHash = !!(r.oracleHash || r.txHash);
 
       setStepStatus(prev => ({
         ...prev,
         read: "success", group: "success", cre: "success",
-        ai: aiOk ? "success" : "failed",
-        score: "success", hash: r.oracleHash ? "success" : "failed",
-        solana: solanaOk ? "success" : "failed",
+        ai: aiOk ? "success" : "simulated",
+        score: "success",
+        hash: r.oracleHash ? "success" : (hasHash ? "simulated" : "failed"),
+        solana: solanaOk ? "success" : (hasHash ? "simulated" : "failed"),
         done: "success",
       }));
       setProgress(100);
@@ -128,12 +130,6 @@ export function useOracleSync() {
         syncId: r.syncId ?? null,
       };
       setResult(out);
-      toast.success(
-        out.bonusGrvm > 0
-          ? `Oracle sincronizado · +${out.bonusGrvm} GRVM`
-          : "Oracle sincronizado",
-        { description: `${out.archetype} · ${out.rank} · ${out.grooveScore}/1000`, icon: "🎧" },
-      );
       onSuccess?.(out);
     } catch (e: any) {
       cancelled = true;
