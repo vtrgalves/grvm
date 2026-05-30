@@ -95,8 +95,30 @@ export default function OracleHistory() {
       const { data, error } = await supabase.functions.invoke("premium-proof-sync", { body: {} });
       if (error) throw error;
       const n = (data as any)?.processed ?? 0;
-      toast.success(n > 0 ? `${n} prova(s) registrada(s) na Devnet` : "Nenhuma prova pendente");
       await loadProofs();
+      if (n > 0) {
+        // Pick the n most-recent synced proofs to show in the modal.
+        const { data: latest } = await (supabase.rpc as any)("get_user_premium_proofs", { _limit: 50 });
+        const synced = ((latest as PremiumProof[]) ?? []).filter((p) => p.oracle_synced).slice(0, n);
+        const views: PremiumProofView[] = synced.map((p) => ({
+          label: p.label,
+          icon: p.icon,
+          txHash: p.tx_hash,
+          explorerUrl: p.explorer_url ?? (isSolanaSignature(p.tx_hash) ? explorerTxUrl(p.tx_hash!) : null),
+          reputationDelta: p.reputation_delta,
+          chain: p.chain,
+          createdAt: p.created_at,
+        }));
+        if (views.length > 0) {
+          setPremiumModalProofs(views);
+          setPremiumModalCount(n);
+          setPremiumModalOpen(true);
+        } else {
+          toast.success(`${n} prova(s) registrada(s) na Devnet`);
+        }
+      } else {
+        toast.info("Nenhuma prova pendente");
+      }
     } catch (e: any) {
       toast.error(e?.message ?? "Falha ao sincronizar provas");
     } finally {
