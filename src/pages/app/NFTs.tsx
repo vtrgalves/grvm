@@ -20,9 +20,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import grooviumOfficialNft from "@/assets/groovium-nft-official.avif";
 import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
+import nftNeonPulse from "@/assets/nfts/neon-pulse.jpg";
+import nftWaveAccess from "@/assets/nfts/wave-access.jpg";
+import nftCyberFrequency from "@/assets/nfts/cyber-frequency.jpg";
+import nftGenesisAura from "@/assets/nfts/genesis-aura.jpg";
+import nftEternalGroove from "@/assets/nfts/eternal-groove.jpg";
+import nftQuantumSound from "@/assets/nfts/quantum-sound.jpg";
+import nftGenesisPrime from "@/assets/nfts/genesis-prime.jpg";
+import nftEternalFounder from "@/assets/nfts/eternal-founder.jpg";
+import nftFirstWave from "@/assets/nfts/first-wave.jpg";
+import nftArtistNeonFrequency from "@/assets/nfts/artist-neon-frequency.jpg";
+import nftArtistLunaVox from "@/assets/nfts/artist-luna-vox.jpg";
+import nftArtistCyberGroove from "@/assets/nfts/artist-cybergroove.jpg";
 
 // ---------- Rarity helpers ----------
-type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis";
+type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis" | "grail";
 
 const RARITY: Record<
   Rarity,
@@ -30,43 +42,51 @@ const RARITY: Record<
 > = {
   common: {
     label: "Common",
-    icon: "⚪",
-    chip: "from-slate-500 to-slate-700",
-    ring: "ring-slate-400/30",
-    glow: "shadow-[0_0_18px_hsl(0_0%_60%/0.18)]",
-    border: "border-slate-500/30",
+    icon: "◇",
+    chip: "from-slate-400 to-slate-600",
+    ring: "ring-slate-300/30",
+    glow: "shadow-[0_0_18px_hsl(0_0%_70%/0.18)]",
+    border: "border-slate-400/30",
   },
   rare: {
     label: "Rare",
-    icon: "🔵",
-    chip: "from-cyan-500 to-blue-600",
-    ring: "ring-cyan-400/40",
-    glow: "shadow-[0_0_22px_hsl(191_100%_50%/0.28)]",
-    border: "border-cyan-400/40",
+    icon: "◈",
+    chip: "from-cyan-400 to-blue-500",
+    ring: "ring-cyan-400/50",
+    glow: "shadow-[0_0_22px_hsl(191_100%_50%/0.35)]",
+    border: "border-cyan-400/50",
   },
   epic: {
     label: "Epic",
-    icon: "🟣",
-    chip: "from-purple-500 to-fuchsia-600",
-    ring: "ring-purple-400/40",
-    glow: "shadow-[0_0_24px_hsl(270_80%_55%/0.35)]",
-    border: "border-purple-400/40",
+    icon: "◆",
+    chip: "from-purple-500 to-fuchsia-500",
+    ring: "ring-purple-400/50",
+    glow: "shadow-[0_0_24px_hsl(270_80%_60%/0.45)]",
+    border: "border-purple-400/50",
   },
   legendary: {
     label: "Legendary",
-    icon: "🟠",
-    chip: "from-orange-500 to-pink-500",
-    ring: "ring-orange-400/50",
-    glow: "shadow-[0_0_28px_hsl(330_100%_55%/0.4)]",
-    border: "border-orange-400/50",
+    icon: "✦",
+    chip: "from-orange-400 to-rose-500",
+    ring: "ring-orange-400/60",
+    glow: "shadow-[0_0_28px_hsl(20_100%_55%/0.5)]",
+    border: "border-orange-400/60",
   },
   genesis: {
     label: "Genesis",
-    icon: "🌌",
-    chip: "from-cyan-400 via-fuchsia-500 to-orange-400",
+    icon: "✺",
+    chip: "from-cyan-400 via-fuchsia-500 to-pink-500",
     ring: "ring-fuchsia-400/60",
-    glow: "shadow-[0_0_36px_hsl(330_100%_55%/0.45),0_0_60px_hsl(191_100%_50%/0.25)]",
+    glow: "shadow-[0_0_36px_hsl(330_100%_55%/0.5),0_0_60px_hsl(191_100%_50%/0.3)]",
     border: "border-fuchsia-400/60",
+  },
+  grail: {
+    label: "Grail",
+    icon: "♛",
+    chip: "from-yellow-300 via-amber-400 to-yellow-600",
+    ring: "ring-amber-300/70",
+    glow: "shadow-[0_0_40px_hsl(45_100%_55%/0.55),0_0_70px_hsl(330_100%_55%/0.25)]",
+    border: "border-amber-300/70",
   },
 };
 
@@ -141,7 +161,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "neon-pulse",
     name: "Neon Pulse",
     artist: "Ana Wave",
-    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=600&q=80",
+    image: nftNeonPulse,
     rarity: "common",
     priceGrv: 50,
     supply: "850 / 1000",
@@ -150,7 +170,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "wave-access",
     name: "Wave Access",
     artist: "Lucas Neon",
-    image: "https://images.unsplash.com/photo-1593697972672-b1c1362d8086?w=600&q=80",
+    image: nftWaveAccess,
     rarity: "rare",
     priceGrv: 500,
     supply: "210 / 500",
@@ -160,7 +180,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "cyber-frequency",
     name: "Cyber Frequency",
     artist: "CyberMike",
-    image: "https://images.unsplash.com/photo-1633101585272-9e0b0c3d9a3c?w=600&q=80",
+    image: nftCyberFrequency,
     rarity: "epic",
     priceGrv: 2000,
     supply: "62 / 200",
@@ -170,7 +190,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "genesis-aura",
     name: "Genesis Aura",
     artist: "Mara Synth",
-    image: "https://images.unsplash.com/photo-1604871000636-074fa5117945?w=600&q=80",
+    image: nftGenesisAura,
     rarity: "legendary",
     priceGrv: 12000,
     supply: "9 / 50",
@@ -180,7 +200,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "eternal-groove",
     name: "Eternal Groove",
     artist: "Sasha Orbit",
-    image: "https://images.unsplash.com/photo-1614851099175-e5b30eb872c5?w=600&q=80",
+    image: nftEternalGroove,
     rarity: "genesis",
     priceGrv: 50000,
     supply: "2 / 10",
@@ -190,7 +210,7 @@ const COMMUNITY_NFTS: CommunityNft[] = [
     id: "quantum-sound",
     name: "Quantum Sound Genesis",
     artist: "DJ Helix",
-    image: "https://images.unsplash.com/photo-1558174685-430919a96c8d?w=600&q=80",
+    image: nftQuantumSound,
     rarity: "genesis",
     priceGrv: 120000,
     supply: "1 / 3",
@@ -203,8 +223,8 @@ const GRAILS: CommunityNft[] = [
     id: "genesis-prime",
     name: "Genesis Prime",
     artist: "Groovium Lab",
-    image: "https://images.unsplash.com/photo-1547234935-80c7145ec969?w=600&q=80",
-    rarity: "genesis",
+    image: nftGenesisPrime,
+    rarity: "grail",
     priceGrv: 250000,
     supply: "1 / 1",
   },
@@ -212,8 +232,8 @@ const GRAILS: CommunityNft[] = [
     id: "eternal-founder",
     name: "Eternal Founder",
     artist: "Groovium Lab",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80",
-    rarity: "genesis",
+    image: nftEternalFounder,
+    rarity: "grail",
     priceGrv: 500000,
     supply: "1 / 1",
   },
@@ -221,12 +241,49 @@ const GRAILS: CommunityNft[] = [
     id: "first-wave",
     name: "First Wave Artifact",
     artist: "Groovium Lab",
-    image: "https://images.unsplash.com/photo-1601370690183-1c7796ecec7a?w=600&q=80",
-    rarity: "genesis",
+    image: nftFirstWave,
+    rarity: "grail",
     priceGrv: 1_200_000,
     supply: "1 / 1",
   },
 ];
+
+type ArtistNft = CommunityNft & { genre: string };
+
+const ARTIST_NFTS: ArtistNft[] = [
+  {
+    id: "artist-neon-frequency",
+    name: "Neon Frequency",
+    artist: "Synthwave Collective",
+    image: nftArtistNeonFrequency,
+    rarity: "rare",
+    priceGrv: 750,
+    supply: "120 / 300",
+    genre: "Synthwave",
+  },
+  {
+    id: "artist-luna-vox",
+    name: "Luna Vox",
+    artist: "Luna Vox",
+    image: nftArtistLunaVox,
+    rarity: "epic",
+    priceGrv: 3200,
+    supply: "40 / 150",
+    genre: "Dream Pop Futurista",
+  },
+  {
+    id: "artist-cybergroove",
+    name: "CyberGroove",
+    artist: "CyberGroove",
+    image: nftArtistCyberGroove,
+    rarity: "legendary",
+    priceGrv: 9800,
+    supply: "12 / 60",
+    genre: "Street Cyberpunk",
+  },
+];
+
+
 
 const ACTIVITY_SEED = [
   "Lucas Neon comprou Genesis Aura por 12.000 GRVM",
@@ -551,7 +608,7 @@ function PortfolioCard() {
 
 // ---------- Page ----------
 
-const RARITY_FILTERS: (Rarity | "all")[] = ["all", "common", "rare", "epic", "legendary", "genesis"];
+const RARITY_FILTERS: (Rarity | "all")[] = ["all", "common", "rare", "epic", "legendary", "genesis", "grail"];
 type SortKey = "recent" | "high" | "low" | "trending";
 
 const NFTs = () => {
@@ -739,6 +796,34 @@ const NFTs = () => {
           ))}
         </div>
       </section>
+
+      {/* Artist NFTs */}
+      <section className="space-y-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="font-display text-xl md:text-2xl font-black flex items-center gap-2">
+              🎤 NFTs dos Artistas
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Linguagens visuais únicas — cada artista do Groovium expressa sua identidade no universo cyberpunk.
+            </p>
+          </div>
+          <span className="text-[10px] font-display uppercase tracking-widest text-primary inline-flex items-center gap-1">
+            <Sparkles className="w-3 h-3" /> Artist Drops
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {ARTIST_NFTS.map((n) => (
+            <div key={n.id} className="relative">
+              <CommunityCard nft={n} />
+              <span className="absolute -top-2 left-3 z-10 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur border border-primary/40 text-[9px] font-display uppercase tracking-widest text-primary">
+                {n.genre}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
 
       {/* User-created items from DB */}
       <section className="pt-2 border-t border-border/40">
