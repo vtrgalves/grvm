@@ -344,6 +344,7 @@ function Tile({ label, value, hint, hintClass, valueClass }: { label: string; va
 /** Standalone card used on /app/oracle */
 export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: OracleSyncResult) => void; headerExtra?: React.ReactNode }) {
   const { running, stepStatus, progress, result, sync } = useOracleSync();
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <div className="glass-card rounded-2xl border border-primary/30 p-4 md:p-5 space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -357,7 +358,7 @@ export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: Oracl
         <div className="flex items-center gap-2 flex-wrap">
           {headerExtra}
           <Button
-            onClick={() => sync(onSynced)}
+            onClick={() => sync((r) => { setModalOpen(true); onSynced?.(r); })}
             disabled={running}
             size="sm"
             className="bg-gradient-to-r from-primary via-accent to-secondary text-background font-display font-bold"
@@ -369,6 +370,7 @@ export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: Oracl
       </div>
       <CreStepper stepStatus={stepStatus} progress={progress} running={running} />
       {result && <OracleResultPanel result={result} />}
+      <OracleSuccessModal open={modalOpen} onOpenChange={setModalOpen} result={result} />
     </div>
   );
 }
