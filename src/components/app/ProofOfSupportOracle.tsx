@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import {
-  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, ExternalLink, Globe, HelpCircle, Link2, Loader2,
+  Activity, AlertTriangle, Brain, CheckCircle2, Cpu, ExternalLink, Eye, Globe, HelpCircle, Link2, Loader2,
   RefreshCw, ShieldCheck, Sparkles, TrendingUp, Zap, Radio,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -270,7 +270,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
             <OracleDemoModal
               trigger={
                 <button className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full border border-accent/40 text-accent hover:bg-accent/10 transition-colors">
-                  ▶ Ver demo guiada
+                  <Eye className="w-3 h-3" /> Ver funcionamento
                 </button>
               }
             />

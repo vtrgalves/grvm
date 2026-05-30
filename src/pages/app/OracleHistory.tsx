@@ -144,14 +144,14 @@ export default function OracleHistory() {
         <OracleDemoModal />
       </div>
 
-      {/* Resumo para jurados */}
+      {/* O coração da reputação musical */}
       <div className="glass-card rounded-2xl border border-accent/40 p-5 md:p-6 bg-gradient-to-br from-accent/5 via-background/40 to-primary/5">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-lg bg-accent/20 border border-accent/50 flex items-center justify-center shrink-0">
             <Award className="w-5 h-5 text-accent" />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-widest text-accent font-display">Resumo para jurados</div>
+            <div className="text-[10px] uppercase tracking-widest text-accent font-display">O coração da reputação musical</div>
             <p className="text-sm md:text-base text-foreground mt-1 leading-relaxed">
               O Groovium usa <strong className="text-secondary">Chainlink CRE</strong> para orquestrar dados, IA e blockchain.
               Cada interação musical gera reputação verificável. A <strong className="text-primary">Solana Devnet</strong> registra
