@@ -52,7 +52,9 @@ const App = () => (
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/missions" element={<Missions />} />
             <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<GrooviumHeart />} />
+              <Route path="heart" element={<GrooviumHeart />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="wallet" element={<Wallet />} />
               <Route path="missions" element={<MissionsApp />} />
               <Route path="levels" element={<Levels />} />
