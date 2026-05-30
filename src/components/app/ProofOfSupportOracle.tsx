@@ -106,6 +106,10 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
   const [prevScore, setPrevScore] = useState<number | null>(null);
   const [lastReward, setLastReward] = useState<number | null>(null);
   const [smartActions, setSmartActions] = useState<SmartAction[]>([]);
+  const [successResult, setSuccessResult] = useState<OracleSyncResult | null>(null);
+  const [successOpen, setSuccessOpen] = useState(false);
+
+
 
   const load = async () => {
     const [{ data: res }, { data: sa }] = await Promise.all([
