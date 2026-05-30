@@ -373,6 +373,13 @@ export default function OracleHistory() {
         🔗 Cada sincronização agrega N Smart Actions em uma única prova verificável.
         Ações premium recebem hash individual na Solana Devnet.
       </p>
+
+      <PremiumProofModal
+        open={premiumModalOpen}
+        onOpenChange={setPremiumModalOpen}
+        proofs={premiumModalProofs}
+        count={premiumModalCount}
+      />
     </div>
   );
 }
