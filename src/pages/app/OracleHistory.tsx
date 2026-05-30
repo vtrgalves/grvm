@@ -112,6 +112,18 @@ export default function OracleHistory() {
         </p>
       </div>
 
+      <OracleSyncCard onSynced={async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        const [hist, rep] = await Promise.all([
+          supabase.rpc("get_oracle_history", { _range: range }),
+          user ? supabase.rpc("compute_reputation_score", { _uid: user.id }) : Promise.resolve({ data: 0 }),
+        ]);
+        setRows(((hist.data as Row[]) ?? []));
+        setReputation(Number(rep.data ?? 0));
+        await loadProofs();
+      }} />
+
+
       <div className="glass-card rounded-2xl border border-primary/30 p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
         <div className="flex-1">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reputation Score atual</div>
