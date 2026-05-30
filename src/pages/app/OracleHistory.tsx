@@ -209,6 +209,65 @@ export default function OracleHistory() {
         )}
       </div>
 
+      {/* Premium Proofs Individuais */}
+      <div className="glass-card rounded-2xl border border-accent/30 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/40 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Crown className="w-4 h-4 text-accent" />
+            <span className="font-display text-sm font-bold">Premium Proofs Individuais</span>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              {pending > 0 ? `${pending} pendente(s)` : "tudo sincronizado"}
+            </span>
+          </div>
+          <Button
+            size="sm"
+            onClick={handleSyncPremium}
+            disabled={syncing || pending === 0}
+            className="bg-gradient-to-r from-accent to-primary text-background font-display font-bold"
+          >
+            {syncing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Crown className="w-3 h-3 mr-1" />}
+            Sincronizar na Devnet
+          </Button>
+        </div>
+        {proofs.length === 0 ? (
+          <div className="p-8 text-center text-muted-foreground text-sm">
+            Conquiste NFTs, VIP, badges ou crates lendárias para gerar provas individuais.
+          </div>
+        ) : (
+          <div className="divide-y divide-border/30">
+            {proofs.map((p) => {
+              const href = p.explorer_url ?? (isSolanaSignature(p.tx_hash) ? explorerTxUrl(p.tx_hash!) : null);
+              return (
+                <div key={p.id} className="px-4 py-3 flex items-center gap-3 flex-wrap md:flex-nowrap">
+                  <div className="text-xl shrink-0">{p.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-display text-[11px] font-bold uppercase tracking-wider text-accent">{p.label}</span>
+                      <span className="text-[10px] text-muted-foreground">• {timeAgo(p.created_at)} atrás</span>
+                      {p.oracle_synced ? (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary uppercase tracking-wider">on-chain</span>
+                      ) : (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted/20 text-muted-foreground uppercase tracking-wider">pendente</span>
+                      )}
+                    </div>
+                    <div className="text-[10px] font-mono text-muted-foreground mt-0.5 flex items-center gap-3 flex-wrap">
+                      <span className="flex items-center gap-1"><Hash className="w-3 h-3" /> {shortHash(p.tx_hash)}</span>
+                      <span className="uppercase tracking-wider">{p.chain ?? "pending"}</span>
+                      {href && (
+                        <a href={href} target="_blank" rel="noreferrer" className="text-primary flex items-center gap-1 hover:underline">
+                          explorer <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <div className="font-display font-bold text-sm shrink-0 text-accent">+{p.reputation_delta} REP</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <p className="text-[10px] text-center text-muted-foreground uppercase tracking-wider">
         🔗 Cada sincronização agrega N Smart Actions em uma única prova verificável.
         Ações premium recebem hash individual na Solana Devnet.
