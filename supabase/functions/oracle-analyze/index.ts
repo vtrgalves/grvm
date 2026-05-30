@@ -131,6 +131,19 @@ Deno.serve(async (req) => {
     });
 
     // [3] Reputation Score 0–1000 — prefer canonical SQL function, fallback to inline.
+    // Capture previous score BEFORE this sync for delta + bonus calculation.
+    let previousScore = 0;
+    try {
+      const { data: prev } = await admin
+        .from("oracle_activity")
+        .select("groove_score")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      previousScore = Number(prev?.groove_score ?? 0);
+    } catch (_) { /* ignore */ }
+
     let grooveScore = 0;
     try {
       const { data, error } = await admin.rpc("compute_reputation_score", { _uid: uid });
@@ -143,13 +156,13 @@ Deno.serve(async (req) => {
     const rank = rankForScore(grooveScore);
     workflow.push({ name: "Calculando GRVM Reputation Score", status: "ok" });
 
-    // [4] AI insight (human, behavioral)
+    // [4] AI insight + behavioral archetype
     const ai = await runAi(metrics, externalData, grooveScore, rank, smartActions, env.LOVABLE_API_KEY);
     externalData.ai_ok = ai.ai_ok;
     if (ai.warning) externalData.warnings.push(ai.warning);
-    workflow.push({ name: "IA Gemini · análise comportamental", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
+    workflow.push({ name: "IA · análise comportamental", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
 
-    // [5] Oracle hash (aggregates score + rank + activity fingerprint)
+    // [5] Oracle hash
     const syncedAt = new Date().toISOString();
     const activityFingerprint = await sha256Hex(
       smartActions.map((a) => `${a.action}:${a.id}`).join("|") || uid,
@@ -181,19 +194,10 @@ Deno.serve(async (req) => {
     };
     try {
       const { data, error } = await admin.rpc("record_oracle_sync", {
-        _uid: uid,
-        _score: grooveScore,
-        _insight: ai.insight,
-        _profile: ai.profile,
-        _trigger: trigger,
-        _metrics: metrics,
-        _rank: rank,
-        _external: externalData,
-        _tx_hash: proof.tx_hash,
-        _slot: proof.slot,
-        _explorer_url: proof.explorer_url,
-        _oracle_hash: oracleHash,
-        _chain: proof.chain,
+        _uid: uid, _score: grooveScore, _insight: ai.insight, _profile: ai.profile,
+        _trigger: trigger, _metrics: metrics, _rank: rank, _external: externalData,
+        _tx_hash: proof.tx_hash, _slot: proof.slot, _explorer_url: proof.explorer_url,
+        _oracle_hash: oracleHash, _chain: proof.chain,
       });
       if (error) throw error;
       dbProof = data as typeof dbProof;
@@ -203,23 +207,35 @@ Deno.serve(async (req) => {
       workflow.push({ name: "Persistindo histórico", status: "fallback", message: stringifyError(error) });
     }
 
+    // [8] Bonus GRVM pós-sync (diminishing returns + diversidade)
+    const bonus = computeOracleBonus(previousScore, grooveScore, smartActions);
+    let bonusAwarded = 0;
+    if (bonus > 0) {
+      try {
+        const { data } = await admin.rpc("award_oracle_bonus", {
+          _uid: uid, _bonus: bonus, _sync_id: dbProof.id ?? null,
+          _reason: `Bônus Oracle · ${ai.archetype} · +${grooveScore - previousScore} pts`,
+        });
+        bonusAwarded = Number((data as any)?.awarded ?? 0);
+        workflow.push({ name: `Bônus GRVM (+${bonusAwarded})`, status: "ok" });
+      } catch (error) {
+        console.error("[bonus] failed", error);
+        workflow.push({ name: "Bônus GRVM", status: "fallback", message: stringifyError(error) });
+      }
+    } else {
+      workflow.push({ name: "Bônus GRVM", status: "ok", message: "Sem bônus (ação repetitiva)" });
+    }
+
     return successResponse({
-      grooveScore,
-      insight: ai.insight,
-      profile: ai.profile,
-      rank,
-      smartActions,
-      activityHash: activityFingerprint,
-      externalData,
-      txHash: proof.tx_hash,
-      blockNumber: proof.slot ?? 0,
-      slot: proof.slot,
-      chain: proof.chain,
-      explorerUrl: proof.explorer_url,
-      oracleHash,
-      syncedAt,
-      durationMs: Date.now() - startedAt,
-      workflow,
+      grooveScore, previousScore,
+      insight: ai.insight, profile: ai.profile, rank,
+      archetype: ai.archetype, nextAction: ai.nextAction, reason: ai.reason,
+      smartActions, actionsAnalyzed: smartActions.length,
+      activityHash: activityFingerprint, externalData,
+      txHash: proof.tx_hash, blockNumber: proof.slot ?? 0, slot: proof.slot,
+      chain: proof.chain, explorerUrl: proof.explorer_url, oracleHash,
+      syncId: dbProof.id ?? null, bonusGrvm: bonusAwarded,
+      syncedAt, durationMs: Date.now() - startedAt, workflow,
     });
   } catch (error) {
     console.error("[oracle] fatal", error);
