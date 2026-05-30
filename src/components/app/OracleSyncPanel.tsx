@@ -211,12 +211,13 @@ export function CreStepper({
 export function OracleResultPanel({ result }: { result: OracleSyncResult }) {
   const delta = result.grooveScore - result.previousScore;
   const deltaColor = delta > 0 ? "text-primary" : delta < 0 ? "text-destructive" : "text-muted-foreground";
+  const hasHash = !!(result.oracleHash || result.txHash);
   const checklist = [
     { label: "Ações verificáveis capturadas", ok: result.actionsAnalyzed > 0 },
     { label: "Pontuação de reputação calculada", ok: result.grooveScore > 0 },
     { label: "IA processou seu perfil musical", ok: !!result.archetype },
     { label: "Hash SHA-256 gerado", ok: !!result.oracleHash },
-    { label: "Registro público na Solana Devnet", ok: result.chain === "solana-devnet" },
+    { label: result.chain === "solana-devnet" ? "Registro público na Solana Devnet" : "Registro preparado para Devnet (demo)", ok: hasHash },
     { label: "Disponível no Explorer público", ok: !!result.explorerUrl },
   ];
   return (
