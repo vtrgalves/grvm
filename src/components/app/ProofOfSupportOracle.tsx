@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank, type SmartAction } from "@/lib/oracle";
+import { OracleDemoModal } from "@/components/app/OracleDemoModal";
 
 interface OracleData {
   latest: {
