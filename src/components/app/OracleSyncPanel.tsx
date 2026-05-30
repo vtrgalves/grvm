@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank } from "@/lib/oracle";
+import { OracleSuccessModal } from "@/components/app/OracleSuccessModal";
 
 export type StepStatus = "idle" | "running" | "success" | "failed" | "simulated";
 
