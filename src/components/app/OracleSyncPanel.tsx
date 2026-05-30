@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank } from "@/lib/oracle";
+import { OracleSuccessModal } from "@/components/app/OracleSuccessModal";
 
-export type StepStatus = "idle" | "running" | "success" | "failed";
+export type StepStatus = "idle" | "running" | "success" | "failed" | "simulated";
 
 export type OracleSyncResult = {
   success: boolean;
@@ -99,13 +100,15 @@ export function useOracleSync() {
 
       const solanaOk = r.chain === "solana-devnet";
       const aiOk = r.externalData?.ai_ok !== false;
+      const hasHash = !!(r.oracleHash || r.txHash);
 
       setStepStatus(prev => ({
         ...prev,
         read: "success", group: "success", cre: "success",
-        ai: aiOk ? "success" : "failed",
-        score: "success", hash: r.oracleHash ? "success" : "failed",
-        solana: solanaOk ? "success" : "failed",
+        ai: aiOk ? "success" : "simulated",
+        score: "success",
+        hash: r.oracleHash ? "success" : (hasHash ? "simulated" : "failed"),
+        solana: solanaOk ? "success" : (hasHash ? "simulated" : "failed"),
         done: "success",
       }));
       setProgress(100);
@@ -128,12 +131,6 @@ export function useOracleSync() {
         syncId: r.syncId ?? null,
       };
       setResult(out);
-      toast.success(
-        out.bonusGrvm > 0
-          ? `Oracle sincronizado · +${out.bonusGrvm} GRVM`
-          : "Oracle sincronizado",
-        { description: `${out.archetype} · ${out.rank} · ${out.grooveScore}/1000`, icon: "🎧" },
-      );
       onSuccess?.(out);
     } catch (e: any) {
       cancelled = true;
@@ -175,26 +172,29 @@ export function CreStepper({
           const status = stepStatus[s.key];
           const Icon = s.icon;
           const color =
-            status === "success" ? "border-primary/50 bg-primary/10 text-primary" :
-            status === "running" ? "border-accent/50 bg-accent/10 text-accent animate-pulse" :
-            status === "failed"  ? "border-destructive/50 bg-destructive/10 text-destructive" :
-                                   "border-border/40 text-muted-foreground/40";
+            status === "success"   ? "border-primary/50 bg-primary/10 text-primary" :
+            status === "simulated" ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-300" :
+            status === "running"   ? "border-accent/50 bg-accent/10 text-accent animate-pulse" :
+            status === "failed"    ? "border-destructive/50 bg-destructive/10 text-destructive" :
+                                     "border-border/40 text-muted-foreground/40";
           const textColor =
-            status === "success" ? "text-foreground" :
-            status === "running" ? "text-foreground" :
+            status === "success" || status === "simulated" || status === "running" ? "text-foreground" :
             status === "failed"  ? "text-destructive" : "text-muted-foreground/50";
+          const isSolanaStep = s.key === "solana";
           const tag =
-            status === "running" ? "running" :
-            status === "success" ? "✓ ok" :
-            status === "failed"  ? "✗ failed" : "idle";
+            status === "running"   ? "running" :
+            status === "success"   ? "✓ ok" :
+            status === "simulated" ? (isSolanaStep ? "✓ simulado em devnet" : "✓ demo") :
+            status === "failed"    ? "✗ failed" : "idle";
           const tagColor =
-            status === "success" ? "text-primary" :
-            status === "running" ? "text-accent" :
-            status === "failed"  ? "text-destructive" : "text-muted-foreground/40";
+            status === "success"   ? "text-primary" :
+            status === "simulated" ? "text-yellow-300" :
+            status === "running"   ? "text-accent" :
+            status === "failed"    ? "text-destructive" : "text-muted-foreground/40";
           return (
             <div key={s.key} className={`flex items-center gap-3 text-xs transition-colors ${textColor}`}>
               <div className={`w-6 h-6 rounded-md flex items-center justify-center border ${color}`}>
-                {status === "success" ? <CheckCircle2 className="w-3.5 h-3.5" /> :
+                {status === "success" || status === "simulated" ? <CheckCircle2 className="w-3.5 h-3.5" /> :
                  status === "running" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
                  status === "failed"  ? <XCircle className="w-3.5 h-3.5" /> :
                                         <Icon className="w-3.5 h-3.5" />}
@@ -212,12 +212,13 @@ export function CreStepper({
 export function OracleResultPanel({ result }: { result: OracleSyncResult }) {
   const delta = result.grooveScore - result.previousScore;
   const deltaColor = delta > 0 ? "text-primary" : delta < 0 ? "text-destructive" : "text-muted-foreground";
+  const hasHash = !!(result.oracleHash || result.txHash);
   const checklist = [
     { label: "Ações verificáveis capturadas", ok: result.actionsAnalyzed > 0 },
     { label: "Pontuação de reputação calculada", ok: result.grooveScore > 0 },
     { label: "IA processou seu perfil musical", ok: !!result.archetype },
     { label: "Hash SHA-256 gerado", ok: !!result.oracleHash },
-    { label: "Registro público na Solana Devnet", ok: result.chain === "solana-devnet" },
+    { label: result.chain === "solana-devnet" ? "Registro público na Solana Devnet" : "Registro preparado para Devnet (demo)", ok: hasHash },
     { label: "Disponível no Explorer público", ok: !!result.explorerUrl },
   ];
   return (
@@ -344,6 +345,7 @@ function Tile({ label, value, hint, hintClass, valueClass }: { label: string; va
 /** Standalone card used on /app/oracle */
 export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: OracleSyncResult) => void; headerExtra?: React.ReactNode }) {
   const { running, stepStatus, progress, result, sync } = useOracleSync();
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <div className="glass-card rounded-2xl border border-primary/30 p-4 md:p-5 space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -357,7 +359,7 @@ export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: Oracl
         <div className="flex items-center gap-2 flex-wrap">
           {headerExtra}
           <Button
-            onClick={() => sync(onSynced)}
+            onClick={() => sync((r) => { setModalOpen(true); onSynced?.(r); })}
             disabled={running}
             size="sm"
             className="bg-gradient-to-r from-primary via-accent to-secondary text-background font-display font-bold"
@@ -369,6 +371,7 @@ export function OracleSyncCard({ onSynced, headerExtra }: { onSynced?: (r: Oracl
       </div>
       <CreStepper stepStatus={stepStatus} progress={progress} running={running} />
       {result && <OracleResultPanel result={result} />}
+      <OracleSuccessModal open={modalOpen} onOpenChange={setModalOpen} result={result} />
     </div>
   );
 }
