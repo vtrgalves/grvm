@@ -688,6 +688,63 @@ export type Database = {
         }
         Relationships: []
       }
+      smart_actions: {
+        Row: {
+          action: string
+          category: string
+          chain: string | null
+          created_at: string
+          explorer_url: string | null
+          icon: string
+          id: string
+          label: string
+          metadata: Json
+          oracle_synced: boolean
+          points: number
+          premium: boolean
+          reputation_delta: number
+          source_tx_id: string | null
+          tx_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          category?: string
+          chain?: string | null
+          created_at?: string
+          explorer_url?: string | null
+          icon?: string
+          id?: string
+          label: string
+          metadata?: Json
+          oracle_synced?: boolean
+          points?: number
+          premium?: boolean
+          reputation_delta?: number
+          source_tx_id?: string | null
+          tx_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          category?: string
+          chain?: string | null
+          created_at?: string
+          explorer_url?: string | null
+          icon?: string
+          id?: string
+          label?: string
+          metadata?: Json
+          oracle_synced?: boolean
+          points?: number
+          premium?: boolean
+          reputation_delta?: number
+          source_tx_id?: string | null
+          tx_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       tips: {
         Row: {
           amount: number
@@ -892,6 +949,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _derive_smart_action: {
+        Args: { _action: string; _desc: string; _points: number }
+        Returns: Json
+      }
       _notify: {
         Args: {
           _actor: string
@@ -912,6 +973,7 @@ export type Database = {
       claim_vip_perk: { Args: { _perk_id: string }; Returns: Json }
       compute_engagement_metrics: { Args: { _uid: string }; Returns: Json }
       compute_level: { Args: { points: number }; Returns: string }
+      compute_reputation_score: { Args: { _uid: string }; Returns: number }
       create_artist_item: {
         Args: {
           _description: string
@@ -1055,8 +1117,60 @@ export type Database = {
       }
       get_my_email: { Args: never; Returns: string }
       get_oracle_dashboard: { Args: never; Returns: Json }
+      get_oracle_history: {
+        Args: { _range?: string }
+        Returns: {
+          ai_insight: string
+          ai_profile: string
+          ai_rank: string
+          block_number: number
+          chain: string
+          created_at: string
+          explorer_url: string
+          external_data: Json
+          groove_score: number
+          id: string
+          oracle_hash: string
+          slot: number
+          trigger_event: string
+          tx_hash: string
+        }[]
+      }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
-      get_smart_actions: { Args: { _limit?: number }; Returns: Json }
+      get_smart_actions: {
+        Args: { _limit?: number }
+        Returns: {
+          action: string
+          category: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          label: string
+          points: number
+          premium: boolean
+          reputation_delta: number
+        }[]
+      }
+      get_smart_actions_global: {
+        Args: { _limit?: number; _premium_only?: boolean }
+        Returns: {
+          action: string
+          category: string
+          chain: string
+          created_at: string
+          explorer_url: string
+          icon: string
+          id: string
+          label: string
+          points: number
+          premium: boolean
+          reputation_delta: number
+          tx_hash: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       get_user_badges: {
         Args: { _user_id: string }
         Returns: {
@@ -1070,7 +1184,27 @@ export type Database = {
           title: string
         }[]
       }
+      list_pending_premium_proofs: {
+        Args: { _limit?: number }
+        Returns: {
+          action: string
+          created_at: string
+          id: string
+          label: string
+          points: number
+          user_id: string
+        }[]
+      }
       mark_all_notifications_read: { Args: never; Returns: Json }
+      mark_premium_proof: {
+        Args: {
+          _action_id: string
+          _chain?: string
+          _explorer_url: string
+          _tx_hash: string
+        }
+        Returns: undefined
+      }
       open_crate: { Args: { _slug: string }; Returns: Json }
       record_oracle_sync:
         | {

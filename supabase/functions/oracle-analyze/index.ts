@@ -35,8 +35,8 @@ type ExternalSignals = {
 };
 
 type Rank =
-  | "Rookie" | "Supporter" | "Insider" | "Groove Hunter"
-  | "Viral Supporter" | "Legendary" | "Genesis Icon";
+  | "Rookie" | "Listener" | "Supporter" | "Insider"
+  | "Groove Hunter" | "Backstage" | "Legend" | "Genesis Icon";
 
 type AiResult = { profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string };
 
@@ -49,12 +49,13 @@ const FALLBACK_INSIGHT = "Seu perfil ainda possui poucos dados — interaja com 
 const FALLBACK_PROFILE = "Groover Rookie";
 
 function rankForScore(score: number): Rank {
-  if (score >= 951) return "Genesis Icon";
-  if (score >= 801) return "Legendary";
-  if (score >= 601) return "Viral Supporter";
-  if (score >= 401) return "Groove Hunter";
-  if (score >= 251) return "Insider";
-  if (score >= 101) return "Supporter";
+  if (score >= 900) return "Genesis Icon";
+  if (score >= 800) return "Legend";
+  if (score >= 650) return "Backstage";
+  if (score >= 500) return "Groove Hunter";
+  if (score >= 350) return "Insider";
+  if (score >= 200) return "Supporter";
+  if (score >= 100) return "Listener";
   return "Rookie";
 }
 
@@ -122,8 +123,16 @@ Deno.serve(async (req) => {
       message: externalData.warnings.join(" · ") || undefined,
     });
 
-    // [3] Reputation Score 0–1000
-    const grooveScore = computeReputationScore(metrics, externalData, smartActions);
+    // [3] Reputation Score 0–1000 — prefer canonical SQL function, fallback to inline.
+    let grooveScore = 0;
+    try {
+      const { data, error } = await admin.rpc("compute_reputation_score", { _uid: uid });
+      if (error) throw error;
+      grooveScore = Number(data ?? 0);
+    } catch (error) {
+      console.warn("[reputation_score rpc] fallback", error);
+      grooveScore = computeReputationScore(metrics, externalData, smartActions);
+    }
     const rank = rankForScore(grooveScore);
     workflow.push({ name: "Calculando GRVM Reputation Score", status: "ok" });
 
