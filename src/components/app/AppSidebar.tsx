@@ -76,9 +76,8 @@ export function AppSidebar() {
             />
           )}
           <GrooviumHeartIcon
-            className="shrink-0"
+            className="shrink-0 h-[18px] w-[18px] text-[hsl(195_100%_50%)]"
             animated={heartActive}
-            style={{ width: 18, height: 18, color: "#00D1FF" }}
           />
           {!collapsed && (
             <>
