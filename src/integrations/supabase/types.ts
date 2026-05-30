@@ -704,6 +704,7 @@ export type Database = {
           premium: boolean
           reputation_delta: number
           source_tx_id: string | null
+          sync_id: string | null
           tx_hash: string | null
           user_id: string
         }
@@ -722,6 +723,7 @@ export type Database = {
           premium?: boolean
           reputation_delta?: number
           source_tx_id?: string | null
+          sync_id?: string | null
           tx_hash?: string | null
           user_id: string
         }
@@ -740,10 +742,19 @@ export type Database = {
           premium?: boolean
           reputation_delta?: number
           source_tx_id?: string | null
+          sync_id?: string | null
           tx_hash?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "smart_actions_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "oracle_activity"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tips: {
         Row: {
@@ -1136,6 +1147,23 @@ export type Database = {
           tx_hash: string
         }[]
       }
+      get_oracle_sync_feed: {
+        Args: { _limit?: number }
+        Returns: {
+          actions_count: number
+          ai_profile: string
+          ai_rank: string
+          chain: string
+          created_at: string
+          explorer_url: string
+          groove_score: number
+          id: string
+          premium_count: number
+          tx_hash: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       get_public_profile: { Args: { _handle: string }; Returns: Json }
       get_smart_actions: {
         Args: { _limit?: number }
@@ -1150,6 +1178,23 @@ export type Database = {
           points: number
           premium: boolean
           reputation_delta: number
+        }[]
+      }
+      get_smart_actions_by_sync: {
+        Args: { _sync_id: string }
+        Returns: {
+          action: string
+          category: string
+          chain: string
+          created_at: string
+          explorer_url: string
+          icon: string
+          id: string
+          label: string
+          points: number
+          premium: boolean
+          reputation_delta: number
+          tx_hash: string
         }[]
       }
       get_smart_actions_global: {
@@ -1182,6 +1227,22 @@ export type Database = {
           rarity: Database["public"]["Enums"]["badge_rarity"]
           slug: string
           title: string
+        }[]
+      }
+      get_user_premium_proofs: {
+        Args: { _limit?: number }
+        Returns: {
+          action: string
+          chain: string
+          created_at: string
+          explorer_url: string
+          icon: string
+          id: string
+          label: string
+          oracle_synced: boolean
+          points: number
+          reputation_delta: number
+          tx_hash: string
         }[]
       }
       list_pending_premium_proofs: {
