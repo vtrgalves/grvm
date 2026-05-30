@@ -570,10 +570,11 @@ function successResponse(payload: Record<string, unknown>) {
 function fallbackResponse(workflow: WorkflowStep[], startedAt: number, warnings: string[]) {
   const ext = fallbackExternalSignals(warnings);
   return successResponse({
-    grooveScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: "Rookie" as Rank,
-    smartActions: [], activityHash: null,
+    grooveScore: 0, previousScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: "Rookie" as Rank,
+    archetype: "Strategic Observer", nextAction: "Faça login e siga um artista para começar.", reason: "Sem dados suficientes para análise.",
+    smartActions: [], actionsAnalyzed: 0, activityHash: null,
     externalData: ext, txHash: fakeTxHash(), blockNumber: 0, slot: null,
-    chain: "simulated", explorerUrl: null, oracleHash: null,
+    chain: "simulated", explorerUrl: null, oracleHash: null, syncId: null, bonusGrvm: 0,
     syncedAt: new Date().toISOString(), durationMs: Date.now() - startedAt,
     workflow: workflow.length ? workflow : [{ name: "Oracle fallback", status: "fallback", message: warnings.join(" · ") }],
   });
