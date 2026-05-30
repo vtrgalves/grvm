@@ -150,15 +150,32 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
       setProgress(100);
       if (Array.isArray(r.smartActions)) setSmartActions(r.smartActions);
 
-      const reward = Math.max(40, Math.round((r.grooveScore ?? 0) * 0.15));
+      const reward = Number((r as any).bonusGrvm ?? Math.max(40, Math.round((r.grooveScore ?? 0) * 0.15)));
       setLastReward(reward);
 
-      toast.success(`Oracle sincronizado · +${reward} GRVM`, {
-        description: `${r.rank ?? "Rookie"} · Score ${r.grooveScore}/1000`,
-        icon: "⚡",
-      });
+      const rr = r as any;
+      const result: OracleSyncResult = {
+        success: true,
+        grooveScore: Number(rr.grooveScore ?? 0),
+        previousScore: Number(rr.previousScore ?? data?.latest?.groove_score ?? 0),
+        rank: normalizeRank(rr.rank, Number(rr.grooveScore ?? 0)),
+        archetype: String(rr.archetype ?? "Strategic Observer"),
+        insight: String(rr.insight ?? ""),
+        reason: String(rr.reason ?? ""),
+        nextAction: String(rr.nextAction ?? ""),
+        bonusGrvm: reward,
+        actionsAnalyzed: Number(rr.actionsAnalyzed ?? (Array.isArray(rr.smartActions) ? rr.smartActions.length : 0)),
+        oracleHash: rr.oracleHash ?? null,
+        txHash: String(rr.txHash ?? ""),
+        chain: String(rr.chain ?? "simulated"),
+        explorerUrl: rr.explorerUrl ?? null,
+        syncId: rr.syncId ?? null,
+      };
+      setSuccessResult(result);
+      setSuccessOpen(true);
 
       await load();
+
     } catch (e: unknown) {
       console.error("[Oracle CRE]", e);
       toast.error(e instanceof Error ? e.message : "Falha ao conectar Oracle. Tente novamente.", {
