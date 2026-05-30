@@ -259,7 +259,7 @@ export default function GrooviumHeart() {
           </div>
 
           <div className="glass-card rounded-2xl border border-accent/40 p-5 bg-gradient-to-br from-accent/5 via-background/40 to-primary/5">
-            <div className="text-[10px] uppercase tracking-widest text-accent font-display">Resumo para jurados</div>
+            <div className="text-[10px] uppercase tracking-widest text-accent font-display">O coração da reputação musical</div>
             <p className="text-sm text-foreground mt-1 leading-relaxed">
               O Groovium usa <strong className="text-secondary">Chainlink CRE</strong> para orquestrar dados, IA e blockchain.
               Cada interação musical gera reputação verificável. A <strong className="text-primary">Solana Devnet</strong> registra

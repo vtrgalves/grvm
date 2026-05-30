@@ -1,8 +1,8 @@
-// Phase 2.5 — Modal "Ver demo guiada" do Proof of Support Oracle.
+// Phase 2.5 — Modal "Ver funcionamento" do Proof of Support Oracle.
 // Explica em 4 passos curtos como ações viram reputação verificável.
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Activity, Cpu, Brain, ShieldCheck, PlayCircle } from "lucide-react";
+import { Activity, Cpu, Brain, ShieldCheck, Eye } from "lucide-react";
 
 const STEPS = [
   {
@@ -41,7 +41,7 @@ export function OracleDemoModal({
       <DialogTrigger asChild>
         {trigger ?? (
           <Button variant="outline" size="sm" className="border-primary/40 text-primary hover:bg-primary/10 font-display">
-            <PlayCircle className="w-3.5 h-3.5 mr-1.5" /> Ver demo guiada
+            <Eye className="w-3.5 h-3.5 mr-1.5" /> Ver funcionamento
           </Button>
         )}
       </DialogTrigger>
