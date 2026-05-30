@@ -74,7 +74,8 @@ const App = () => (
               <Route path="ai" element={<AiGroovium />} />
               <Route path="boosts" element={<Boosts />} />
               <Route path="crates" element={<Crates />} />
-              <Route path="oracle" element={<OracleHistory />} />
+              <Route path="oracle" element={<GrooviumHeart />} />
+              <Route path="oracle-history" element={<OracleHistory />} />
             </Route>
             <Route path="/u/:handle" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<PublicProfile />} />
