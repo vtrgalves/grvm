@@ -243,6 +243,14 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
                 </div>
               </DialogContent>
             </Dialog>
+
+            <OracleDemoModal
+              trigger={
+                <button className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full border border-accent/40 text-accent hover:bg-accent/10 transition-colors">
+                  ▶ Ver demo guiada
+                </button>
+              }
+            />
           </div>
           <h2 className="font-display text-xl md:text-2xl font-black gradient-neon-text flex items-center gap-2">
             🎧 Proof of Support Oracle
