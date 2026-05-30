@@ -20,9 +20,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import grooviumOfficialNft from "@/assets/groovium-nft-official.avif";
 import { useMarketplaceModal } from "@/components/app/MarketplaceComingSoonModal";
+import nftNeonPulse from "@/assets/nfts/neon-pulse.jpg";
+import nftWaveAccess from "@/assets/nfts/wave-access.jpg";
+import nftCyberFrequency from "@/assets/nfts/cyber-frequency.jpg";
+import nftGenesisAura from "@/assets/nfts/genesis-aura.jpg";
+import nftEternalGroove from "@/assets/nfts/eternal-groove.jpg";
+import nftQuantumSound from "@/assets/nfts/quantum-sound.jpg";
+import nftGenesisPrime from "@/assets/nfts/genesis-prime.jpg";
+import nftEternalFounder from "@/assets/nfts/eternal-founder.jpg";
+import nftFirstWave from "@/assets/nfts/first-wave.jpg";
+import nftArtistNeonFrequency from "@/assets/nfts/artist-neon-frequency.jpg";
+import nftArtistLunaVox from "@/assets/nfts/artist-luna-vox.jpg";
+import nftArtistCyberGroove from "@/assets/nfts/artist-cybergroove.jpg";
 
 // ---------- Rarity helpers ----------
-type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis";
+type Rarity = "common" | "rare" | "epic" | "legendary" | "genesis" | "grail";
 
 const RARITY: Record<
   Rarity,
@@ -30,43 +42,51 @@ const RARITY: Record<
 > = {
   common: {
     label: "Common",
-    icon: "⚪",
-    chip: "from-slate-500 to-slate-700",
-    ring: "ring-slate-400/30",
-    glow: "shadow-[0_0_18px_hsl(0_0%_60%/0.18)]",
-    border: "border-slate-500/30",
+    icon: "◇",
+    chip: "from-slate-400 to-slate-600",
+    ring: "ring-slate-300/30",
+    glow: "shadow-[0_0_18px_hsl(0_0%_70%/0.18)]",
+    border: "border-slate-400/30",
   },
   rare: {
     label: "Rare",
-    icon: "🔵",
-    chip: "from-cyan-500 to-blue-600",
-    ring: "ring-cyan-400/40",
-    glow: "shadow-[0_0_22px_hsl(191_100%_50%/0.28)]",
-    border: "border-cyan-400/40",
+    icon: "◈",
+    chip: "from-cyan-400 to-blue-500",
+    ring: "ring-cyan-400/50",
+    glow: "shadow-[0_0_22px_hsl(191_100%_50%/0.35)]",
+    border: "border-cyan-400/50",
   },
   epic: {
     label: "Epic",
-    icon: "🟣",
-    chip: "from-purple-500 to-fuchsia-600",
-    ring: "ring-purple-400/40",
-    glow: "shadow-[0_0_24px_hsl(270_80%_55%/0.35)]",
-    border: "border-purple-400/40",
+    icon: "◆",
+    chip: "from-purple-500 to-fuchsia-500",
+    ring: "ring-purple-400/50",
+    glow: "shadow-[0_0_24px_hsl(270_80%_60%/0.45)]",
+    border: "border-purple-400/50",
   },
   legendary: {
     label: "Legendary",
-    icon: "🟠",
-    chip: "from-orange-500 to-pink-500",
-    ring: "ring-orange-400/50",
-    glow: "shadow-[0_0_28px_hsl(330_100%_55%/0.4)]",
-    border: "border-orange-400/50",
+    icon: "✦",
+    chip: "from-orange-400 to-rose-500",
+    ring: "ring-orange-400/60",
+    glow: "shadow-[0_0_28px_hsl(20_100%_55%/0.5)]",
+    border: "border-orange-400/60",
   },
   genesis: {
     label: "Genesis",
-    icon: "🌌",
-    chip: "from-cyan-400 via-fuchsia-500 to-orange-400",
+    icon: "✺",
+    chip: "from-cyan-400 via-fuchsia-500 to-pink-500",
     ring: "ring-fuchsia-400/60",
-    glow: "shadow-[0_0_36px_hsl(330_100%_55%/0.45),0_0_60px_hsl(191_100%_50%/0.25)]",
+    glow: "shadow-[0_0_36px_hsl(330_100%_55%/0.5),0_0_60px_hsl(191_100%_50%/0.3)]",
     border: "border-fuchsia-400/60",
+  },
+  grail: {
+    label: "Grail",
+    icon: "♛",
+    chip: "from-yellow-300 via-amber-400 to-yellow-600",
+    ring: "ring-amber-300/70",
+    glow: "shadow-[0_0_40px_hsl(45_100%_55%/0.55),0_0_70px_hsl(330_100%_55%/0.25)]",
+    border: "border-amber-300/70",
   },
 };
 
