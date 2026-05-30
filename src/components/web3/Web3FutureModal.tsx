@@ -9,36 +9,43 @@ interface Props {
 }
 
 const today = [
-  "Sistema gamificado Web2.5",
-  "Reputação musical simulada",
-  "GRVM experimental (off-chain)",
+  "Missões e interações verificáveis",
+  "Proof of Support Oracle",
+  "Reputation Score musical",
+  "IA de perfil comportamental",
+  "Oracle Sync com Chainlink CRE",
+  "Provas registradas na Solana Devnet",
+  "Explorer de reputação",
+  "Smart Actions verificáveis",
 ];
 
 const future = [
-  "Token GRVM real na Solana",
-  "NFTs descentralizadas on-chain",
-  "Reputação Oracle Chainlink",
+  "Token GRVM na infraestrutura Solana",
+  "NFTs descentralizados",
+  "Experiências tokenizadas",
+  "Recompensas on-chain",
   "Economia musical SocialFi",
+  "Integrações com plataformas musicais",
 ];
 
 export const Web3FutureModal = ({ open, onOpenChange }: Props) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent className="max-w-lg glass-card border-primary/30">
       <DialogHeader>
-        <DialogTitle className="font-display text-2xl gradient-neon-text">
-          O Futuro Web3 do GRVM
-        </DialogTitle>
-        <DialogDescription className="text-muted-foreground">
-          Como o ecossistema Groovium evolui da experiência atual para a infraestrutura on-chain.
-        </DialogDescription>
+          <DialogTitle className="font-display text-2xl gradient-neon-text">
+            O caminho para a economia musical verificável
+          </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            Veja o que já está funcionando hoje e o que será ativado nas próximas fases do Groovium.
+          </DialogDescription>
       </DialogHeader>
 
       <div className="grid grid-cols-2 gap-3 mt-2">
         <div className="rounded-lg border border-border/60 p-4 bg-muted/10">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="font-display text-xs uppercase tracking-widest text-accent">Hoje</span>
-          </div>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-accent" />
+                <span className="font-display text-xs uppercase tracking-widest text-accent">ATIVO AGORA</span>
+              </div>
           <ul className="space-y-2">
             {today.map((t) => (
               <li key={t} className="text-xs text-muted-foreground flex gap-2">
@@ -50,10 +57,10 @@ export const Web3FutureModal = ({ open, onOpenChange }: Props) => (
         </div>
 
         <div className="rounded-lg border border-primary/30 p-4 bg-primary/5">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="font-display text-xs uppercase tracking-widest text-primary">Futuro</span>
-          </div>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="font-display text-xs uppercase tracking-widest text-primary">PRÓXIMOS PASSOS</span>
+              </div>
           <ul className="space-y-2">
             {future.map((t) => (
               <li key={t} className="text-xs text-foreground flex gap-2">
@@ -65,25 +72,12 @@ export const Web3FutureModal = ({ open, onOpenChange }: Props) => (
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 pt-4 border-t border-border/40 mt-2">
-        <a
-          href="https://chain.link/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-xs text-primary hover:opacity-80 transition-opacity"
-        >
-          <ChainlinkLogo className="w-4 h-4" />
-          <span className="font-display uppercase tracking-wider">Chainlink CRE</span>
-        </a>
-        <a
-          href="https://solana.com/pt"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-xs hover:opacity-80 transition-opacity"
-        >
-          <SolanaLogo className="w-4 h-4" />
-          <span className="font-display uppercase tracking-wider">Solana</span>
-        </a>
+      <div className="flex items-center justify-center gap-6 pt-4 border-t border-border/40 mt-2 text-xs text-muted-foreground font-display uppercase tracking-wider">
+        <span>Powered by Chainlink CRE</span>
+        <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
+        <span>Solana Devnet</span>
+        <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
+        <span>Groovium Heart</span>
       </div>
     </DialogContent>
   </Dialog>

@@ -12,11 +12,15 @@ export default function BetaDialog({ open, onOpenChange }: Props) {
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-2 animate-pulse-glow">
             <Sparkles className="w-6 h-6 text-background" />
           </div>
-          <DialogTitle className="font-display text-2xl gradient-neon-text">Groovium · Modo BETA</DialogTitle>
+          <DialogTitle className="font-display text-2xl gradient-neon-text">Groovium · Beta Público</DialogTitle>
           <DialogDescription className="text-sm leading-relaxed pt-2">
-            Todos os créditos <span className="text-primary font-bold">GRVM</span>, recompensas, NFTs, experiências e interações atuais são <span className="text-accent">fictícios</span> e utilizados apenas para testes da plataforma e validação da economia gamificada.
+            O Groovium já possui infraestrutura ativa de reputação musical verificável.
             <br /><br />
-            No lançamento oficial da plataforma Web3, os usuários poderão conectar suas wallets e participar da economia real do ecossistema Groovium.
+            Suas interações geram Smart Actions, passam pelo Proof of Support Oracle, recebem análise de IA e podem gerar registros públicos na Solana Devnet.
+            <br /><br />
+            Os créditos GRVM exibidos atualmente possuem caráter experimental e são utilizados para validação da economia, da gamificação e dos mecanismos de reputação do ecossistema.
+            <br /><br />
+            Nas próximas fases, o GRVM evoluirá para uma camada econômica integrada à infraestrutura Web3 do Groovium.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -24,7 +28,7 @@ export default function BetaDialog({ open, onOpenChange }: Props) {
             onClick={() => { localStorage.setItem("grv_beta_seen", "1"); onOpenChange(false); }}
             className="w-full bg-gradient-to-r from-primary to-accent text-background font-display font-bold"
           >
-            Entendi
+            Continuar explorando
           </Button>
         </DialogFooter>
       </DialogContent>
