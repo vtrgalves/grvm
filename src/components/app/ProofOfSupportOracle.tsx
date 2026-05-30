@@ -11,6 +11,8 @@ import {
 import { toast } from "sonner";
 import { normalizeRank, rankForScore, RANK_STYLES, type OracleRank, type SmartAction } from "@/lib/oracle";
 import { OracleDemoModal } from "@/components/app/OracleDemoModal";
+import { OracleSuccessModal } from "@/components/app/OracleSuccessModal";
+import type { OracleSyncResult } from "@/components/app/OracleSyncPanel";
 
 interface OracleData {
   latest: {
