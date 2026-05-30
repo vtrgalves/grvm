@@ -542,6 +542,7 @@ export default function ProofOfSupportOracle({ initialData = null }: { initialDa
         </div>
       </div>
     </div>
+    <OracleSuccessModal open={successOpen} onOpenChange={setSuccessOpen} result={successResult} />
     </TooltipProvider>
   );
 }
