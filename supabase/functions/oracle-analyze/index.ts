@@ -38,7 +38,14 @@ type Rank =
   | "Rookie" | "Listener" | "Supporter" | "Insider"
   | "Groove Hunter" | "Backstage" | "Legend" | "Genesis Icon";
 
-type AiResult = { profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string };
+type Archetype =
+  | "Trend Hunter" | "Community Builder" | "Genesis Supporter"
+  | "Culture Creator" | "Strategic Observer" | "Backstage Builder";
+
+type AiResult = {
+  profile: string; insight: string; rank: Rank; ai_ok: boolean; warning?: string;
+  archetype: Archetype; nextAction: string; reason: string;
+};
 
 type SmartAction = {
   id: string; action: string; label: string; icon: string;
@@ -124,6 +131,19 @@ Deno.serve(async (req) => {
     });
 
     // [3] Reputation Score 0–1000 — prefer canonical SQL function, fallback to inline.
+    // Capture previous score BEFORE this sync for delta + bonus calculation.
+    let previousScore = 0;
+    try {
+      const { data: prev } = await admin
+        .from("oracle_activity")
+        .select("groove_score")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      previousScore = Number(prev?.groove_score ?? 0);
+    } catch (_) { /* ignore */ }
+
     let grooveScore = 0;
     try {
       const { data, error } = await admin.rpc("compute_reputation_score", { _uid: uid });
@@ -136,13 +156,13 @@ Deno.serve(async (req) => {
     const rank = rankForScore(grooveScore);
     workflow.push({ name: "Calculando GRVM Reputation Score", status: "ok" });
 
-    // [4] AI insight (human, behavioral)
+    // [4] AI insight + behavioral archetype
     const ai = await runAi(metrics, externalData, grooveScore, rank, smartActions, env.LOVABLE_API_KEY);
     externalData.ai_ok = ai.ai_ok;
     if (ai.warning) externalData.warnings.push(ai.warning);
-    workflow.push({ name: "IA Gemini · análise comportamental", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
+    workflow.push({ name: "IA · análise comportamental", status: ai.ai_ok ? "ok" : "fallback", message: ai.warning });
 
-    // [5] Oracle hash (aggregates score + rank + activity fingerprint)
+    // [5] Oracle hash
     const syncedAt = new Date().toISOString();
     const activityFingerprint = await sha256Hex(
       smartActions.map((a) => `${a.action}:${a.id}`).join("|") || uid,
@@ -174,19 +194,10 @@ Deno.serve(async (req) => {
     };
     try {
       const { data, error } = await admin.rpc("record_oracle_sync", {
-        _uid: uid,
-        _score: grooveScore,
-        _insight: ai.insight,
-        _profile: ai.profile,
-        _trigger: trigger,
-        _metrics: metrics,
-        _rank: rank,
-        _external: externalData,
-        _tx_hash: proof.tx_hash,
-        _slot: proof.slot,
-        _explorer_url: proof.explorer_url,
-        _oracle_hash: oracleHash,
-        _chain: proof.chain,
+        _uid: uid, _score: grooveScore, _insight: ai.insight, _profile: ai.profile,
+        _trigger: trigger, _metrics: metrics, _rank: rank, _external: externalData,
+        _tx_hash: proof.tx_hash, _slot: proof.slot, _explorer_url: proof.explorer_url,
+        _oracle_hash: oracleHash, _chain: proof.chain,
       });
       if (error) throw error;
       dbProof = data as typeof dbProof;
@@ -196,23 +207,35 @@ Deno.serve(async (req) => {
       workflow.push({ name: "Persistindo histórico", status: "fallback", message: stringifyError(error) });
     }
 
+    // [8] Bonus GRVM pós-sync (diminishing returns + diversidade)
+    const bonus = computeOracleBonus(previousScore, grooveScore, smartActions);
+    let bonusAwarded = 0;
+    if (bonus > 0) {
+      try {
+        const { data } = await admin.rpc("award_oracle_bonus", {
+          _uid: uid, _bonus: bonus, _sync_id: dbProof.id ?? null,
+          _reason: `Bônus Oracle · ${ai.archetype} · +${grooveScore - previousScore} pts`,
+        });
+        bonusAwarded = Number((data as any)?.awarded ?? 0);
+        workflow.push({ name: `Bônus GRVM (+${bonusAwarded})`, status: "ok" });
+      } catch (error) {
+        console.error("[bonus] failed", error);
+        workflow.push({ name: "Bônus GRVM", status: "fallback", message: stringifyError(error) });
+      }
+    } else {
+      workflow.push({ name: "Bônus GRVM", status: "ok", message: "Sem bônus (ação repetitiva)" });
+    }
+
     return successResponse({
-      grooveScore,
-      insight: ai.insight,
-      profile: ai.profile,
-      rank,
-      smartActions,
-      activityHash: activityFingerprint,
-      externalData,
-      txHash: proof.tx_hash,
-      blockNumber: proof.slot ?? 0,
-      slot: proof.slot,
-      chain: proof.chain,
-      explorerUrl: proof.explorer_url,
-      oracleHash,
-      syncedAt,
-      durationMs: Date.now() - startedAt,
-      workflow,
+      grooveScore, previousScore,
+      insight: ai.insight, profile: ai.profile, rank,
+      archetype: ai.archetype, nextAction: ai.nextAction, reason: ai.reason,
+      smartActions, actionsAnalyzed: smartActions.length,
+      activityHash: activityFingerprint, externalData,
+      txHash: proof.tx_hash, blockNumber: proof.slot ?? 0, slot: proof.slot,
+      chain: proof.chain, explorerUrl: proof.explorer_url, oracleHash,
+      syncId: dbProof.id ?? null, bonusGrvm: bonusAwarded,
+      syncedAt, durationMs: Date.now() - startedAt, workflow,
     });
   } catch (error) {
     console.error("[oracle] fatal", error);
@@ -387,6 +410,72 @@ function computeReputationScore(
   return Math.max(0, Math.min(1000, Math.round(raw)));
 }
 
+function classifyArchetype(
+  m: Record<string, number>, smart: SmartAction[], topCat: string,
+): { archetype: Archetype; reason: string; nextAction: string } {
+  const collectorN = smart.filter(s => s.category === "collector").length;
+  const supportN   = smart.filter(s => s.category === "support").length;
+  const socialN    = smart.filter(s => s.category === "social").length;
+  const creatorN   = smart.filter(s => s.category === "creator").length;
+  const engageN    = smart.filter(s => s.category === "engagement").length;
+
+  if ((m.nft_count ?? 0) >= 3 || collectorN >= 4)
+    return {
+      archetype: "Genesis Supporter",
+      reason: "Você coleciona NFTs e abre crates raras antes da maioria.",
+      nextAction: "Abra uma Crate Lendária para subir de rank.",
+    };
+  if ((m.tips_sent ?? 0) >= 2 || supportN >= 3)
+    return {
+      archetype: "Backstage Builder",
+      reason: "Você apoia artistas com tips e resgates VIP.",
+      nextAction: "Resgate um perk VIP para fortalecer sua reputação.",
+    };
+  if (socialN >= 6 || (m.follows ?? 0) >= 5)
+    return {
+      archetype: "Community Builder",
+      reason: "Seu impacto social no Groovium está acima da média.",
+      nextAction: "Comente em um post de um artista que você segue.",
+    };
+  if (creatorN >= 2)
+    return {
+      archetype: "Culture Creator",
+      reason: "Você cria conteúdo e movimenta o ecossistema.",
+      nextAction: "Lance um novo drop ou item para sua audiência.",
+    };
+  if (engageN >= 6 || (m.streak ?? 0) >= 5)
+    return {
+      archetype: "Trend Hunter",
+      reason: "Sua frequência diária mantém o radar afiado.",
+      nextAction: "Complete a próxima missão diária para manter o streak.",
+    };
+  return {
+    archetype: "Strategic Observer",
+    reason: "Você está acompanhando, mas ainda interagindo pouco.",
+    nextAction: "Siga um artista e faça check-in para ativar sua reputação.",
+  };
+}
+
+export function computeOracleBonus(
+  prev: number, next: number, smart: SmartAction[],
+): number {
+  const delta = next - prev;
+  const cats = new Set(smart.map(s => s.category));
+  const diversity = cats.size; // 0..6
+  // repetição → diminishing returns: se 80%+ vem de 1 categoria, penaliza
+  const counts: Record<string, number> = {};
+  for (const a of smart) counts[a.category] = (counts[a.category] ?? 0) + 1;
+  const total = smart.length || 1;
+  const topShare = Math.max(0, ...Object.values(counts)) / total;
+  const repetitionPenalty = topShare > 0.8 ? 0.5 : 1;
+
+  const base = Math.max(0, delta) * 0.6 + diversity * 5;
+  // Score absoluto também gera um mínimo de 10 para não ser frustrante
+  const minimum = next > 0 ? 10 : 0;
+  const raw = Math.max(minimum, base * repetitionPenalty);
+  return Math.max(0, Math.min(80, Math.round(raw)));
+}
+
 async function runAi(
   m: Record<string, number>,
   ext: ExternalSignals,
@@ -395,25 +484,30 @@ async function runAi(
   smart: SmartAction[],
   apiKey: string,
 ): Promise<AiResult> {
-  const fallback: AiResult = {
-    profile: FALLBACK_PROFILE,
-    insight: FALLBACK_INSIGHT,
-    rank, ai_ok: false,
-  };
-  if (!apiKey) return { ...fallback, warning: "IA temporariamente indisponível" };
-
   const topCats: Record<string, number> = {};
   for (const a of smart) topCats[a.category] = (topCats[a.category] ?? 0) + 1;
   const topCat = Object.entries(topCats).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "engagement";
+  const classification = classifyArchetype(m, smart, topCat);
+
+  const fallback: AiResult = {
+    profile: classification.archetype,
+    insight: classification.reason,
+    rank, ai_ok: false,
+    archetype: classification.archetype,
+    nextAction: classification.nextAction,
+    reason: classification.reason,
+  };
+  if (!apiKey) return { ...fallback, warning: "IA temporariamente indisponível" };
 
   try {
-    const prompt = `Você é o Oracle do Groovium. Analise o comportamento do fã e devolva uma frase HUMANA, inspiradora, em PT-BR (até 140 chars).
+    const prompt = `Você é o Oracle do Groovium, um motor de reputação musical Web3. Analise o comportamento do fã abaixo.
 Métricas: GRV ${m.grv_balance ?? 0}, missões ${m.missions_completed ?? 0}, NFTs ${m.nft_count ?? 0}, streak ${m.streak ?? 0}, boosts ${m.boosts_active ?? 0}, tips ${m.tips_sent ?? 0}, follows ${m.follows ?? 0}, likes ${m.likes ?? 0}, badges ${m.badges ?? 0}.
-Categoria dominante recente: ${topCat}. Score: ${score}/1000. Rank: ${rank}.
-Sinais externos: ETH ${ext.eth_usd}, trending ${ext.trending_name}.
-Escreva como se descrevesse o comportamento do fã (ex: "Você apoia artistas antes da tendência", "Perfil de colecionador raro", "Engajamento social acima da média").
-NÃO invente números. NÃO use jargão cripto/finance.
-Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase humana até 140 chars"}`;
+Categoria dominante: ${topCat}. Score: ${score}/1000. Rank: ${rank}. Smart Actions recentes: ${smart.length}.
+Arquétipo sugerido (regras): ${classification.archetype}.
+Classifique o fã em UM destes arquétipos: Trend Hunter, Community Builder, Genesis Supporter, Culture Creator, Strategic Observer, Backstage Builder.
+NÃO invente números. NÃO use jargão cripto/finance. Tudo em PT-BR.
+Responda APENAS JSON válido:
+{"archetype":"<um dos 6>","profile":"2-4 palavras cyberpunk","insight":"frase humana inspiradora até 140 chars","reason":"por que o score está nesse nível até 120 chars","nextAction":"recomendação curta de próxima ação até 100 chars"}`;
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "edge-function-fetch" },
@@ -426,9 +520,14 @@ Responda APENAS JSON: {"profile":"2-4 palavras cyberpunk","insight":"frase human
     const s = cleaned.indexOf("{"), e = cleaned.lastIndexOf("}");
     if (s === -1 || e === -1) throw new Error("Non-JSON AI response");
     const parsed = JSON.parse(cleaned.slice(s, e + 1));
+    const allowed: Archetype[] = ["Trend Hunter","Community Builder","Genesis Supporter","Culture Creator","Strategic Observer","Backstage Builder"];
+    const arch = allowed.includes(parsed.archetype) ? parsed.archetype : classification.archetype;
     return {
-      profile: String(parsed.profile ?? FALLBACK_PROFILE).slice(0, 40),
-      insight: String(parsed.insight ?? FALLBACK_INSIGHT).slice(0, 200),
+      profile: String(parsed.profile ?? arch).slice(0, 40),
+      insight: String(parsed.insight ?? classification.reason).slice(0, 200),
+      reason: String(parsed.reason ?? classification.reason).slice(0, 160),
+      nextAction: String(parsed.nextAction ?? classification.nextAction).slice(0, 140),
+      archetype: arch as Archetype,
       rank, ai_ok: true,
     };
   } catch (e) {
@@ -471,10 +570,11 @@ function successResponse(payload: Record<string, unknown>) {
 function fallbackResponse(workflow: WorkflowStep[], startedAt: number, warnings: string[]) {
   const ext = fallbackExternalSignals(warnings);
   return successResponse({
-    grooveScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: "Rookie" as Rank,
-    smartActions: [], activityHash: null,
+    grooveScore: 0, previousScore: 0, insight: FALLBACK_INSIGHT, profile: FALLBACK_PROFILE, rank: "Rookie" as Rank,
+    archetype: "Strategic Observer", nextAction: "Faça login e siga um artista para começar.", reason: "Sem dados suficientes para análise.",
+    smartActions: [], actionsAnalyzed: 0, activityHash: null,
     externalData: ext, txHash: fakeTxHash(), blockNumber: 0, slot: null,
-    chain: "simulated", explorerUrl: null, oracleHash: null,
+    chain: "simulated", explorerUrl: null, oracleHash: null, syncId: null, bonusGrvm: 0,
     syncedAt: new Date().toISOString(), durationMs: Date.now() - startedAt,
     workflow: workflow.length ? workflow : [{ name: "Oracle fallback", status: "fallback", message: warnings.join(" · ") }],
   });
