@@ -61,6 +61,10 @@ export default function OracleHistory() {
   const [reputation, setReputation] = useState<number>(0);
   const [proofs, setProofs] = useState<PremiumProof[]>([]);
   const [syncing, setSyncing] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [premiumModalProofs, setPremiumModalProofs] = useState<PremiumProofView[]>([]);
+  const [premiumModalCount, setPremiumModalCount] = useState(0);
 
   const loadProofs = async () => {
     const { data } = await (supabase.rpc as any)("get_user_premium_proofs", { _limit: 50 });
