@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, Hash, Sparkles, ExternalLink, Filter, Crown, Loader2 } from "lucide-react";
+import { Activity, Hash, Sparkles, ExternalLink, Filter, Crown, Loader2, Award } from "lucide-react";
 import { normalizeRank, rankForScore, RANK_STYLES } from "@/lib/oracle";
 import { explorerTxUrl, isSolanaSignature } from "@/lib/solana";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { OracleSyncCard } from "@/components/app/OracleSyncPanel";
+import { OracleDemoModal } from "@/components/app/OracleDemoModal";
 
 type PremiumProof = {
   id: string; action: string; label: string; icon: string; points: number;
