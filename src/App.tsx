@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AppLayout from "@/components/app/AppLayout";
+import { MarketplaceModalProvider } from "@/components/app/MarketplaceComingSoonModal";
 import Index from "./pages/Index.tsx";
 import Signup from "./pages/Signup.tsx";
 import Login from "./pages/Login.tsx";
@@ -45,6 +46,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+        <MarketplaceModalProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/signup" element={<Signup />} />
