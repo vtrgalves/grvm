@@ -11,7 +11,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const fanItems = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard, end: true },
   { title: "Meu Perfil", url: "/app/profile", icon: User },
   { title: "Feed", url: "/app/feed", icon: Rss },
   { title: "Ranking", url: "/app/ranking", icon: Crown },
@@ -26,7 +25,6 @@ const fanItems = [
   { title: "NFTs", url: "/app/nfts", icon: Image },
   { title: "Experiências", url: "/app/experiences", icon: Ticket },
   { title: "IA Groovium", url: "/app/ai", icon: Wand2 },
-  { title: "Oracle History", url: "/app/oracle", icon: Activity },
   { title: "Explorer", url: "/app/explorer", icon: Boxes },
 ];
 
